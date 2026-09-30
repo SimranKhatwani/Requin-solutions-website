@@ -1,0 +1,12 @@
+{
+  "name": "requin-solutions-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev:frontend": "npm run dev --prefix Frontend",
+    "dev:backend": "npm run dev --prefix Backend",
+    "build:frontend": "npm run build --prefix Frontend",
+    "build:backend": "npm run build --prefix Backend",
+    "install:all": "npm install --prefix Frontend && npm install --prefix Backend"
+  }
+}
