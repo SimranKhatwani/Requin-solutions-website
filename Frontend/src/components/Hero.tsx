@@ -44,7 +44,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreServices, onViewProducts })
 
             {/* Sub-headline Description */}
             <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-xl font-normal">
-              We build modern software, cloud and digital solutions that help businesses operate, grow and transform.
+              At Requin Solutions Pvt Ltd , we build modern software, cloud and digital solutions that help businesses operate, grow and transform.
             </p>
 
             {/* Action Buttons */}

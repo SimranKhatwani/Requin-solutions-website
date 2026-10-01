@@ -95,7 +95,7 @@ export const REQUIN_SERVICES: ServiceItem[] = [
     id: 'web-development',
     title: 'Web Development',
     category: 'Engineering',
-    description: 'High-performance web applications, responsive platforms, and robust enterprise portals engineered with cutting-edge frontend architectures.',
+    description: 'Scalable, responsive, and high-performance web applications for your business.',
     overview: 'From custom customer portals to high-throughput web applications, our engineering team builds resilient, accessible, and lightning-fast digital experiences that convert and scale.',
     image: '/images/modern_software_mockup_1790576657118.jpg',
     highlights: [
@@ -110,7 +110,7 @@ export const REQUIN_SERVICES: ServiceItem[] = [
     id: 'mobile-development',
     title: 'Mobile App Development',
     category: 'Native & Cross-Platform',
-    description: 'Native iOS and Android engineering and cross-platform mobile solutions delivering fluid micro-interactions and seamless offline capabilities.',
+    description: 'Innovative mobile applications for iOS and Android platforms.',
     overview: 'We build native and hybrid mobile apps that feel intuitive, load instantly, and keep users engaged across smartphone and tablet form factors.',
     image: '/images/digital_agency_office_1790576645354.jpg',
     highlights: [
@@ -125,7 +125,7 @@ export const REQUIN_SERVICES: ServiceItem[] = [
     id: 'software-solutions',
     title: 'Software Solutions',
     category: 'Enterprise Systems',
-    description: 'End-to-end custom software ecosystems, automated business workflows, and customized CRM/ERP platforms to streamline core operations.',
+    description: 'Custom software solutions that streamline your business processes.',
     overview: 'Replace disjointed legacy tooling with unified software ecosystems custom-tailored to your organizational business logic and multi-tier workflows.',
     image: '/images/requin_software_team_1790576614688.jpg',
     highlights: [
@@ -140,7 +140,7 @@ export const REQUIN_SERVICES: ServiceItem[] = [
     id: 'cloud-solutions',
     title: 'Cloud Solutions',
     category: 'Infrastructure & DevOps',
-    description: 'Resilient multi-cloud architectures, automated CI/CD deployment pipelines, container orchestration, and 24/7 high-availability infrastructure.',
+    description: 'Secure and scalable cloud infrastructure for your business.',
     overview: 'We architect, optimize, and maintain zero-downtime cloud environments across AWS, Google Cloud, and Azure, slashing latency and operating expenditures.',
     image: '/images/cloud_infrastructure_1790576629897.jpg',
     highlights: [
@@ -153,9 +153,9 @@ export const REQUIN_SERVICES: ServiceItem[] = [
   },
   {
     id: 'digital-marketing',
-    title: 'Digital Marketing & Growth',
+    title: 'Digital Marketing',
     category: 'Performance',
-    description: 'Data-driven search engine optimization, technical performance tuning, and digital conversion funnels that connect your brand with qualified enterprise audiences.',
+    description: 'Data-driven digital marketing strategies to grow your brand.',
     overview: 'Bridge technology and market traction. We combine technical SEO, content architectures, and precision performance marketing to generate compounding inbound pipeline.',
     image: '/images/modern_software_mockup_1790576657118.jpg',
     highlights: [
@@ -168,9 +168,9 @@ export const REQUIN_SERVICES: ServiceItem[] = [
   },
   {
     id: 'academic-assistance',
-    title: 'Academic Assistance & Training',
+    title: 'Academic Assistance',
     category: 'Knowledge & Research',
-    description: 'Specialized academic technology consulting, computational research assistance, technical documentation, and professional development programs.',
+    description: 'Expert support for research papers, project management, and academic excellence.',
     overview: 'Bridging academia and practical engineering. We provide research data modeling, thesis system prototyping, and hands-on software workshops for institutions.',
     image: '/images/requin_software_team_1790576614688.jpg',
     highlights: [

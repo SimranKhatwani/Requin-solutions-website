@@ -5,6 +5,7 @@ import { PublicBlogsPage } from './pages/PublicBlogsPage';
 import { PublicBlogDetailPage } from './pages/PublicBlogDetailPage';
 import { PublicProjectsPage } from './pages/PublicProjectsPage';
 import { PublicStoriesPage } from './pages/PublicStoriesPage';
+import { PublicServiceDetailPage } from './pages/PublicServiceDetailPage';
 
 // Admin CMS Components
 import { AdminLogin } from './admin/AdminLogin';
@@ -27,6 +28,8 @@ export default function App() {
         ======================================================== */}
         <Route path="/" element={<PublicHomePage />} />
         <Route path="/services" element={<PublicHomePage initialScrollTo="services" />} />
+        <Route path="/service/:serviceId" element={<PublicServiceDetailPage />} />
+        <Route path="/services/:serviceId" element={<PublicServiceDetailPage />} />
         <Route path="/projects" element={<PublicProjectsPage />} />
         <Route path="/blogs" element={<PublicBlogsPage />} />
         <Route path="/blog/:slug" element={<PublicBlogDetailPage />} />
