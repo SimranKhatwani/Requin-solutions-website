@@ -73,11 +73,11 @@ export const AdminLayout: React.FC = () => {
         {/* Brand Area */}
         <div className="h-20 px-6 flex items-center justify-between border-b border-slate-800 bg-slate-950/60">
           <div className="flex items-center gap-3">
-            <div className="bg-white px-3 py-1.5 rounded-xl shadow-sm border border-slate-100 flex items-center">
+            <div className="flex items-center">
               <img
                 src="/images/logo.png"
                 alt="Requin Solutions"
-                className="h-7 w-auto object-contain"
+                className="h-8 w-auto object-contain"
               />
             </div>
             <div>

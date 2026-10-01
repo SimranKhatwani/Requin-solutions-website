@@ -71,11 +71,11 @@ export const AdminLogin: React.FC = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md px-4">
         {/* Header with Authentic Requin Logo */}
         <div className="text-center mb-8">
-          <div className="inline-block bg-white px-5 py-2.5 rounded-2xl shadow-lg border border-slate-100 mb-5">
+          <div className="mb-6">
             <img
               src="/images/logo.png"
               alt="Requin Solutions Pvt Ltd"
-              className="h-9 w-auto object-contain mx-auto"
+              className="h-12 w-auto object-contain mx-auto"
             />
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">

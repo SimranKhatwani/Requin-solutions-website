@@ -75,19 +75,17 @@ export const Navbar: React.FC<NavbarProps> = ({
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          {/* Logo Zone: Rounded White Card with Original Requin Logo */}
+          {/* Requin Logo: Naturally integrated on dark navbar without any container */}
           <button
             onClick={() => handleNavClick('hero')}
             className="flex items-center focus:outline-none group text-left cursor-pointer select-none py-1"
             aria-label="Requin Solutions Home"
           >
-            <div className="bg-white px-4 py-1.5 sm:px-4.5 sm:py-2 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center transition-all duration-200 group-hover:shadow-md group-hover:scale-[1.02]">
-              <img
-                src="/images/logo.png"
-                alt="Requin Solutions"
-                className="h-7 sm:h-8 md:h-9 w-auto object-contain block"
-              />
-            </div>
+            <img
+              src="/images/logo.png"
+              alt="Requin Solutions"
+              className="h-14 sm:h-16 md:h-14 w-auto object-contain block transition-opacity duration-200 hover:opacity-90"
+            />
           </button>
 
           {/* Desktop Navigation Links */}

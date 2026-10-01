@@ -79,11 +79,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           />
 
           <div className="relative z-10 space-y-6">
-            <div className="inline-flex bg-white px-3.5 py-1.5 rounded-xl shadow-md border border-slate-100">
+            <div className="inline-flex items-center">
               <img
                 src="/images/logo.png"
                 alt="Requin Solutions"
-                className="h-8 w-auto object-contain"
+                className="h-9 w-auto object-contain"
               />
             </div>
 

@@ -133,28 +133,23 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
         </div>
 
         {/* ========================================================
-            MAIN 4-COLUMN FOOTER SECTION (As shown in Reference Images 2 & 3)
-            Col 1: Logo (Image 1) + Tagline + Social Icons
-            Col 2: Company links
-            Col 3: Services links
-            Col 4: Contact info (Email, Phone, Malviya Nagar Address)
+            MAIN 4-COLUMN FOOTER SECTION 
+            
         ======================================================== */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 py-16 border-t border-white/10">
-          
+        
           {/* Column 1: Brand & Socials */}
           <div className="lg:col-span-4 space-y-5">
             {/* Official Requin Logo (As It Is) */}
             <div className="cursor-pointer inline-block" onClick={() => onNavigateSection('hero')}>
-              <div className="bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100 inline-flex items-center transition-all duration-200 hover:shadow-md hover:scale-[1.02]">
-                <img
-                  src="/images/logo.png"
-                  alt="Requin Solutions Pvt Ltd"
-                  className="h-8 sm:h-9 w-auto object-contain"
-                />
-              </div>
+              <img
+                src="/images/logo.png"
+                alt="Requin Solutions Pvt Ltd"
+                className="h-14 sm:h-16 md:h-20 w-auto object-contain block transition-opacity duration-200 hover:opacity-90"
+              />
             </div>
 
-            {/* Tagline from Reference Image 3 */}
+            {/* Tagline*/}
             <p className="text-sm text-slate-400 leading-relaxed max-w-xs font-normal">
               Building a better future with innovative solutions.
             </p>
@@ -279,13 +274,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
                   href="mailto:skorokrylsolutions@gmail.com"
                   className="text-slate-300 hover:text-[#08B9E8] transition-colors"
                 >
-                  skorokrylsolutions@gmail.com
+                  info@requinsolutions.com
                 </a>
-                <div className="text-xs text-slate-500 mt-0.5">
-                  <a href="mailto:info@requinsolutions.com" className="hover:text-[#08B9E8]">
-                    info@requinsolutions.com
-                  </a>
-                </div>
+                
               </div>
 
               <div>
@@ -308,7 +299,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
         </div>
 
         {/* ========================================================
-            BOTTOM SUB-FOOTER BAR (As shown in Reference Image 3)
+            BOTTOM SUB-FOOTER BAR 
             Left: Copyright
             Right: PRIVACY POLICY | DISCLAIMER | BUILDING TRUST | India English
         ======================================================== */}
