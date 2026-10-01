@@ -58,3 +58,38 @@
   background: #08B9E8;
 }
 
+/* Floating Callout Card Keyframes for Experience & Feature Visuals */
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes floatGentleAlt {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(7px);
+  }
+}
+
+.animate-float-gentle {
+  animation: floatGentle 5s ease-in-out infinite;
+}
+
+.animate-float-gentle-alt {
+  animation: floatGentleAlt 5.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-gentle,
+  .animate-float-gentle-alt {
+    animation: none !important;
+  }
+}
+
+
