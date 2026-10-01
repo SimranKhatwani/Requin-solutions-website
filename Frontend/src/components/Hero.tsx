@@ -24,11 +24,8 @@ export const Hero: React.FC<HeroProps> = ({ onExploreServices, onViewProducts })
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* LEFT COLUMN: Headline & Value Proposition */}
           <div className="lg:col-span-6 xl:col-span-6 space-y-7 text-left">
-            {/* Small Label */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold tracking-wider text-slate-300 uppercase">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#08B9E8]" />
-              <span>DIGITAL SOLUTIONS • SOFTWARE • CLOUD</span>
-            </div>
+            
+            
 
             {/* Large Heading - Manrope 800, 72-84px desktop, natural wrap */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[72px] xl:text-[80px] font-[800] tracking-[-0.04em] text-white leading-[1.02] max-w-2xl">
