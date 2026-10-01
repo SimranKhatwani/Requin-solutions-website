@@ -95,7 +95,7 @@ export const REQUIN_SERVICES: ServiceItem[] = [
     id: 'web-development',
     title: 'Web Development',
     category: 'Engineering',
-    description: 'Scalable, responsive, and high-performance web applications for your business.',
+    description: 'We provide the best solutions for web development with extensive experience in various projects.',
     overview: 'From custom customer portals to high-throughput web applications, our engineering team builds resilient, accessible, and lightning-fast digital experiences that convert and scale.',
     image: '/images/modern_software_mockup_1790576657118.jpg',
     highlights: [
@@ -155,7 +155,7 @@ export const REQUIN_SERVICES: ServiceItem[] = [
     id: 'digital-marketing',
     title: 'Digital Marketing',
     category: 'Performance',
-    description: 'Data-driven digital marketing strategies to grow your brand.',
+    description: 'Data-driven digital marketing strategies to grow your brand with the right audience.',
     overview: 'Bridge technology and market traction. We combine technical SEO, content architectures, and precision performance marketing to generate compounding inbound pipeline.',
     image: '/images/modern_software_mockup_1790576657118.jpg',
     highlights: [
