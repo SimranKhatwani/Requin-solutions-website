@@ -1,6 +1,5 @@
 import React from 'react';
-import { ArrowRight, ArrowUpRight, Code2, Smartphone, Globe, Sparkles, CheckCircle2 } from 'lucide-react';
-import { REQUIN_COMPANY_INFO } from '../data/requinData';
+import { ArrowRight, Monitor, Smartphone, Cloud, Cpu } from 'lucide-react';
 
 interface HeroProps {
   onExploreServices: () => void;
@@ -9,40 +8,50 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onExploreServices, onViewProducts }) => {
   return (
-    <section id="hero" className="relative min-h-[92vh] pt-32 pb-20 md:pt-40 md:pb-28 flex items-center overflow-hidden bg-[#071827]">
-      {/* Background Subtle Ambience & Radial Cyan Glow */}
-      <div
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-[#08B9E8]/10 blur-[130px] rounded-full pointer-events-none"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute -top-32 right-0 w-[500px] h-[500px] bg-[#0B2235] blur-[100px] rounded-full pointer-events-none"
-        aria-hidden="true"
-      />
+    <section id="hero" className="relative min-h-[92vh] pt-32 pb-16 md:pt-36 md:pb-20 flex flex-col justify-between overflow-hidden bg-[#061523]">
+      {/* Background Image Composition with Deep Navy Gradients */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* Desk Workspace Photo positioned cleanly on the right with full clarity and visibility */}
+        <img
+          src="/images/hero-developer-desk.jpg?v=3"
+          alt="Software Development Workspace"
+          className="absolute inset-0 w-full h-full object-cover object-right opacity-85 sm:opacity-95 lg:opacity-100"
+        />
+        {/* Left gradient specifically protecting text readability while leaving workspace objects 100% clear */}
+        <div className="absolute inset-y-0 left-0 w-full lg:w-[58%] xl:w-[52%] bg-gradient-to-r from-[#061523] via-[#061523]/95 via-70% to-transparent" />
+        {/* Subtle top/bottom edge blend */}
+        <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-b from-[#061523] to-transparent opacity-70" />
+        <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#061523] to-transparent opacity-60" />
+        {/* Radial Cyan Lighting behind headline */}
+        <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[450px] bg-[#00c2ff]/10 blur-[130px] rounded-full" />
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          {/* LEFT COLUMN: Headline & Value Proposition */}
-          <div className="lg:col-span-6 xl:col-span-6 space-y-7 text-left">
-            
-            
+      {/* Main Hero Content */}
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 relative z-10 my-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* LEFT: Headline & Value Proposition */}
+          <div className="lg:col-span-7 xl:col-span-6 space-y-6 text-left">
+            {/* Small Top Branded Label */}
+            <div className="text-xs sm:text-sm font-bold tracking-widest text-[#00c2ff] uppercase">
+              DIGITAL SOLUTIONS • SOFTWARE • CLOUD
+            </div>
 
-            {/* Large Heading - Manrope 800, 72-84px desktop, natural wrap */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[72px] xl:text-[80px] font-[800] tracking-[-0.04em] text-white leading-[1.02] max-w-2xl">
+            {/* Main Headline */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[62px] xl:text-[68px] font-[800] tracking-[-0.03em] text-white leading-[1.08] max-w-2xl">
               Building Digital Solutions That Move Businesses{' '}
-              <span className="text-[#08B9E8]">Forward.</span>
+              <span className="text-[#00c2ff]">Forward.</span>
             </h1>
 
-            {/* Actual Requin Company Description - Manrope 400/500, line-height 1.65 */}
-            <p className="text-base sm:text-lg text-slate-300 leading-[1.65] max-w-xl font-normal tracking-normal">
-              {REQUIN_COMPANY_INFO.aboutProse}
+            {/* Sub-headline Description */}
+            <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-xl font-normal">
+              We build modern software, cloud and digital solutions that help businesses operate, grow and transform.
             </p>
 
-            {/* CTAs - Manrope 600, clean rounded rectangle */}
+            {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <button
                 onClick={onExploreServices}
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-semibold text-sm text-[#071827] bg-[#08B9E8] hover:bg-[#4DD4F5] transition-all duration-200 shadow-lg shadow-[#08B9E8]/20 hover:shadow-[#08B9E8]/35 focus:outline-none active:scale-[0.98]"
+                className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-xl font-semibold text-sm sm:text-base text-[#05131f] bg-[#00c2ff] hover:bg-[#38d4ff] transition-all duration-200 shadow-lg shadow-[#00c2ff]/25 hover:shadow-[#00c2ff]/40 focus:outline-none active:scale-[0.98] cursor-pointer"
               >
                 <span>Explore Our Services</span>
                 <ArrowRight className="w-4 h-4" />
@@ -50,153 +59,48 @@ export const Hero: React.FC<HeroProps> = ({ onExploreServices, onViewProducts })
 
               <button
                 onClick={onViewProducts}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm text-white bg-[#0B2235] hover:bg-white/10 border border-white/15 transition-all duration-200 focus:outline-none"
+                className="inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 rounded-xl font-semibold text-sm sm:text-base text-white bg-transparent hover:bg-white/5 border border-[#00c2ff]/50 hover:border-[#00c2ff] transition-all duration-200 focus:outline-none cursor-pointer"
               >
                 <span>View Our Products</span>
-                <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-white" />
               </button>
             </div>
+          </div>
+        </div>
+      </div>
 
-            {/* Quiet Trust Footnote */}
-            <div className="pt-4 flex items-center gap-6 text-xs text-slate-400 font-medium">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#08B9E8]" />
-                <span>Enterprise Grade Engineering</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#08B9E8]" />
-                <span>Agile Product Studio</span>
-              </div>
+      {/* BOTTOM: 4-Icon Feature Strip */}
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 relative z-10 pt-12">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 max-w-4xl">
+          {/* 1. Web Development */}
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left group cursor-pointer" onClick={onExploreServices}>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center text-[#00c2ff] group-hover:scale-110 transition-transform">
+              <Monitor className="w-6 h-6 stroke-[1.75]" />
             </div>
+            <span className="text-xs sm:text-sm font-medium text-slate-200 mt-1">Web Development</span>
           </div>
 
-          {/* RIGHT COLUMN: Realistic Software Product Composition */}
-          <div className="lg:col-span-6 xl:col-span-6 relative flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-[560px] lg:max-w-none">
-              {/* Layer 1: Ambient Cyan Glow Behind Device Mockup */}
-              <div
-                className="absolute inset-0 bg-gradient-to-tr from-[#08B9E8]/20 via-[#0B2235]/40 to-transparent rounded-3xl blur-2xl transform -rotate-1 scale-95"
-                aria-hidden="true"
-              />
-
-              {/* Layer 2: Large Laptop / Browser Visual in Background */}
-              <div className="relative rounded-2xl bg-[#0B2235]/90 border border-white/15 shadow-2xl overflow-hidden backdrop-blur-xl transition-transform duration-300 hover:border-white/25">
-                {/* Browser Chrome Header */}
-                <div className="bg-[#071827] px-4 py-3 border-b border-white/10 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-rose-500/80 inline-block" />
-                    <span className="w-3 h-3 rounded-full bg-amber-500/80 inline-block" />
-                    <span className="w-3 h-3 rounded-full bg-emerald-500/80 inline-block" />
-                  </div>
-                  <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-white/5 border border-white/5 text-[11px] text-slate-400 font-mono">
-                    <Globe className="w-3 h-3 text-[#08B9E8]" />
-                    <span>requinsolutions.com/platform</span>
-                  </div>
-                  <div className="text-[11px] text-slate-400 font-medium">v2.4 Live</div>
-                </div>
-
-                {/* Browser Viewport: Realistic Software Application Interface */}
-                <div className="p-5 sm:p-6 space-y-4">
-                  {/* Top Bar of the Mock Software Product */}
-                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-[#08B9E8]/10 border border-[#08B9E8]/30 flex items-center justify-center text-[#08B9E8]">
-                        <Code2 className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-white">Client Portal Engine</div>
-                        <div className="text-xs text-slate-400">Enterprise Cloud Application</div>
-                      </div>
-                    </div>
-                    <div className="text-xs px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 font-medium border border-emerald-500/20">
-                      Active Release
-                    </div>
-                  </div>
-
-                  {/* Software Canvas: Clean Product Architecture Showcase */}
-                  <div className="grid grid-cols-3 gap-3 pt-1">
-                    <div className="col-span-2 space-y-3">
-                      <div className="h-28 rounded-xl bg-gradient-to-br from-white/[0.07] to-white/[0.02] border border-white/10 p-3.5 flex flex-col justify-between">
-                        <div className="flex justify-between items-start">
-                          <span className="text-xs font-medium text-slate-300">Modern Architecture</span>
-                          <span className="text-[11px] text-[#08B9E8] font-mono">TypeScript / Next.js</span>
-                        </div>
-                        <div className="space-y-1.5">
-                          <div className="w-3/4 h-2 rounded bg-white/20" />
-                          <div className="w-1/2 h-2 rounded bg-[#08B9E8]/40" />
-                        </div>
-                        <div className="text-[11px] text-slate-400">Engineered for sub-second global response</div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2.5">
-                        <div className="rounded-lg bg-white/5 border border-white/10 p-3">
-                          <div className="text-[11px] text-slate-400">Data Reliability</div>
-                          <div className="text-sm font-bold text-white mt-1">Multi-Region</div>
-                        </div>
-                        <div className="rounded-lg bg-white/5 border border-white/10 p-3">
-                          <div className="text-[11px] text-slate-400">Security</div>
-                          <div className="text-sm font-bold text-white mt-1">SOC-2 Ready</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="rounded-xl bg-white/[0.04] border border-white/10 p-3 flex flex-col justify-between">
-                      <div className="text-xs font-semibold text-slate-200">Modules</div>
-                      <div className="space-y-2 text-[11px] text-slate-300">
-                        <div className="flex items-center gap-1.5 text-[#4DD4F5]">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#08B9E8]" />
-                          <span>CRM Ops</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-slate-400">
-                          <span className="w-1.5 h-1.5 rounded-full bg-slate-600" />
-                          <span>AMS Sync</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-slate-400">
-                          <span className="w-1.5 h-1.5 rounded-full bg-slate-600" />
-                          <span>Auth API</span>
-                        </div>
-                      </div>
-                      <div className="text-[10px] text-slate-500 font-mono">Build 890</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Layer 3: Overlapping Mobile Device Mockup */}
-              <div className="absolute -bottom-6 -right-3 sm:-bottom-8 sm:-right-6 w-44 sm:w-52 rounded-2xl bg-[#071827] border-2 border-white/20 shadow-2xl p-3 backdrop-blur-xl z-20 transition-transform duration-300 hover:translate-y-[-4px]">
-                {/* Mobile Speaker & Camera Notch */}
-                <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mb-2.5" />
-
-                {/* Mobile Screen Content */}
-                <div className="rounded-xl bg-[#0B2235] p-3 border border-white/10 space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-semibold text-white">Requin Mobile</span>
-                    <Smartphone className="w-3.5 h-3.5 text-[#08B9E8]" />
-                  </div>
-
-                  <div className="bg-[#071827] rounded-lg p-2 border border-white/5 space-y-1">
-                    <div className="text-[10px] text-slate-400">Workforce AMS</div>
-                    <div className="text-xs font-bold text-[#08B9E8]">Checked In 09:02 AM</div>
-                  </div>
-
-                  <div className="flex items-center justify-between text-[10px] text-slate-300 pt-1">
-                    <span>GPS Verified</span>
-                    <span className="text-emerald-400 font-medium">Synced</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Layer 4: Small Floating UI Glass Card */}
-              <div className="hidden sm:flex absolute -top-5 -left-4 items-center gap-3 px-4 py-2.5 rounded-xl bg-[#0B2235]/95 border border-white/20 shadow-xl backdrop-blur-xl z-20">
-                <div className="w-8 h-8 rounded-lg bg-[#08B9E8] flex items-center justify-center text-[#071827]">
-                  <Sparkles className="w-4 h-4 fill-current" />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-white">5+ Years Proven Delivery</div>
-                  <div className="text-[11px] text-slate-300">Custom Software & Apps</div>
-                </div>
-              </div>
+          {/* 2. Mobile Apps */}
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left group cursor-pointer" onClick={onExploreServices}>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center text-[#00c2ff] group-hover:scale-110 transition-transform">
+              <Smartphone className="w-6 h-6 stroke-[1.75]" />
             </div>
+            <span className="text-xs sm:text-sm font-medium text-slate-200 mt-1">Mobile Apps</span>
+          </div>
+
+          {/* 3. Cloud Solutions */}
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left group cursor-pointer" onClick={onExploreServices}>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center text-[#00c2ff] group-hover:scale-110 transition-transform">
+              <Cloud className="w-6 h-6 stroke-[1.75]" />
+            </div>
+            <span className="text-xs sm:text-sm font-medium text-slate-200 mt-1">Cloud Solutions</span>
+          </div>
+
+          {/* 4. Software Solutions */}
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left group cursor-pointer" onClick={onExploreServices}>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center text-[#00c2ff] group-hover:scale-110 transition-transform">
+              <Cpu className="w-6 h-6 stroke-[1.75]" />
+            </div>
+            <span className="text-xs sm:text-sm font-medium text-slate-200 mt-1">Software Solutions</span>
           </div>
         </div>
       </div>

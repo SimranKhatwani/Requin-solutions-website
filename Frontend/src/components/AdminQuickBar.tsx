@@ -12,8 +12,8 @@ export const AdminQuickBar: React.FC = () => {
     setIsAdmin(adminAuthService.isAuthenticated());
   }, [location.pathname]);
 
-  // Do not show on /admin pages
-  if (location.pathname.startsWith('/admin')) return null;
+  // Only show when authenticated as admin
+  if (!isAdmin || location.pathname.startsWith('/admin')) return null;
 
   return (
     <div className="fixed bottom-5 left-5 z-40">
