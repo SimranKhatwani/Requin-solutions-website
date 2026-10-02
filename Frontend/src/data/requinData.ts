@@ -9,6 +9,12 @@ export interface ServiceItem {
   technologies: string[];
 }
 
+export interface ProductGalleryItem {
+  title: string;
+  caption: string;
+  image: string;
+}
+
 export interface ProductItem {
   id: string;
   title: string;
@@ -17,6 +23,7 @@ export interface ProductItem {
   category: string;
   features: string[];
   bullets?: string[];
+  gallery?: ProductGalleryItem[];
   visualSide?: 'left' | 'right';
   metrics: { label: string; value: string }[];
   image: string;
@@ -28,6 +35,7 @@ export interface ProductItem {
 export interface ShowcaseProductItem extends ProductItem {
   visualSide: 'left' | 'right';
   bullets: string[];
+  gallery?: ProductGalleryItem[];
 }
 
 export const SHOWCASE_PRODUCTS: ShowcaseProductItem[] = [
@@ -51,6 +59,18 @@ export const SHOWCASE_PRODUCTS: ShowcaseProductItem[] = [
       'Custom reporting and analytics',
       'Multi-user support with role-based access',
     ],
+    gallery: [
+      {
+        title: 'Sales Pipeline & Deal Management',
+        caption: 'Multi-stage deal flow visualization with automated progression triggers.',
+        image: '/images/products/requin-ops-demo.jpg',
+      },
+      {
+        title: 'Real-Time Revenue Analytics',
+        caption: 'Pipeline velocity monitoring, conversion metrics, and executive reporting.',
+        image: '/images/modern_software_mockup_1790576657118.jpg',
+      },
+    ],
     metrics: [
       { label: 'Pipeline Velocity', value: '+3.4x' },
       { label: 'Lead Conversion', value: '42%' },
@@ -61,12 +81,12 @@ export const SHOWCASE_PRODUCTS: ShowcaseProductItem[] = [
       'Microservices backend built with Node.js and PostgreSQL',
       'WebSocket event bus for real-time collaborative deal updates',
     ],
-    visualSide: 'left',
+    visualSide: 'right',
   },
   {
     id: 'requin-ams',
     title: 'Requin AMS',
-    tagline: 'Modern Workforce Attendance & Time Tracking System',
+    tagline: 'Smart Tracking, Seamless Attendance',
     description: 'An attendance management system for tracking employee work hours.',
     category: 'Workforce Operations',
     badge: 'Real-time Tracking',
@@ -75,6 +95,7 @@ export const SHOWCASE_PRODUCTS: ShowcaseProductItem[] = [
       'Dynamic rolling QR scan verification preventing proxy attendance',
       'Geofenced workplace boundary detection for on-site field staff',
       'Automated overtime calculation, holiday calendars, and shift swap workflows',
+      'Morning 9:05 AM check-in, evening 5:55 PM check-out, and automated half-day policies',
     ],
     bullets: [
       'Real-time attendance tracking',
@@ -82,10 +103,26 @@ export const SHOWCASE_PRODUCTS: ShowcaseProductItem[] = [
       'Location based tracking',
       'Detailed attendance reports and analytics',
     ],
+    gallery: [
+      {
+        title: 'Employee Authentication',
+        caption: 'Secure employee login screen with organization credentials and motivational onboarding.',
+        image: '/images/products/requin-ams-login.jpg',
+      },
+      {
+        title: 'Monthly Attendance Dashboard',
+        caption: 'Monthly attendance visual bar charts, quick profile actions, check-in/check-out triggers, and effort tracking.',
+        image: '/images/products/requin-ams-dashboard.jpg',
+      },
+      {
+        title: 'Attendance Rules & QR Scan Verification',
+        caption: 'Location & Wi-Fi verified check-in guidelines, automated half-day calculation rules, and instant QR scanner.',
+        image: '/images/products/requin-ams-attendance-rules.jpg',
+      },
+    ],
     metrics: [
       { label: 'Attendance Accuracy', value: '99.9%' },
       { label: 'Clock-in Latency', value: '<0.8s' },
-      { label: 'Admin Hours Saved', value: '18h/wk' },
     ],
     image: '/images/products/requin-ams-demo.jpg',
     architectureDetails: [
@@ -97,7 +134,7 @@ export const SHOWCASE_PRODUCTS: ShowcaseProductItem[] = [
   {
     id: 'hrms',
     title: 'Requin HRMS',
-    tagline: 'Unified Human Resource & Talent Management Suite',
+    tagline: 'Smart HR, Streamlined Operations',
     description: 'A human resource management system for streamlined employee management.',
     category: 'Human Capital',
     badge: 'Enterprise HR',
@@ -106,6 +143,7 @@ export const SHOWCASE_PRODUCTS: ShowcaseProductItem[] = [
       'Tax-compliant automated payroll engine with salary slip distribution',
       'Self-service employee portal for leave management and expense claims',
       'Objective & Key Results (OKR) tracking and 360-degree appraisal cycles',
+      'Hardware asset lifecycle tracking and maintenance inventory',
     ],
     bullets: [
       'Employee data management',
@@ -114,17 +152,33 @@ export const SHOWCASE_PRODUCTS: ShowcaseProductItem[] = [
       'Performance management and appraisals',
       'Role-based access control and document management',
     ],
+    gallery: [
+      {
+        title: 'Executive Dashboard & Live Attendance',
+        caption: 'Centralized overview with user metrics, active projects, and daily leave tracking.',
+        image: '/images/products/requin-hrms-dashboard.png',
+      },
+      {
+        title: 'Role Management & Access Control',
+        caption: 'Granular permissions, vacancy monitoring, and department role administration.',
+        image: '/images/products/requin-hrms-roles.png',
+      },
+      {
+        title: 'Enterprise Asset & Inventory Tracking',
+        caption: 'Hardware asset allocation, maintenance logs, and real-time assignment status.',
+        image: '/images/products/requin-hrms-assets.png',
+      },
+    ],
     metrics: [
       { label: 'Payroll Processing', value: 'Instant' },
-      { label: 'Staff Engagement', value: '94%' },
-      { label: 'Paperless Rate', value: '100%' },
+      { label: 'Paperless Management', value: '100%' },
     ],
     image: '/images/products/requin-hrms-demo.jpg',
     architectureDetails: [
       'Automated payroll math engine with statutory deduction tables',
       'Granular department permissions and custom approval chains',
     ],
-    visualSide: 'left',
+    visualSide: 'right',
   },
   {
     id: 'requin-chat',
@@ -145,6 +199,18 @@ export const SHOWCASE_PRODUCTS: ShowcaseProductItem[] = [
       'File sharing for documents and media',
       'Group and private chat rooms',
       'End-to-end encryption for secure communication',
+    ],
+    gallery: [
+      {
+        title: 'Real-time Encrypted Chat',
+        caption: 'Sub-50ms instant messaging across desktop, mobile, and web.',
+        image: '/images/products/requin-chat-demo.jpg',
+      },
+      {
+        title: 'Team Huddles & Media Sharing',
+        caption: 'Voice calls, screen sharing, and secure document collaboration.',
+        image: '/images/digital_agency_office_1790576645354.jpg',
+      },
     ],
     metrics: [
       { label: 'Message Latency', value: '<50ms' },

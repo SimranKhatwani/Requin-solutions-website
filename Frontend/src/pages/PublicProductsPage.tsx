@@ -4,18 +4,18 @@ import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { LoginModal } from '../components/LoginModal';
 import { QuizModal } from '../components/QuizModal';
-import { ProductVideoModal } from '../components/ProductVideoModal';
+import { ProductFeatureModal } from '../components/ProductFeatureModal';
 import { ProductItem, SHOWCASE_PRODUCTS } from '../data/requinData';
 import {
   ChevronRight,
   ArrowRight,
   Sparkles,
-  Play,
+  Layers,
 } from 'lucide-react';
 
 export const PublicProductsPage: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
-  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
 
@@ -25,9 +25,9 @@ export const PublicProductsPage: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const handleOpenDemo = (product: ProductItem) => {
+  const handleOpenFeatures = (product: ProductItem) => {
     setSelectedProduct(product);
-    setIsVideoModalOpen(true);
+    setIsFeatureModalOpen(true);
   };
 
   return (
@@ -102,41 +102,34 @@ export const PublicProductsPage: React.FC = () => {
           </div>
 
           {/* ========================================================
-              PRODUCTS SHOWCASE LIST (Exact Reference Matching Layout)
+              PRODUCTS SHOWCASE LIST
           ======================================================== */}
           <div className="space-y-12 sm:space-y-16">
             {SHOWCASE_PRODUCTS.map((product) => {
               const isVisualLeft = product.visualSide === 'left';
 
-              // Visual Mockup Container with Video Play Overlay
+              // Visual Mockup Container (Clean showcase preview without video icons/demo badges)
               const visualBlock = (
                 <div
-                  onClick={() => handleOpenDemo(product)}
-                  className="relative rounded-[28px] overflow-hidden bg-[#0A1826] border border-white/15 shadow-2xl group cursor-pointer aspect-video sm:aspect-[16/10] flex items-center justify-center"
+                  onClick={() => handleOpenFeatures(product)}
+                  className="relative rounded-[28px] overflow-hidden bg-[#0A1826] border border-white/15 shadow-2xl group cursor-pointer aspect-video sm:aspect-[16/10] flex items-center justify-center transition-all duration-300 hover:border-[#08B9E8]/60 hover:shadow-[0_0_40px_rgba(8,185,232,0.25)]"
                 >
                   {/* Product Visual Image */}
                   <img
                     src={product.image}
-                    alt={`${product.title} Demo`}
+                    alt={`${product.title} Interface`}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
 
                   {/* Dark subtle gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 pointer-events-none" />
 
-                  {/* Top-Right Cyan "Demo Available" Pill Tag */}
-                  <div className="absolute top-4 right-4 z-20">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#08B9E8] text-[#061827] text-xs font-bold shadow-lg shadow-[#08B9E8]/30 backdrop-blur-sm">
-                      <Play className="w-3.5 h-3.5 fill-current" />
-                      <span>Demo Available</span>
+                  {/* Subtle Bottom Hover Indicator */}
+                  <div className="absolute bottom-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#061827]/90 text-[#08B9E8] border border-[#08B9E8]/40 text-xs font-bold shadow-lg backdrop-blur-md">
+                      <Layers className="w-3.5 h-3.5" />
+                      <span>View Feature Gallery</span>
                     </span>
-                  </div>
-
-                  {/* Center Luminous Video Play Button */}
-                  <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-                    <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-full bg-white/20 group-hover:bg-white/35 backdrop-blur-md border border-white/40 flex items-center justify-center text-white shadow-[0_0_40px_rgba(8,185,232,0.6)] transition-all duration-300 group-hover:scale-110">
-                      <Play className="w-7 sm:w-8 h-7 sm:h-8 fill-white translate-x-0.5" />
-                    </div>
                   </div>
                 </div>
               );
@@ -167,7 +160,7 @@ export const PublicProductsPage: React.FC = () => {
                   {/* Gradient "Explore Features →" Action Button */}
                   <div className="pt-3">
                     <button
-                      onClick={() => handleOpenDemo(product)}
+                      onClick={() => handleOpenFeatures(product)}
                       className="inline-flex items-center gap-2.5 px-7 py-3 rounded-full bg-gradient-to-r from-[#08B9E8] to-[#00c2ff] text-[#061827] font-bold text-sm sm:text-base shadow-lg shadow-[#08B9E8]/25 hover:shadow-[#08B9E8]/40 hover:scale-105 transition-all duration-300 cursor-pointer focus:outline-none"
                     >
                       <span>Explore Features</span>
@@ -183,17 +176,11 @@ export const PublicProductsPage: React.FC = () => {
                   className="rounded-[32px] bg-[#0A1B2D]/85 border border-[#08B9E8]/20 p-6 sm:p-10 lg:p-12 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-[#08B9E8]/45"
                 >
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
-                    {isVisualLeft ? (
-                      <>
-                        <div className="lg:col-span-6">{visualBlock}</div>
-                        <div className="lg:col-span-6">{contentBlock}</div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="lg:col-span-6 order-2 lg:order-1">{contentBlock}</div>
-                        <div className="lg:col-span-6 order-1 lg:order-2">{visualBlock}</div>
-                      </>
-                    )}
+                    {/* Left Column: Title, Description, Bullet Checklist & Explore Button */}
+                    <div className="lg:col-span-6 order-2 lg:order-1">{contentBlock}</div>
+                    
+                    {/* Right Column: Visual Product Image Card */}
+                    <div className="lg:col-span-6 order-1 lg:order-2">{visualBlock}</div>
                   </div>
                 </div>
               );
@@ -245,12 +232,12 @@ export const PublicProductsPage: React.FC = () => {
           navigate('/#contact');
         }}
       />
-      <ProductVideoModal
+      <ProductFeatureModal
         product={selectedProduct}
-        isOpen={isVideoModalOpen}
-        onClose={() => setIsVideoModalOpen(false)}
+        isOpen={isFeatureModalOpen}
+        onClose={() => setIsFeatureModalOpen(false)}
         onRequestQuote={() => {
-          setIsVideoModalOpen(false);
+          setIsFeatureModalOpen(false);
           navigate('/#contact');
         }}
       />

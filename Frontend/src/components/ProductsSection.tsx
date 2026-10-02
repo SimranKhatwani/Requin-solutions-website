@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Play, ArrowRight } from 'lucide-react';
+import { ArrowRight, Layers } from 'lucide-react';
 import { SHOWCASE_PRODUCTS, ShowcaseProductItem, ProductItem } from '../data/requinData';
-import { ProductVideoModal } from './ProductVideoModal';
+import { ProductFeatureModal } from './ProductFeatureModal';
 
 interface ProductsSectionProps {
   onSelectProduct?: (product: ProductItem) => void;
 }
 
-export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduct }) => {
+export const ProductsSection: React.FC<ProductsSectionProps> = () => {
   const navigate = useNavigate();
   const [selectedProductId, setSelectedProductId] = useState<string>(SHOWCASE_PRODUCTS[0].id);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
   const [selectedProductForModal, setSelectedProductForModal] = useState<ProductItem | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
@@ -46,47 +46,40 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
     }, 180);
   };
 
-  const handleOpenDemo = (product: ProductItem) => {
+  const handleOpenFeatures = (product: ProductItem) => {
     setSelectedProductForModal(product);
-    setIsVideoModalOpen(true);
+    setIsFeatureModalOpen(true);
   };
 
   const isVisualLeft = activeProduct.visualSide === 'left';
 
-  // Visual Mockup Container with Video Play Overlay matching the "See More Products" page
+  // Visual Mockup Container (Clean showcase preview without video icons/demo badges)
   const visualBlock = (
     <div
-      onClick={() => handleOpenDemo(activeProduct)}
-      className="relative rounded-[28px] overflow-hidden bg-[#0A1826] border border-white/15 shadow-2xl group cursor-pointer aspect-video sm:aspect-[16/10] flex items-center justify-center"
+      onClick={() => handleOpenFeatures(activeProduct)}
+      className="relative rounded-[28px] overflow-hidden bg-[#0A1826] border border-white/15 shadow-2xl group cursor-pointer aspect-video sm:aspect-[16/10] flex items-center justify-center transition-all duration-300 hover:border-[#08B9E8]/60 hover:shadow-[0_0_40px_rgba(8,185,232,0.25)]"
     >
       {/* Product Visual Image */}
       <img
         src={activeProduct.image}
-        alt={`${activeProduct.title} Demo`}
+        alt={`${activeProduct.title} Interface`}
         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
       />
 
       {/* Dark subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 pointer-events-none" />
 
-      {/* Top-Right Cyan "Demo Available" Pill Tag */}
-      <div className="absolute top-4 right-4 z-20">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#08B9E8] text-[#061827] text-xs font-bold shadow-lg shadow-[#08B9E8]/30 backdrop-blur-sm">
-          <Play className="w-3.5 h-3.5 fill-current" />
-          <span>Demo Available</span>
+      {/* Subtle Bottom Hover Indicator */}
+      <div className="absolute bottom-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#061827]/90 text-[#08B9E8] border border-[#08B9E8]/40 text-xs font-bold shadow-lg backdrop-blur-md">
+          <Layers className="w-3.5 h-3.5" />
+          <span>View Feature Gallery</span>
         </span>
-      </div>
-
-      {/* Center Luminous Video Play Button */}
-      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-        <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-full bg-white/20 group-hover:bg-white/35 backdrop-blur-md border border-white/40 flex items-center justify-center text-white shadow-[0_0_40px_rgba(8,185,232,0.6)] transition-all duration-300 group-hover:scale-110">
-          <Play className="w-7 sm:w-8 h-7 sm:h-8 fill-white translate-x-0.5" />
-        </div>
       </div>
     </div>
   );
 
-  // Content Block matching the exact content & typography on the "See More Products" page
+  // Content Block matching the exact content & typography
   const contentBlock = (
     <div className="space-y-6 text-left flex flex-col justify-center py-2 sm:py-4">
       {/* Title & Tagline/Description */}
@@ -112,7 +105,7 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
       {/* Gradient "Explore Features →" Action Button */}
       <div className="pt-3">
         <button
-          onClick={() => handleOpenDemo(activeProduct)}
+          onClick={() => handleOpenFeatures(activeProduct)}
           className="inline-flex items-center gap-2.5 px-7 py-3 rounded-full bg-gradient-to-r from-[#08B9E8] to-[#00c2ff] text-[#061827] font-bold text-sm sm:text-base shadow-lg shadow-[#08B9E8]/25 hover:shadow-[#08B9E8]/40 hover:scale-105 transition-all duration-300 cursor-pointer focus:outline-none"
         >
           <span>Explore Features</span>
@@ -126,7 +119,7 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
     <section
       ref={sectionRef}
       id="products"
-      className="py-24 sm:py-32 bg-[#061827] text-white relative overflow-hidden font-sans select-none"
+      className="pt-16 sm:pt-20 lg:pt-24 pb-24 sm:pb-32 bg-[#061827] text-white relative overflow-hidden font-sans select-none"
     >
       {/* ========================================================
           BACKGROUND LAYER 1: Deep Ambient Radial Glows
@@ -212,12 +205,12 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
             1. SECTION HEADER (Centered)
         ======================================================== */}
         <div
-          className={`max-w-3xl mx-auto text-center mb-10 sm:mb-12 transition-all duration-700 ${
+          className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 transition-all duration-700 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
           {/* Eyebrow */}
-          <div className="text-sm sm:text-base font-bold tracking-[0.2em] text-[#08B9E8] uppercase mb-3.5">
+          <div className="text-lg sm:text-2xl lg:text-3xl font-extrabold tracking-[0.2em] text-[#08B9E8] uppercase mb-4 sm:mb-5">
             OUR PRODUCTS
           </div>
           {/* Main Heading */}
@@ -225,7 +218,7 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
             Powerful Solutions for Your Business
           </h2>
           {/* Subtitle / Description */}
-          <p className="mt-4 text-sm sm:text-base text-[#A9C8DA] font-normal leading-relaxed max-w-2xl mx-auto">
+          <p className="mt-6 sm:mt-7 text-sm sm:text-base text-[#A9C8DA] font-normal leading-relaxed max-w-2xl mx-auto">
             Our digital solutions empower businesses with cutting-edge web applications,
             leveraging modern technologies to create seamless, scalable, and secure
             experiences.
@@ -257,7 +250,7 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
         </div>
 
         {/* ========================================================
-            3. MAIN PRODUCT PRESENTATION CARD (Exact layout & styling from See More Products page)
+            3. MAIN PRODUCT PRESENTATION CARD
         ======================================================== */}
         <div className="rounded-[32px] bg-[#0A1B2D]/85 border border-[#08B9E8]/20 p-6 sm:p-10 lg:p-12 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-[#08B9E8]/45 relative overflow-hidden">
           
@@ -273,17 +266,11 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
             }`}
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
-              {isVisualLeft ? (
-                <>
-                  <div className="lg:col-span-6">{visualBlock}</div>
-                  <div className="lg:col-span-6">{contentBlock}</div>
-                </>
-              ) : (
-                <>
-                  <div className="lg:col-span-6 order-2 lg:order-1">{contentBlock}</div>
-                  <div className="lg:col-span-6 order-1 lg:order-2">{visualBlock}</div>
-                </>
-              )}
+              {/* Left Column: Title, Description, Bullet Checklist & Explore Button */}
+              <div className="lg:col-span-6 order-2 lg:order-1">{contentBlock}</div>
+              
+              {/* Right Column: Visual Product Image Card */}
+              <div className="lg:col-span-6 order-1 lg:order-2">{visualBlock}</div>
             </div>
           </div>
         </div>
@@ -303,13 +290,13 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({ onSelectProduc
 
       </div>
 
-      {/* Interactive Video Demo Modal */}
-      <ProductVideoModal
+      {/* Feature & Screenshot Gallery Modal */}
+      <ProductFeatureModal
         product={selectedProductForModal || activeProduct}
-        isOpen={isVideoModalOpen}
-        onClose={() => setIsVideoModalOpen(false)}
+        isOpen={isFeatureModalOpen}
+        onClose={() => setIsFeatureModalOpen(false)}
         onRequestQuote={() => {
-          setIsVideoModalOpen(false);
+          setIsFeatureModalOpen(false);
           const contactEl = document.getElementById('contact');
           if (contactEl) {
             contactEl.scrollIntoView({ behavior: 'smooth' });
