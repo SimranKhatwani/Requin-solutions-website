@@ -17,8 +17,7 @@ import { LoginModal } from '../components/LoginModal';
 import { ChatWidget } from '../components/ChatWidget';
 import { Footer } from '../components/Footer';
 import { ServiceDetailModal } from '../components/ServiceDetailModal';
-import { ProductDetailModal } from '../components/ProductDetailModal';
-import { ServiceItem, ProductItem } from '../data/requinData';
+import { ServiceItem } from '../data/requinData';
 
 interface PublicHomePageProps {
   initialScrollTo?: string;
@@ -28,7 +27,6 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ initialScrollTo 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
 
   const location = useLocation();
 
@@ -74,7 +72,7 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ initialScrollTo 
         <ExperienceSection onLearnMore={() => scrollToSection('our-story')} />
 
         {/* Products Section: High-Fidelity Software Suite Showcase */}
-        <ProductsSection onSelectProduct={(product) => setSelectedProduct(product)} />
+        <ProductsSection />
 
         {/* Software Solutions: Image-First Portfolio Showcase */}
         <SoftwareSolutionsSection />
@@ -120,15 +118,6 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ initialScrollTo 
         onClose={() => setSelectedService(null)}
         onRequestQuote={(title) => {
           setSelectedService(null);
-          scrollToSection('contact');
-        }}
-      />
-
-      <ProductDetailModal
-        product={selectedProduct}
-        onClose={() => setSelectedProduct(null)}
-        onRequestDemo={(title) => {
-          setSelectedProduct(null);
           scrollToSection('contact');
         }}
       />

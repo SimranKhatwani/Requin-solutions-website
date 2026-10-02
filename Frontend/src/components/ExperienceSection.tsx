@@ -114,7 +114,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
     <section
       ref={sectionRef}
       id="experience"
-      className="py-16 sm:py-20 lg:py-24 bg-[#F5FAFD] text-[#061827] relative overflow-hidden font-sans select-none"
+      className="py-6 sm:py-10 lg:py-14 bg-[#F5FAFD] text-[#061827] relative overflow-hidden font-sans select-none"
     >
       {/* ========================================================
           BACKGROUND LAYER 1: Soft Cyan Ambient Gradients
@@ -258,37 +258,30 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
           >
             {/* Ambient Cyan Soft Glow behind image */}
             <div
-              className="absolute -bottom-8 -right-8 w-60 h-60 bg-[#08B9E8]/20 blur-3xl rounded-full pointer-events-none"
+              className="absolute -bottom-10 -right-10 w-72 h-72 bg-[#08B9E8]/25 blur-3xl rounded-full pointer-events-none"
               aria-hidden="true"
             />
             <div
-              className="absolute -top-6 -left-6 w-48 h-48 bg-[#00c2ff]/15 blur-2xl rounded-full pointer-events-none"
+              className="absolute -bottom-8 -left-8 w-56 h-56 bg-[#00c2ff]/20 blur-2xl rounded-full pointer-events-none"
               aria-hidden="true"
             />
 
-            {/* Main Rounded Image Container */}
-            <div className="relative rounded-3xl overflow-hidden bg-white border border-white/90 shadow-[0_20px_50px_rgba(8,185,232,0.14)] group">
+            {/* Main Rounded Image Container with Smooth Curved Ends */}
+            <div className="relative rounded-[32px] overflow-hidden bg-white border border-white/90 shadow-[0_24px_54px_rgba(8,185,232,0.18)] group">
               <img
                 src="/images/experience-team-collaboration.jpg"
-                alt="Requin Solutions Engineering & Product Team Collaborating"
+                alt="Requin Solutions Engineering Team Collaborating"
                 className="w-full h-[360px] sm:h-[430px] md:h-[470px] lg:h-[450px] xl:h-[480px] object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                onError={(e) => {
-                  // Fallback if generated asset fails
-                  const target = e.currentTarget;
-                  if (target.src !== '/images/requin_software_team_1790576614688.jpg') {
-                    target.src = '/images/requin_software_team_1790576614688.jpg';
-                  }
-                }}
               />
-              {/* Subtle bottom-right gradient lighting */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#08B9E8]/10 via-transparent to-transparent pointer-events-none" />
+              {/* Soft cyan bottom atmospheric gradient matching reference */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#08B9E8]/25 via-transparent to-transparent pointer-events-none" />
             </div>
 
             {/* ----------------------------------------------------
                 FLOATING CALLOUT 1: Top-Left ("Clean Code / Better Solutions")
             ---------------------------------------------------- */}
             <div className="absolute -top-4 -left-3 sm:-top-6 sm:-left-6 z-20 animate-float-gentle">
-              <div className="bg-white/95 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/90 shadow-[0_12px_32px_rgba(8,185,232,0.16)] flex items-center gap-3 transition-transform duration-300 hover:scale-105">
+              <div className="bg-white/95 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/90 shadow-[0_12px_32px_rgba(8,185,232,0.18)] flex items-center gap-3 transition-transform duration-300 hover:scale-105">
                 <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#E1F7FD] flex items-center justify-center text-[#08B9E8] shadow-inner shrink-0">
                   <Code2 className="w-5 h-5 sm:w-5.5 sm:h-5.5 stroke-[2.2]" />
                 </div>
@@ -307,9 +300,9 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                 FLOATING CALLOUT 2: Top-Right (Chart Graphic + Plan / Build / Launch)
             ---------------------------------------------------- */}
             <div className="absolute -top-4 -right-3 sm:-top-6 sm:-right-6 z-20 animate-float-gentle-alt">
-              <div className="bg-white/95 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/90 shadow-[0_12px_32px_rgba(8,185,232,0.16)] flex items-center gap-3.5 transition-transform duration-300 hover:scale-105">
+              <div className="bg-[#EBF8FD]/95 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/90 shadow-[0_12px_32px_rgba(8,185,232,0.18)] flex items-center gap-3.5 transition-transform duration-300 hover:scale-105">
                 {/* Mini upward line chart box */}
-                <div className="w-12 h-11 rounded-xl bg-[#E1F7FD] p-1.5 flex items-center justify-center shrink-0">
+                <div className="w-12 h-11 rounded-xl bg-white/90 p-1.5 flex items-center justify-center shrink-0 shadow-sm">
                   <svg
                     viewBox="0 0 36 26"
                     fill="none"
@@ -319,29 +312,29 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                     <path
                       d="M2 20 L10 14 L18 18 L26 8 L34 4"
                       stroke="#08B9E8"
-                      strokeWidth="2.2"
+                      strokeWidth="2.4"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
                     <path
                       d="M2 20 L10 14 L18 18 L26 8 L34 4 V24 H2 Z"
                       fill="#08B9E8"
-                      fillOpacity="0.15"
+                      fillOpacity="0.18"
                     />
                   </svg>
                 </div>
                 {/* 3 Step Checklist: Plan, Build, Launch */}
                 <div className="space-y-1">
                   <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-[#061827]">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#08B9E8] shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#08B9E8] fill-[#08B9E8]/15 shrink-0" />
                     <span>Plan</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-[#061827]">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#08B9E8] shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#08B9E8] fill-[#08B9E8]/15 shrink-0" />
                     <span>Build</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-[#061827]">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#08B9E8] shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#08B9E8] fill-[#08B9E8]/15 shrink-0" />
                     <span>Launch</span>
                   </div>
                 </div>
@@ -352,7 +345,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                 FLOATING CALLOUT 3: Bottom-Left ("Turning Ideas into Scalable Products")
             ---------------------------------------------------- */}
             <div className="absolute -bottom-4 -left-3 sm:-bottom-6 sm:-left-6 z-20 animate-float-gentle">
-              <div className="bg-white/95 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/90 shadow-[0_12px_32px_rgba(8,185,232,0.16)] flex items-center gap-3 transition-transform duration-300 hover:scale-105">
+              <div className="bg-white/95 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/90 shadow-[0_12px_32px_rgba(8,185,232,0.18)] flex items-center gap-3 transition-transform duration-300 hover:scale-105">
                 <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#E1F7FD] flex items-center justify-center text-[#08B9E8] shadow-inner shrink-0">
                   <BarChart3 className="w-5 h-5 sm:w-5.5 sm:h-5.5 stroke-[2.2]" />
                 </div>

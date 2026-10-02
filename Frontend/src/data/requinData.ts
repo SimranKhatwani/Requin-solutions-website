@@ -16,11 +16,151 @@ export interface ProductItem {
   description: string;
   category: string;
   features: string[];
+  bullets?: string[];
+  visualSide?: 'left' | 'right';
   metrics: { label: string; value: string }[];
   image: string;
+  videoUrl?: string;
   badge?: string;
   architectureDetails: string[];
 }
+
+export interface ShowcaseProductItem extends ProductItem {
+  visualSide: 'left' | 'right';
+  bullets: string[];
+}
+
+export const SHOWCASE_PRODUCTS: ShowcaseProductItem[] = [
+  {
+    id: 'requin-ops',
+    title: 'Requin Ops',
+    tagline: 'Intelligent Enterprise CRM & Sales Workflow Orchestration',
+    description: 'A CRM system for managing customer relationships efficiently.',
+    category: 'Enterprise CRM',
+    badge: 'Flagship Platform',
+    features: [
+      'Contact and multi-tier organizational lead hierarchy management',
+      'Real-time sales pipeline stage tracking with automated deal progression triggers',
+      'Calendar scheduling and bidirectional email synchronization',
+      'Custom pipeline forecasting, deal velocity analytics, and SLA monitoring',
+    ],
+    bullets: [
+      'Contact and lead management',
+      'Sales pipeline tracking',
+      'Task scheduling and email integration',
+      'Custom reporting and analytics',
+      'Multi-user support with role-based access',
+    ],
+    metrics: [
+      { label: 'Pipeline Velocity', value: '+3.4x' },
+      { label: 'Lead Conversion', value: '42%' },
+      { label: 'Time-to-Close', value: '-28%' },
+    ],
+    image: '/images/products/requin-ops-demo.jpg',
+    architectureDetails: [
+      'Microservices backend built with Node.js and PostgreSQL',
+      'WebSocket event bus for real-time collaborative deal updates',
+    ],
+    visualSide: 'left',
+  },
+  {
+    id: 'requin-ams',
+    title: 'Requin AMS',
+    tagline: 'Modern Workforce Attendance & Time Tracking System',
+    description: 'An attendance management system for tracking employee work hours.',
+    category: 'Workforce Operations',
+    badge: 'Real-time Tracking',
+    features: [
+      'Real-time employee check-in and check-out tracking with sub-second sync',
+      'Dynamic rolling QR scan verification preventing proxy attendance',
+      'Geofenced workplace boundary detection for on-site field staff',
+      'Automated overtime calculation, holiday calendars, and shift swap workflows',
+    ],
+    bullets: [
+      'Real-time attendance tracking',
+      'Qr Scan integration',
+      'Location based tracking',
+      'Detailed attendance reports and analytics',
+    ],
+    metrics: [
+      { label: 'Attendance Accuracy', value: '99.9%' },
+      { label: 'Clock-in Latency', value: '<0.8s' },
+      { label: 'Admin Hours Saved', value: '18h/wk' },
+    ],
+    image: '/images/products/requin-ams-demo.jpg',
+    architectureDetails: [
+      'High-throughput mobile sync engine with offline-caching',
+      'Cryptographic time-stamped QR generation for tamper prevention',
+    ],
+    visualSide: 'right',
+  },
+  {
+    id: 'hrms',
+    title: 'Requin HRMS',
+    tagline: 'Unified Human Resource & Talent Management Suite',
+    description: 'A human resource management system for streamlined employee management.',
+    category: 'Human Capital',
+    badge: 'Enterprise HR',
+    features: [
+      'Comprehensive employee directory with digital document repositories',
+      'Tax-compliant automated payroll engine with salary slip distribution',
+      'Self-service employee portal for leave management and expense claims',
+      'Objective & Key Results (OKR) tracking and 360-degree appraisal cycles',
+    ],
+    bullets: [
+      'Employee data management',
+      'Payroll automation with tax calculations',
+      'Leave and attendance tracking',
+      'Performance management and appraisals',
+      'Role-based access control and document management',
+    ],
+    metrics: [
+      { label: 'Payroll Processing', value: 'Instant' },
+      { label: 'Staff Engagement', value: '94%' },
+      { label: 'Paperless Rate', value: '100%' },
+    ],
+    image: '/images/products/requin-hrms-demo.jpg',
+    architectureDetails: [
+      'Automated payroll math engine with statutory deduction tables',
+      'Granular department permissions and custom approval chains',
+    ],
+    visualSide: 'left',
+  },
+  {
+    id: 'requin-chat',
+    title: 'Requin Chat',
+    tagline: 'Real-time Encrypted Team Collaboration Platform',
+    description: 'A real-time chat application for organizational communication.',
+    category: 'Team Communication',
+    badge: 'Encrypted Messaging',
+    features: [
+      'Sub-50ms instant messaging across mobile, desktop, and web clients',
+      'High-fidelity voice and screen sharing capabilities for agile team huddles',
+      'Secure document and media sharing with automatic preview generation',
+      'Public, private, and broadcast announcement channels with read receipts',
+    ],
+    bullets: [
+      'Instant messaging with real-time updates',
+      'Voice and video call support',
+      'File sharing for documents and media',
+      'Group and private chat rooms',
+      'End-to-end encryption for secure communication',
+    ],
+    metrics: [
+      { label: 'Message Latency', value: '<50ms' },
+      { label: 'Uptime SLA', value: '99.95%' },
+      { label: 'Encryption', value: 'AES-256' },
+    ],
+    image: '/images/products/requin-chat-demo.jpg',
+    architectureDetails: [
+      'Distributed WebRTC audio/video mesh with fallback TURN servers',
+      'Decentralized message broker cluster using Redis Pub/Sub',
+    ],
+    visualSide: 'right',
+  },
+];
+
+export const REQUIN_PRODUCTS: ProductItem[] = SHOWCASE_PRODUCTS;
 
 export interface SoftwareSolutionItem {
   id: string;
@@ -180,110 +320,6 @@ export const REQUIN_SERVICES: ServiceItem[] = [
       'Academic lab software tooling and institutional database architecture'
     ],
     technologies: ['LaTeX', 'Python Science Stack', 'R', 'Jupyter', 'PostgreSQL', 'TensorFlow']
-  }
-];
-
-export const REQUIN_PRODUCTS: ProductItem[] = [
-  {
-    id: 'requin-ops',
-    title: 'Requin Ops',
-    tagline: 'Intelligent Enterprise CRM & Sales Workflow Orchestration',
-    description: 'A comprehensive customer relationship and revenue operations platform engineered to manage client pipelines, automate deal communications, and surface predictive sales intelligence.',
-    category: 'Enterprise CRM',
-    badge: 'Flagship Platform',
-    features: [
-      'Contact and multi-tier organizational lead hierarchy management',
-      'Real-time sales pipeline stage tracking with automated deal progression triggers',
-      'Calendar scheduling and bidirectional email synchronization',
-      'Custom pipeline forecasting, deal velocity analytics, and SLA monitoring',
-      'Role-based multi-tenant access control with audited permission security'
-    ],
-    metrics: [
-      { label: 'Pipeline Velocity', value: '+3.4x' },
-      { label: 'Lead Conversion', value: '42%' },
-      { label: 'Time-to-Close', value: '-28%' }
-    ],
-    image: '/images/modern_software_mockup_1790576657118.jpg',
-    architectureDetails: [
-      'Microservices backend built with Node.js and PostgreSQL',
-      'WebSocket event bus for real-time collaborative deal updates',
-      'Encrypted client storage with zero-knowledge data isolation'
-    ]
-  },
-  {
-    id: 'requin-ams',
-    title: 'Requin AMS',
-    tagline: 'Modern Workforce Attendance & Time Tracking System',
-    description: 'An advanced workforce management and attendance tracking platform featuring dynamic QR check-ins, geo-fencing verification, and automated shift scheduling.',
-    category: 'Workforce Operations',
-    features: [
-      'Real-time employee check-in and check-out tracking with sub-second sync',
-      'Dynamic rolling QR scan verification preventing proxy attendance',
-      'Geofenced workplace boundary detection for on-site field staff',
-      'Automated overtime calculation, holiday calendars, and shift swap workflows',
-      'Executive compliance reports and one-click payroll CSV export'
-    ],
-    metrics: [
-      { label: 'Attendance Accuracy', value: '99.9%' },
-      { label: 'Clock-in Latency', value: '<0.8s' },
-      { label: 'Admin Hours Saved', value: '18h/wk' }
-    ],
-    image: '/images/digital_agency_office_1790576645354.jpg',
-    architectureDetails: [
-      'High-throughput mobile sync engine with offline offline-caching',
-      'Cryptographic time-stamped QR generation for tamper prevention',
-      'REST & GraphQL integration connectors for SAP and standard HRMS'
-    ]
-  },
-  {
-    id: 'hrms',
-    title: 'Requin HRMS',
-    tagline: 'Unified Human Resource & Talent Management Suite',
-    description: 'A human resource suite engineered for modern organizations to unify employee lifecycles, automated tax-compliant payroll, performance appraisals, and self-service portals.',
-    category: 'Human Capital',
-    features: [
-      'Comprehensive employee directory with digital document repositories',
-      'Tax-compliant automated payroll engine with salary slip distribution',
-      'Self-service employee portal for leave management and expense claims',
-      'Objective & Key Results (OKR) tracking and 360-degree appraisal cycles',
-      'Secure document storage with biometric signing and compliance logs'
-    ],
-    metrics: [
-      { label: 'Payroll Processing', value: 'Instant' },
-      { label: 'Staff Engagement', value: '94%' },
-      { label: 'Paperless Rate', value: '100%' }
-    ],
-    image: '/images/requin_software_team_1790576614688.jpg',
-    architectureDetails: [
-      'Automated payroll math engine with statutory deduction tables',
-      'Granular department permissions and custom approval chains',
-      'Export connectors for standard tax and banking protocols'
-    ]
-  },
-  {
-    id: 'requin-chat',
-    title: 'Requin Chat',
-    tagline: 'Real-time Encrypted Team Collaboration Platform',
-    description: 'An organizational messaging and collaboration platform offering end-to-end encrypted messaging, voice/video huddles, and granular channel control.',
-    category: 'Team Communication',
-    features: [
-      'Sub-50ms instant messaging across mobile, desktop, and web clients',
-      'High-fidelity voice and screen sharing capabilities for agile team huddles',
-      'Secure document and media sharing with automatic preview generation',
-      'Public, private, and broadcast announcement channels with read receipts',
-      'End-to-end encryption protocols ensuring strict internal privacy'
-    ],
-    metrics: [
-      { label: 'Message Latency', value: '<50ms' },
-      { label: 'Uptime SLA', value: '99.95%' },
-      { label: 'Encryption', value: 'AES-256' }
-    ],
-    image: '/images/cloud_infrastructure_1790576629897.jpg',
-    architectureDetails: [
-      'Distributed WebRTC audio/video mesh with fallback TURN servers',
-      'Decentralized message broker cluster using Redis Pub/Sub',
-      'Zero-storage ephemeral chat options for sensitive discussions'
-    ]
   }
 ];
 
