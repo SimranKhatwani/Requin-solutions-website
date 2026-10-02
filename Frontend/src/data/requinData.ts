@@ -42,7 +42,7 @@ export const SHOWCASE_PRODUCTS: ShowcaseProductItem[] = [
   {
     id: 'requin-ops',
     title: 'Requin Ops',
-    tagline: 'Intelligent Enterprise CRM & Sales Workflow Orchestration',
+    tagline: 'Smart CRM, High-Velocity Pipelines',
     description: 'A CRM system for managing customer relationships efficiently.',
     category: 'Enterprise CRM',
     badge: 'Flagship Platform',
@@ -61,19 +61,24 @@ export const SHOWCASE_PRODUCTS: ShowcaseProductItem[] = [
     ],
     gallery: [
       {
-        title: 'Sales Pipeline & Deal Management',
-        caption: 'Multi-stage deal flow visualization with automated progression triggers.',
-        image: '/images/products/requin-ops-demo.jpg',
+        title: 'Efforts & Delivery Tracking',
+        caption: 'Centralized project delivery logs, task IDs, and milestone verification.',
+        image: '/images/products/requin-ops-efforts.png',
       },
       {
-        title: 'Real-Time Revenue Analytics',
-        caption: 'Pipeline velocity monitoring, conversion metrics, and executive reporting.',
-        image: '/images/modern_software_mockup_1790576657118.jpg',
+        title: 'Task Assignment & Operations Detail',
+        caption: 'Granular task assignment, progress tracking, and soft & hard deadline management.',
+        image: '/images/products/requin-ops-tasklist.png',
+      },
+      {
+        title: 'Task Status Report & Work Calendar',
+        caption: 'Real-time status breakdown across running, approved, quality check, and work calendar.',
+        image: '/images/products/requin-ops-report.png',
       },
     ],
     metrics: [
       { label: 'Pipeline Velocity', value: '+3.4x' },
-      { label: 'Lead Conversion', value: '42%' },
+      { label: 'Pipeline Visibility', value: '100%' },
       { label: 'Time-to-Close', value: '-28%' },
     ],
     image: '/images/products/requin-ops-demo.jpg',
@@ -177,50 +182,6 @@ export const SHOWCASE_PRODUCTS: ShowcaseProductItem[] = [
     architectureDetails: [
       'Automated payroll math engine with statutory deduction tables',
       'Granular department permissions and custom approval chains',
-    ],
-    visualSide: 'right',
-  },
-  {
-    id: 'requin-chat',
-    title: 'Requin Chat',
-    tagline: 'Real-time Encrypted Team Collaboration Platform',
-    description: 'A real-time chat application for organizational communication.',
-    category: 'Team Communication',
-    badge: 'Encrypted Messaging',
-    features: [
-      'Sub-50ms instant messaging across mobile, desktop, and web clients',
-      'High-fidelity voice and screen sharing capabilities for agile team huddles',
-      'Secure document and media sharing with automatic preview generation',
-      'Public, private, and broadcast announcement channels with read receipts',
-    ],
-    bullets: [
-      'Instant messaging with real-time updates',
-      'Voice and video call support',
-      'File sharing for documents and media',
-      'Group and private chat rooms',
-      'End-to-end encryption for secure communication',
-    ],
-    gallery: [
-      {
-        title: 'Real-time Encrypted Chat',
-        caption: 'Sub-50ms instant messaging across desktop, mobile, and web.',
-        image: '/images/products/requin-chat-demo.jpg',
-      },
-      {
-        title: 'Team Huddles & Media Sharing',
-        caption: 'Voice calls, screen sharing, and secure document collaboration.',
-        image: '/images/digital_agency_office_1790576645354.jpg',
-      },
-    ],
-    metrics: [
-      { label: 'Message Latency', value: '<50ms' },
-      { label: 'Uptime SLA', value: '99.95%' },
-      { label: 'Encryption', value: 'AES-256' },
-    ],
-    image: '/images/products/requin-chat-demo.jpg',
-    architectureDetails: [
-      'Distributed WebRTC audio/video mesh with fallback TURN servers',
-      'Decentralized message broker cluster using Redis Pub/Sub',
     ],
     visualSide: 'right',
   },
