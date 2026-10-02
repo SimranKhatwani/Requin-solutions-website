@@ -5,7 +5,7 @@ import { Footer } from '../components/Footer';
 import { LoginModal } from '../components/LoginModal';
 import { QuizModal } from '../components/QuizModal';
 import { ProductFeatureModal } from '../components/ProductFeatureModal';
-import { ProductItem, SHOWCASE_PRODUCTS } from '../data/requinData';
+import { ProductItem, EXPLORE_MORE_PRODUCTS } from '../data/requinData';
 import {
   ChevronRight,
   ArrowRight,
@@ -52,7 +52,7 @@ export const PublicProductsPage: React.FC = () => {
               Products
             </Link>
             <ChevronRight className="w-3.5 h-3.5" />
-            <span className="text-[#08B9E8]">All Products</span>
+            <span className="text-[#08B9E8]">More Products</span>
           </div>
 
           {/* ========================================================
@@ -65,15 +65,9 @@ export const PublicProductsPage: React.FC = () => {
               aria-hidden="true"
             />
 
-            {/* Small Eyebrow Pill */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#08B9E8]/10 border border-[#08B9E8]/30 text-[#08B9E8] text-xs font-bold uppercase tracking-widest mb-4">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Proprietary Software Suite</span>
-            </div>
-
             {/* Large White Heading */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight">
-              Our Products
+            <h1 className="text-4xl sm:text-4xl lg:text-6xl font-extrabold text-white tracking-tight">
+            Our Products
             </h1>
 
             {/* Glowing Luminous Laser-Shine Line below Title */}
@@ -93,40 +87,31 @@ export const PublicProductsPage: React.FC = () => {
               {/* High-intensity central white/cyan laser shine core */}
               <div className="absolute w-32 sm:w-56 h-[2.5px] bg-gradient-to-r from-transparent via-white to-transparent shadow-[0_0_14px_#08B9E8,0_0_28px_#00c2ff]" />
             </div>
-
-            {/* Subtitle Description */}
-            <p className="mt-7 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed font-normal">
-              Engineered in-house to eliminate operational bottlenecks, automate high-stakes
-              workflows, and deliver scalable enterprise intelligence.
-            </p>
           </div>
 
           {/* ========================================================
               PRODUCTS SHOWCASE LIST
           ======================================================== */}
           <div className="space-y-12 sm:space-y-16">
-            {SHOWCASE_PRODUCTS.map((product) => {
+            {EXPLORE_MORE_PRODUCTS.map((product) => {
               const isVisualLeft = product.visualSide === 'left';
 
-              // Visual Mockup Container (Clean showcase preview without video icons/demo badges)
+              // Visual Mockup Container (Crisp, fully legible screenshot showcase)
               const visualBlock = (
                 <div
                   onClick={() => handleOpenFeatures(product)}
-                  className="relative rounded-[28px] overflow-hidden bg-[#0A1826] border border-white/15 shadow-2xl group cursor-pointer aspect-video sm:aspect-[16/10] flex items-center justify-center transition-all duration-300 hover:border-[#08B9E8]/60 hover:shadow-[0_0_40px_rgba(8,185,232,0.25)]"
+                  className="relative rounded-[24px] sm:rounded-[28px] overflow-hidden bg-[#0A1826] border border-[#08B9E8]/30 shadow-2xl group cursor-pointer aspect-[16/10] sm:aspect-video flex items-center justify-center p-2 sm:p-3.5 transition-all duration-300 hover:border-[#08B9E8] hover:shadow-[0_0_40px_rgba(8,185,232,0.3)]"
                 >
-                  {/* Product Visual Image */}
+                  {/* Product Visual Image - Object Contain to preserve full UI, text, and header */}
                   <img
                     src={product.image}
                     alt={`${product.title} Interface`}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-full object-contain rounded-xl sm:rounded-2xl transition-transform duration-500 group-hover:scale-[1.02]"
                   />
-
-                  {/* Dark subtle gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 pointer-events-none" />
 
                   {/* Subtle Bottom Hover Indicator */}
                   <div className="absolute bottom-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#061827]/90 text-[#08B9E8] border border-[#08B9E8]/40 text-xs font-bold shadow-lg backdrop-blur-md">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#061827]/95 text-[#08B9E8] border border-[#08B9E8]/60 text-xs font-bold shadow-xl backdrop-blur-md">
                       <Layers className="w-3.5 h-3.5" />
                       <span>View Feature Gallery</span>
                     </span>

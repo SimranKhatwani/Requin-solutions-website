@@ -185,9 +185,173 @@ export const SHOWCASE_PRODUCTS: ShowcaseProductItem[] = [
     ],
     visualSide: 'right',
   },
+  {
+    id: 'vastra-erp',
+    title: 'VASTRA ERP',
+    tagline: 'Your Clothing Business Digitally Managed',
+    description: 'A boutique ERP and POS system for apparel businesses, tailoring operations, and retail chains.',
+    category: 'Fashion & Retail ERP',
+    badge: 'Apparel Suite',
+    features: [
+      'Fast POS billing with intelligent barcode scanning and multi-rate GST computation',
+      'End-to-end tailoring workshop and garment alteration lifecycle tracking',
+      'Real-time inventory management with SKU, size, color, and low-stock alerts',
+      'Payment tracking, credit ledger management, and cash summary reconciliation',
+      'Comprehensive product catalog with purchase rates, wholesale prices (WSP), and retail MRP',
+      'Dynamic business charts, daily focus KPIs, and sales performance analytics',
+    ],
+    bullets: [
+      'Barcode scanning & POS billing',
+      'Sales & payment tracking',
+      'Alteration & tailoring details',
+      'Inventory & stock management',
+      'Business analytics charts & focus dashboards',
+    ],
+    gallery: [
+      {
+        title: 'Boutique POS Billing & GST Engine',
+        caption: 'High-speed barcode scanner, walk-in customer loyalty tracking, and instant multi-slab GST calculation.',
+        image: '/images/products/vastra-erp-pos.png',
+      },
+      {
+        title: 'Tailoring & Garment Alterations',
+        caption: 'Custom fit measurement recording, workshop queue monitoring, and tailor-wise completion tracking.',
+        image: '/images/products/vastra-erp-alteration.png',
+      },
+      {
+        title: 'Products & Garment Catalog',
+        caption: 'Detailed apparel catalog with purchase cost, wholesale price (WSP), retail MRP, and live inventory status.',
+        image: '/images/products/vastra-erp-catalog.png',
+      },
+    ],
+    metrics: [
+      { label: 'Billing Speed', value: '<2s' },
+      { label: 'Stock Accuracy', value: '100%' },
+    ],
+    image: '/images/products/vastra-erp-overview.png',
+    architectureDetails: [
+      'High-velocity offline-ready POS architecture with hardware barcode scanner integration',
+      'Multi-tier garment matrix handling complex sizes, batches, and tailoring workflows',
+    ],
+    visualSide: 'right',
+  },
 ];
 
-export const REQUIN_PRODUCTS: ProductItem[] = SHOWCASE_PRODUCTS;
+export const VASTRA_ERP_PRODUCT: ShowcaseProductItem = SHOWCASE_PRODUCTS[3];
+
+export const DINE_AND_DUSK_PRODUCT: ShowcaseProductItem = {
+  id: 'dine-and-dusk',
+  title: 'Dine & Dusk',
+  tagline: 'Complete Restaurant Operations & Kitchen Intelligence',
+  description: 'An all-in-one restaurant management and POS platform with table management, real-time KDS, and revenue analytics.',
+  category: 'Hospitality & F&B ERP',
+  badge: 'Restaurant Suite',
+  features: [
+    'High-speed touch POS terminal with instant KOT generation and bill settlement',
+    'Interactive multi-floor table management (Ground Floor & Rooftop/Terrace) with occupancy status',
+    'Real-time Kitchen Display System (KDS) with station routing, timers, and cooking workflows',
+    'Sales mix analytics, category revenue charts, and top-performing dish insights',
+    'Staff directory clock-in monitoring and live platform transaction tracking',
+  ],
+  bullets: [
+    'POS sale checkout & instant KOT billing',
+    'Multi-floor table layout & occupancy tracking',
+    'Real-time Kitchen Display System (KDS)',
+    'Category sales mix & revenue analytics',
+    'Live staff activity & platform transaction logs',
+  ],
+  gallery: [
+    {
+      title: 'POS Sale & Fast Billing Terminal',
+      caption: 'Visual menu grid, instant KOT generation, veg/non-veg indicators, and swift order settlement.',
+      image: '/images/products/dine-dusk-pos.png',
+    },
+    {
+      title: 'Tables Management & Multi-Floor Layout',
+      caption: 'Multi-floor table grid, real-time occupancy indicators, session timers, and bill & order sync.',
+      image: '/images/products/dine-dusk-tables.png',
+    },
+    {
+      title: 'Kitchen Display System (KDS)',
+      caption: 'Real-time kitchen order queues, station routing, chef cooking timers, and instant dispatch updates.',
+      image: '/images/products/dine-dusk-kds.png',
+    },
+  ],
+  metrics: [
+    { label: 'Order-to-KDS Sync', value: '<0.5s' },
+    { label: 'Table Turnover', value: '+35%' },
+  ],
+  image: '/images/products/dine-dusk-dashboard.png',
+  architectureDetails: [
+    'Low-latency WebSocket event streaming between POS terminals and kitchen display stations',
+    'Offline-first local network synchronization ensuring uninterrupted billing during peak hours',
+  ],
+  visualSide: 'right',
+};
+
+export const RKB_ENTERPRISES_PRODUCT: ShowcaseProductItem = {
+  id: 'rkb-enterprises',
+  title: 'RKB Enterprises',
+  tagline: 'Jewellery Manufacturer & Wholesale Supplier Portal',
+  description: 'Manufacturer and wholesale supplier of chains, anklets, bracelets, and fashion jewellery, serving retailers, resellers, and online sellers.',
+  category: 'Jewellery & Wholesale E-Commerce',
+  badge: 'B2B Wholesale Suite',
+  features: [
+    'Comprehensive manufacturer catalog for brass chains, silver anklets, bracelets, and fashion jewellery',
+    'Dedicated B2B wholesale ordering platform built for volume retailers, resellers, and dropshippers',
+    'Faceted product filtering system by material type, collection category, and real-time inventory status',
+    'Interactive side-by-side product comparison tool for evaluating wholesale prices, variants, and SKU availability',
+    'Direct WhatsApp quick ordering and bulk inquiry distribution workflows',
+  ],
+  bullets: [
+    'Manufacturer & wholesale supplier of fashion jewellery',
+    'Chains, anklets, bracelets & bridal collections',
+    'Serving retailers, resellers & online sellers',
+    'Faceted material & category search filtering',
+    'Interactive B2B product comparison matrix',
+  ],
+  gallery: [
+    {
+      title: 'Wholesale Category Catalog',
+      caption: 'Comprehensive collection grid spanning chains, anklets, bridal wear, and raw jewellery materials.',
+      image: '/images/products/rkb-enterprises-categories.png',
+    },
+    {
+      title: 'Faceted Product Search & Filtering',
+      caption: 'Multi-criteria filter panel by category and material with instant stock status and wholesale rates.',
+      image: '/images/products/rkb-enterprises-catalog.png',
+    },
+    {
+      title: 'B2B Product Comparison Matrix',
+      caption: 'Side-by-side SKU comparison for retailers to evaluate specifications, wholesale pricing, and stock availability.',
+      image: '/images/products/rkb-enterprises-comparison.png',
+    },
+  ],
+  metrics: [
+    { label: 'Catalog Scale', value: '5,000+ SKUs' },
+    { label: 'Wholesale Dispatch', value: '24-48h' },
+  ],
+  image: '/images/products/rkb-enterprises-home.png',
+  architectureDetails: [
+    'High-performance headless e-commerce catalog optimized for high-resolution imagery and fast filtering',
+    'B2B tier pricing engine with bulk volume discounts and WhatsApp order API gateway',
+  ],
+  visualSide: 'right',
+};
+
+export const ALL_PRODUCTS: ShowcaseProductItem[] = [
+  ...SHOWCASE_PRODUCTS,
+  DINE_AND_DUSK_PRODUCT,
+  RKB_ENTERPRISES_PRODUCT,
+];
+
+export const EXPLORE_MORE_PRODUCTS: ShowcaseProductItem[] = [
+  VASTRA_ERP_PRODUCT,
+  DINE_AND_DUSK_PRODUCT,
+  RKB_ENTERPRISES_PRODUCT,
+];
+
+export const REQUIN_PRODUCTS: ProductItem[] = ALL_PRODUCTS;
 
 export interface SoftwareSolutionItem {
   id: string;

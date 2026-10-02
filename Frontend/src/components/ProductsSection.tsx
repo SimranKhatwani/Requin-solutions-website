@@ -57,21 +57,18 @@ export const ProductsSection: React.FC<ProductsSectionProps> = () => {
   const visualBlock = (
     <div
       onClick={() => handleOpenFeatures(activeProduct)}
-      className="relative rounded-[28px] overflow-hidden bg-[#0A1826] border border-white/15 shadow-2xl group cursor-pointer aspect-video sm:aspect-[16/10] flex items-center justify-center transition-all duration-300 hover:border-[#08B9E8]/60 hover:shadow-[0_0_40px_rgba(8,185,232,0.25)]"
+      className="relative rounded-[24px] sm:rounded-[28px] overflow-hidden bg-[#0A1826] border border-[#08B9E8]/30 shadow-2xl group cursor-pointer aspect-[16/10] sm:aspect-video flex items-center justify-center p-2 sm:p-3.5 transition-all duration-300 hover:border-[#08B9E8] hover:shadow-[0_0_40px_rgba(8,185,232,0.3)]"
     >
-      {/* Product Visual Image */}
+      {/* Product Visual Image - Object Contain to preserve complete software UI */}
       <img
         src={activeProduct.image}
         alt={`${activeProduct.title} Interface`}
-        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        className="w-full h-full object-contain rounded-xl sm:rounded-2xl transition-transform duration-500 group-hover:scale-[1.02]"
       />
-
-      {/* Dark subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 pointer-events-none" />
 
       {/* Subtle Bottom Hover Indicator */}
       <div className="absolute bottom-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#061827]/90 text-[#08B9E8] border border-[#08B9E8]/40 text-xs font-bold shadow-lg backdrop-blur-md">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#061827]/95 text-[#08B9E8] border border-[#08B9E8]/60 text-xs font-bold shadow-xl backdrop-blur-md">
           <Layers className="w-3.5 h-3.5" />
           <span>View Feature Gallery</span>
         </span>
