@@ -339,16 +339,68 @@ export const RKB_ENTERPRISES_PRODUCT: ShowcaseProductItem = {
   visualSide: 'right',
 };
 
+export const INDIA_MOTOR_PRODUCT: ShowcaseProductItem = {
+  id: 'india-motor-driving-school',
+  title: 'India Motor Driving School',
+  tagline: 'Learn Driving the Smart Way — Certified Trainers & RTO Test Prep',
+  description: 'A driving academy platform offering professional driving lessons, certified instructors, RTO mock tests, and flexible driving courses across India.',
+  category: 'EdTech & Mobility Academy',
+  badge: 'Driving Academy SaaS',
+  features: [
+    'Online student onboarding with digital RTO document vault and verified driving licenses',
+    'Live GPS instructor tracking with real-time arrival estimates and doorstep pickup/drop',
+    'Flexible course packages across manual and automatic (AMT/CVT) transmission vehicles',
+    'Comprehensive 18-point learner progress dashboard tracking steering, gear shifts, and parallel parking',
+    'Direct 1-on-1 slot booking selecting certified instructors by ratings, hub locations, and languages',
+  ],
+  bullets: [
+    'Professional driving lessons with dual-control fleet',
+    'Certified instructors & personalized 1-on-1 slot booking',
+    'Manual & automatic transmission flexible course plans',
+    '18-point progress tracker & RTO mock test prep',
+    'Doorstep pickup & drop with live GPS instructor tracking',
+  ],
+  gallery: [
+    {
+      title: 'Flexible Course Plans & Pricing',
+      caption: 'Transparent pricing packages for manual & automatic vehicles including fuel, pickup, and RTO filing.',
+      image: '/images/products/india-motor-pricing.png',
+    },
+    {
+      title: 'Comprehensive Learning Features',
+      caption: '18-point progress tracking, digital RTO document vault, mock theory tests, and automated WhatsApp alerts.',
+      image: '/images/products/india-motor-features.png',
+    },
+    {
+      title: 'Expert Trainer Directory & Slot Booking',
+      caption: 'Certified instructor profiles with experience ratings, languages, dual-control fleet specs, and direct booking.',
+      image: '/images/products/india-motor-trainers.png',
+    },
+  ],
+  metrics: [
+    { label: 'RTO Pass Rate', value: '98%' },
+    { label: 'Learners Trained', value: '5,000+' },
+  ],
+  image: '/images/products/india-motor-hero.png',
+  architectureDetails: [
+    'Real-time geolocation WebSockets for live trainer dispatch and telemetry tracking',
+    'Automated slot reservation engine with multi-trainer calendar synchronization',
+  ],
+  visualSide: 'right',
+};
+
 export const ALL_PRODUCTS: ShowcaseProductItem[] = [
   ...SHOWCASE_PRODUCTS,
   DINE_AND_DUSK_PRODUCT,
   RKB_ENTERPRISES_PRODUCT,
+  INDIA_MOTOR_PRODUCT,
 ];
 
 export const EXPLORE_MORE_PRODUCTS: ShowcaseProductItem[] = [
   VASTRA_ERP_PRODUCT,
   DINE_AND_DUSK_PRODUCT,
   RKB_ENTERPRISES_PRODUCT,
+  INDIA_MOTOR_PRODUCT,
 ];
 
 export const REQUIN_PRODUCTS: ProductItem[] = ALL_PRODUCTS;
