@@ -5,9 +5,6 @@ import { Hero } from '../components/Hero';
 import { ServicesSection } from '../components/ServicesSection';
 import { ExperienceSection } from '../components/ExperienceSection';
 import { ProductsSection } from '../components/ProductsSection';
-import { SoftwareSolutionsSection } from '../components/SoftwareSolutionsSection';
-import { CloudSolutionsSection } from '../components/CloudSolutionsSection';
-import { AcademicSolutionsSection } from '../components/AcademicSolutionsSection';
 import { OurStorySection } from '../components/OurStorySection';
 import { LifeAtRequinSection } from '../components/LifeAtRequinSection';
 import { QuizCTA } from '../components/QuizCTA';
@@ -73,15 +70,6 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ initialScrollTo 
 
         {/* Products Section: High-Fidelity Software Suite Showcase */}
         <ProductsSection />
-
-        {/* Software Solutions: Image-First Portfolio Showcase */}
-        <SoftwareSolutionsSection />
-
-        {/* Cloud Solutions: Editorial Split Layout */}
-        <CloudSolutionsSection onConsultation={() => scrollToSection('contact')} />
-
-        {/* Academic Solutions: Lighter Editorial Cards */}
-        <AcademicSolutionsSection />
 
         {/* Our Story: Editorial Timeline */}
         <OurStorySection />

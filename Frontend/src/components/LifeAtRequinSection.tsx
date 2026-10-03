@@ -1,112 +1,417 @@
-import React, { useState } from 'react';
-import { Camera, Calendar, Sparkles, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  Camera,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  ArrowRight,
+  X,
+  Sparkles,
+  Maximize2
+} from 'lucide-react';
 import { LIFE_AT_REQUIN_GALLERY, GalleryImage } from '../data/requinData';
 
 export const LifeAtRequinSection: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [activeImage, setActiveImage] = useState<GalleryImage>(LIFE_AT_REQUIN_GALLERY[0]);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalActiveIndex, setModalActiveIndex] = useState<number>(0);
 
-  const categories = ['All', '5th Anniversary', 'Diwali', '4th Anniversary', 'Office Party'];
+  // Touch swipe support
+  const touchStartXRef = useRef<number | null>(null);
+  const touchEndXRef = useRef<number | null>(null);
 
-  const filteredImages =
-    selectedCategory === 'All'
-      ? LIFE_AT_REQUIN_GALLERY
-      : LIFE_AT_REQUIN_GALLERY.filter((item) => item.category === selectedCategory);
+  const filteredList: GalleryImage[] = LIFE_AT_REQUIN_GALLERY;
 
-  const displayActive =
-    filteredImages.find((img) => img.id === activeImage.id) || filteredImages[0] || LIFE_AT_REQUIN_GALLERY[0];
+  // Safe navigation
+  const handlePrev = useCallback(() => {
+    if (filteredList.length <= 1) return;
+    setActiveIndex((prev) => (prev === 0 ? filteredList.length - 1 : prev - 1));
+  }, [filteredList.length]);
+
+  const handleNext = useCallback(() => {
+    if (filteredList.length <= 1) return;
+    setActiveIndex((prev) => (prev === filteredList.length - 1 ? 0 : prev + 1));
+  }, [filteredList.length]);
+
+  // Modal navigation
+  const handleModalPrev = useCallback(() => {
+    if (filteredList.length <= 1) return;
+    setModalActiveIndex((prev) => (prev === 0 ? filteredList.length - 1 : prev - 1));
+  }, [filteredList.length]);
+
+  const handleModalNext = useCallback(() => {
+    if (filteredList.length <= 1) return;
+    setModalActiveIndex((prev) => (prev === filteredList.length - 1 ? 0 : prev + 1));
+  }, [filteredList.length]);
+
+  // Autoplay functionality (5.5s)
+  useEffect(() => {
+    if (isHovered || isModalOpen || filteredList.length <= 1) return;
+
+    // Respect prefers-reduced-motion
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    const timer = setInterval(() => {
+      handleNext();
+    }, 5500);
+
+    return () => clearInterval(timer);
+  }, [isHovered, isModalOpen, filteredList.length, handleNext]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isModalOpen) {
+        if (e.key === 'Escape') setIsModalOpen(false);
+        if (e.key === 'ArrowLeft') handleModalPrev();
+        if (e.key === 'ArrowRight') handleModalNext();
+      } else if (isHovered) {
+        if (e.key === 'ArrowLeft') handlePrev();
+        if (e.key === 'ArrowRight') handleNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isModalOpen, isHovered, handleModalPrev, handleModalNext, handlePrev, handleNext]);
+
+  // Touch handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndXRef.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartXRef.current !== null && touchEndXRef.current !== null) {
+      const distance = touchStartXRef.current - touchEndXRef.current;
+      if (distance > 45) {
+        handleNext();
+      } else if (distance < -45) {
+        handlePrev();
+      }
+    }
+    touchStartXRef.current = null;
+    touchEndXRef.current = null;
+  };
+
+  // Card click behavior
+  const handleCardClick = (index: number) => {
+    if (index === activeIndex) {
+      setModalActiveIndex(index);
+      setIsModalOpen(true);
+    } else {
+      setActiveIndex(index);
+    }
+  };
+
+  const activeModalItem = filteredList[modalActiveIndex] || filteredList[0];
 
   return (
-    <section id="life-at-requin" className="py-28 md:py-36 bg-[#F5F9FC] text-[#0B1726] relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 text-left">
-          <div className="max-w-2xl">
-            <div className="text-xs font-semibold tracking-widest text-[#08B9E8] uppercase mb-3">
-              Team & Culture
-            </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B1726] tracking-[-0.03em]">
-              Life at Requin
-            </h2>
-            <p className="mt-4 text-base sm:text-lg text-[#64748B] font-normal leading-[1.65]">
-              Behind every high-performance codebase is a passionate team of technologists. Glimpse into our company celebrations, festive traditions, and collaborative spirit.
-            </p>
-          </div>
+    <section
+      id="life-at-requin"
+      className="pt-8 sm:pt-12 md:pt-14 pb-16 sm:pb-20 md:pb-24 bg-[#F5FAFD] text-[#071827] relative overflow-hidden selection:bg-[#08B9E8]/20 selection:text-[#08B9E8]"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Background Ambience & Animation Keyframes */}
+      <style>{`
+        @keyframes ambientFloatLife {
+          0%, 100% {
+            transform: translate(0, 0) scale(1);
+          }
+          50% {
+            transform: translate(-8px, -10px) scale(1.03);
+          }
+        }
+        @keyframes networkPulseLife {
+          0%, 100% {
+            opacity: 0.7;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
+        @keyframes waveFloatLife {
+          0%, 100% {
+            transform: translateX(0);
+          }
+          50% {
+            transform: translateX(20px);
+          }
+        }
+        .animate-ambient-life {
+          animation: ambientFloatLife 16s ease-in-out infinite;
+        }
+        .animate-network-life {
+          animation: networkPulseLife 12s ease-in-out infinite;
+        }
+        .animate-wave-life {
+          animation: waveFloatLife 20s ease-in-out infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-ambient-life,
+          .animate-network-life,
+          .animate-wave-life {
+            animation: none !important;
+          }
+        }
+      `}</style>
 
-          {/* Category Filter Tabs */}
-          <div className="flex flex-wrap gap-2 p-1.5 bg-slate-200/80 rounded-xl">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 focus:outline-none ${
-                  selectedCategory === cat
-                    ? 'bg-white text-[#0B1726] shadow-sm'
-                    : 'text-slate-600 hover:text-[#0B1726]'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+      {/* ========================================================
+          BACKGROUND LAYER 1: Amplified Radiant Ambient Glows (Light Blue Theme)
+      ======================================================== */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Top-Left Radiant Cyan Glow */}
+        <div className="absolute -top-24 -left-20 w-[750px] h-[550px] bg-[radial-gradient(circle_at_30%_30%,rgba(8,185,232,0.18),transparent_65%)] blur-[100px] animate-ambient-life" />
+        
+        {/* Top-Right Soft Sky Glow */}
+        <div
+          className="absolute -top-20 -right-20 w-[700px] h-[520px] bg-[radial-gradient(circle_at_70%_30%,rgba(0,194,255,0.16),transparent_65%)] blur-[100px] animate-ambient-life"
+          style={{ animationDelay: '-5s' }}
+        />
+        
+        {/* Center Glowing Tech Aura */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-[radial-gradient(circle,rgba(8,185,232,0.12),transparent_70%)] blur-[120px] pointer-events-none" />
+
+        {/* Bottom-Left Luminous Cyan Glow */}
+        <div
+          className="absolute -bottom-24 -left-16 w-[680px] h-[520px] bg-[radial-gradient(circle_at_40%_70%,rgba(8,185,232,0.16),transparent_65%)] blur-[100px] animate-ambient-life"
+          style={{ animationDelay: '-9s' }}
+        />
+        
+        {/* Bottom-Right Deep Azure Glow */}
+        <div
+          className="absolute -bottom-24 -right-16 w-[720px] h-[540px] bg-[radial-gradient(circle_at_70%_70%,rgba(2,132,199,0.14),transparent_65%)] blur-[100px] animate-ambient-life"
+          style={{ animationDelay: '-3s' }}
+        />
+      </div>
+
+      {/* ========================================================
+          BACKGROUND LAYER 2: Subtle Digital Network & Constellations
+      ======================================================== */}
+      <svg
+        className="absolute inset-0 w-full h-full pointer-events-none z-0 animate-network-life"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="none"
+      >
+        <defs>
+          <linearGradient id="netGradLife" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#08B9E8" stopOpacity="0.14" />
+            <stop offset="50%" stopColor="#00c2ff" stopOpacity="0.08" />
+            <stop offset="100%" stopColor="#0284c7" stopOpacity="0.12" />
+          </linearGradient>
+          <filter id="nodeGlowLife" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+
+        <g stroke="url(#netGradLife)" strokeWidth="1" fill="none">
+          <line x1="5%" y1="12%" x2="12%" y2="22%" />
+          <line x1="12%" y1="22%" x2="8%" y2="35%" />
+          <line x1="12%" y1="22%" x2="19%" y2="28%" />
+          <line x1="95%" y1="14%" x2="88%" y2="24%" />
+          <line x1="88%" y1="24%" x2="92%" y2="38%" />
+        </g>
+        <g fill="#08B9E8">
+          <circle cx="5%" cy="12%" r="3" fillOpacity="0.4" />
+          <circle cx="12%" cy="22%" r="4" fillOpacity="0.3" filter="url(#nodeGlowLife)" />
+          <circle cx="12%" cy="22%" r="2" fillOpacity="0.85" />
+          <circle cx="8%" cy="35%" r="2.5" fillOpacity="0.4" />
+          <circle cx="19%" cy="28%" r="3" fillOpacity="0.4" />
+          <circle cx="95%" cy="14%" r="3" fillOpacity="0.4" />
+          <circle cx="88%" cy="24%" r="3.5" fillOpacity="0.4" filter="url(#nodeGlowLife)" />
+          <circle cx="88%" cy="24%" r="1.5" fillOpacity="0.85" />
+          <circle cx="92%" cy="38%" r="2.5" fillOpacity="0.4" />
+        </g>
+      </svg>
+
+      {/* ========================================================
+          BACKGROUND LAYER 3: Flowing Bottom Waves
+      ======================================================== */}
+      <div className="absolute inset-x-0 bottom-0 h-44 pointer-events-none z-0 overflow-hidden opacity-60 animate-wave-life">
+        <svg
+          viewBox="0 0 1440 200"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-full preserve-3d"
+        >
+          <path
+            d="M-50,130 C220,70 540,170 880,100 C1180,40 1350,140 1500,90"
+            stroke="#08B9E8"
+            strokeWidth="1.2"
+            strokeOpacity="0.08"
+            strokeDasharray="5 7"
+          />
+          <path
+            d="M-50,165 C300,110 650,200 1000,125 C1300,65 1420,150 1500,120"
+            stroke="#00c2ff"
+            strokeWidth="1"
+            strokeOpacity="0.06"
+          />
+        </svg>
+      </div>
+
+      {/* ========================================================
+          MAIN CONTENT LAYER
+      ======================================================== */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Section Header */}
+        <div className="max-w-3xl mb-6 sm:mb-8 md:mb-10 text-left">
+          <div className="text-sm sm:text-base font-bold tracking-[0.2em] text-[#08B9E8] uppercase mb-2 flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-[#08B9E8]" />
+            TEAM & CULTURE
           </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#071827] tracking-[-0.03em] leading-tight">
+            Life at <span className="text-[#08B9E8]">Requin</span>
+          </h2>
+          <p className="mt-3 text-base sm:text-lg text-slate-600 font-normal leading-[1.6]">
+            Where people, ideas, and technology come together. Glimpse into our company celebrations, team hackathons, and collaborative culture.
+          </p>
         </div>
 
-        {/* Gallery Layout: One Large Prominent Featured Image + Supporting Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Main Featured Image - Crisp and Prominent */}
-          <div className="lg:col-span-7">
-            <div className="rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-xl transition-all duration-300">
-              <div className="relative h-[340px] sm:h-[440px] w-full overflow-hidden bg-slate-900">
-                <img
-                  src={displayActive.image}
-                  alt={displayActive.title}
-                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.02]"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-              <div className="p-6 sm:p-7 text-left bg-white">
-                <div className="flex items-center justify-between text-xs font-semibold text-[#08B9E8] uppercase tracking-wider mb-1.5">
-                  <span>{displayActive.category}</span>
-                  <span className="text-slate-400 font-normal">{displayActive.date}</span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-[#0B1726]">
-                  {displayActive.title}
-                </h3>
-                <p className="text-sm text-slate-600 mt-2 leading-relaxed">
-                  {displayActive.caption}
-                </p>
-              </div>
-            </div>
-          </div>
+        {/* ========================================================
+            CENTER-FOCUSED 3D CAROUSEL STAGE
+        ======================================================== */}
+        <div className="relative w-full max-w-6xl mx-auto h-[380px] sm:h-[440px] md:h-[480px] lg:h-[500px] flex items-center justify-center my-2 sm:my-3">
+          {/* Left Arrow Control */}
+          <button
+            onClick={handlePrev}
+            aria-label="Previous event"
+            className="absolute left-1 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 z-40 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/95 backdrop-blur-md border border-[#D8E5EC] text-[#071827] shadow-lg hover:border-[#08B9E8] hover:text-[#08B9E8] hover:shadow-[0_0_25px_rgba(8,185,232,0.35)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8]"
+          >
+            <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7" />
+          </button>
 
-          {/* Supporting Images Grid - Clicking swaps featured view */}
-          <div className="lg:col-span-5 grid grid-cols-2 gap-4">
-            {filteredImages.map((img) => {
-              const isSelected = img.id === displayActive.id;
+          {/* Right Arrow Control */}
+          <button
+            onClick={handleNext}
+            aria-label="Next event"
+            className="absolute right-1 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 z-40 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/95 backdrop-blur-md border border-[#D8E5EC] text-[#071827] shadow-lg hover:border-[#08B9E8] hover:text-[#08B9E8] hover:shadow-[0_0_25px_rgba(8,185,232,0.35)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8]"
+          >
+            <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7" />
+          </button>
+
+          {/* Carousel Track Cards */}
+          <div className="relative w-full h-full flex items-center justify-center overflow-visible">
+            {filteredList.map((item, idx) => {
+              const total = filteredList.length;
+              if (total === 0) return null;
+
+              // Calculate shortest circular difference
+              let diff = idx - activeIndex;
+              if (total > 2) {
+                diff = ((idx - activeIndex) % total + total) % total;
+                if (diff > total / 2) diff -= total;
+              }
+
+              const isCenter = diff === 0;
+
+              // Compute transforms and styling based on position
+              let translateX = '0%';
+              let scale = 1;
+              let opacity = 1;
+              let blur = 0;
+              let zIndex = 30;
+              let pointerEvents: 'auto' | 'none' = 'auto';
+
+              if (isCenter) {
+                translateX = '0%';
+                scale = 1;
+                opacity = 1;
+                blur = 0;
+                zIndex = 30;
+              } else if (diff === -1 || (total <= 2 && !isCenter && idx < activeIndex)) {
+                translateX = '-65%';
+                scale = 0.82;
+                opacity = 0.65;
+                blur = 2.5;
+                zIndex = 10;
+              } else if (diff === 1 || (total <= 2 && !isCenter && idx > activeIndex)) {
+                translateX = '65%';
+                scale = 0.82;
+                opacity = 0.65;
+                blur = 2.5;
+                zIndex = 10;
+              } else {
+                // Offstage cards
+                translateX = diff > 0 ? '130%' : '-130%';
+                scale = 0.7;
+                opacity = 0;
+                blur = 4;
+                zIndex = 0;
+                pointerEvents = 'none';
+              }
+
               return (
                 <div
-                  key={img.id}
-                  onClick={() => setActiveImage(img)}
-                  className={`group cursor-pointer rounded-xl overflow-hidden bg-white border transition-all duration-200 ${
-                    isSelected
-                      ? 'ring-2 ring-[#08B9E8] border-transparent shadow-md'
-                      : 'border-slate-200 hover:border-slate-400 shadow-sm'
+                  key={item.id}
+                  onClick={() => handleCardClick(idx)}
+                  style={{
+                    transform: `translate(-50%, -50%) translateX(${translateX}) scale(${scale})`,
+                    zIndex,
+                    opacity,
+                    filter: `blur(${blur}px)`,
+                    pointerEvents,
+                    transition: 'transform 600ms cubic-bezier(0.22, 1, 0.36, 1), opacity 600ms cubic-bezier(0.22, 1, 0.36, 1), filter 600ms cubic-bezier(0.22, 1, 0.36, 1)',
+                  }}
+                  className={`absolute left-1/2 top-1/2 w-[88%] sm:w-[74%] md:w-[62%] lg:w-[58%] h-[350px] sm:h-[400px] md:h-[440px] lg:h-[460px] rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer select-none bg-[#071827] border transition-all duration-300 ${
+                    isCenter
+                      ? 'border-slate-200/90 shadow-[0_25px_60px_-15px_rgba(7,24,39,0.35),0_0_40px_rgba(8,185,232,0.18)] ring-1 ring-[#08B9E8]/40 hover:border-[#08B9E8] hover:shadow-[0_30px_70px_-12px_rgba(8,185,232,0.3)]'
+                      : 'border-slate-300/70 hover:border-[#08B9E8]/70 hover:opacity-90 hover:scale-[0.86] hover:blur-0 shadow-lg'
                   }`}
                 >
-                  <div className="relative h-32 sm:h-36 w-full overflow-hidden bg-slate-200">
+                  <div className="relative w-full h-full group overflow-hidden">
+                    {/* Event Photo */}
                     <img
-                      src={img.image}
-                      alt={img.title}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      src={item.image}
+                      alt={item.title}
+                      className={`w-full h-full object-cover transition-transform duration-700 ${
+                        isCenter ? 'group-hover:scale-105' : ''
+                      }`}
                       referrerPolicy="no-referrer"
                     />
-                  </div>
-                  <div className="p-3 text-left">
-                    <div className="text-[11px] font-bold text-[#0B1726] truncate">
-                      {img.title}
+
+                    {/* Gradient Vignette Overlay (Dark Navy -> Transparent) */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#071827]/90 via-[#071827]/30 to-transparent pointer-events-none" />
+
+                    {/* Top-Left Category Badge */}
+                    <div className="absolute top-4 sm:top-5 left-4 sm:left-5 z-10">
+                      <span className="px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-[#071827]/80 backdrop-blur-md border border-[#08B9E8]/50 text-[#08B9E8] text-xs sm:text-sm font-bold tracking-wide shadow-md">
+                        {item.category}
+                      </span>
                     </div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">
-                      {img.category}
+
+                    {/* Center Circular Play/Explore Indicator */}
+                    {isCenter && (
+                      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/95 backdrop-blur-md text-[#071827] flex items-center justify-center shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:bg-[#08B9E8] group-hover:text-white group-hover:shadow-[0_0_30px_rgba(8,185,232,0.6)]">
+                          <Play className="w-6 h-6 sm:w-7 sm:h-7 ml-0.5 fill-current" />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Bottom Content: Clean Big Title and Explore Gallery */}
+                    <div className="absolute bottom-0 inset-x-0 p-5 sm:p-7 md:p-8 text-left z-10">
+                      <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-snug group-hover:text-[#08B9E8] transition-colors">
+                        {item.title}
+                      </h3>
+                      {isCenter && (
+                        <div className="mt-3 flex items-center gap-1.5 text-xs sm:text-sm font-bold text-white group-hover:text-[#08B9E8] transition-colors">
+                          <span>Explore Gallery</span>
+                          <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -114,7 +419,126 @@ export const LifeAtRequinSection: React.FC = () => {
             })}
           </div>
         </div>
+
+        {/* Pagination Indicators */}
+        <div className="flex items-center justify-center gap-2 mt-6 sm:mt-8 z-20 relative">
+          {filteredList.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setActiveIndex(idx)}
+              aria-label={`Go to slide ${idx + 1}`}
+              className={`h-2.5 rounded-full transition-all duration-400 focus:outline-none focus:ring-2 focus:ring-[#08B9E8] ${
+                idx === activeIndex
+                  ? 'w-8 bg-[#08B9E8] shadow-[0_0_12px_rgba(8,185,232,0.6)]'
+                  : 'w-2.5 bg-slate-300 hover:bg-slate-400'
+              }`}
+            />
+          ))}
+        </div>
       </div>
+
+      {/* ========================================================
+          INTERACTIVE PHOTO GALLERY MODAL (Optimized Height & Scrollable)
+      ======================================================== */}
+      {isModalOpen && activeModalItem && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-[#071827]/90 backdrop-blur-md animate-fadeIn"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-4xl bg-[#0B1726] rounded-2xl sm:rounded-3xl border border-slate-700/80 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-800 bg-[#071827] shrink-0">
+              <div className="flex items-center gap-2 sm:gap-3 truncate pr-2">
+                <span className="px-2.5 py-1 rounded-full bg-[#08B9E8]/20 border border-[#08B9E8]/40 text-[#08B9E8] text-xs font-bold tracking-wide shrink-0">
+                  {activeModalItem.category}
+                </span>
+                <span className="text-xs text-slate-400 font-medium truncate">
+                  {activeModalItem.date}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs text-slate-400 font-medium hidden sm:inline mr-1">
+                  Item {modalActiveIndex + 1} of {filteredList.length}
+                </span>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  aria-label="Close modal"
+                  className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition-all flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8]"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Featured Image & Navigation */}
+            <div className="relative flex-1 bg-black flex items-center justify-center overflow-hidden min-h-[200px] max-h-[46vh]">
+              <img
+                src={activeModalItem.image}
+                alt={activeModalItem.title}
+                className="w-full h-full object-contain max-h-[46vh]"
+                referrerPolicy="no-referrer"
+              />
+
+              {/* Prev / Next Buttons in Modal */}
+              <button
+                onClick={handleModalPrev}
+                aria-label="Previous photo"
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/60 hover:bg-[#08B9E8] text-white backdrop-blur-md border border-white/20 transition-all flex items-center justify-center focus:outline-none"
+              >
+                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+              </button>
+              <button
+                onClick={handleModalNext}
+                aria-label="Next photo"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/60 hover:bg-[#08B9E8] text-white backdrop-blur-md border border-white/20 transition-all flex items-center justify-center focus:outline-none"
+              >
+                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+              </button>
+            </div>
+
+            {/* Modal Bottom Panel: Title, Caption & All 6 Thumbnails */}
+            <div className="p-3.5 sm:p-4 bg-[#071827] border-t border-slate-800 text-left shrink-0">
+              <div className="mb-2.5">
+                <h3 className="text-sm sm:text-lg font-bold text-white leading-tight">
+                  {activeModalItem.title}
+                </h3>
+                <p className="text-[11px] sm:text-xs text-slate-300 leading-snug line-clamp-2 mt-0.5">
+                  {activeModalItem.caption}
+                </p>
+              </div>
+
+              {/* All 6 Thumbnails Strip */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-thin">
+                {filteredList.map((item, idx) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setModalActiveIndex(idx)}
+                    className={`relative w-16 h-11 sm:w-20 sm:h-13 rounded-lg overflow-hidden shrink-0 border transition-all duration-200 focus:outline-none ${
+                      idx === modalActiveIndex
+                        ? 'border-[#08B9E8] ring-2 ring-[#08B9E8]/60 scale-105 shadow-md'
+                        : 'border-slate-700 opacity-60 hover:opacity-100'
+                    }`}
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                    />
+                    <span className="absolute bottom-0.5 left-1 text-[8px] font-bold text-white bg-black/60 px-1 rounded truncate max-w-[90%]">
+                      {idx + 1}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

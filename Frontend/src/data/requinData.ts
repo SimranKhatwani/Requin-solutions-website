@@ -479,10 +479,12 @@ export interface StoryMilestone {
 export interface GalleryImage {
   id: string;
   title: string;
-  category: 'All' | '5th Anniversary' | 'Diwali' | '4th Anniversary' | 'Office Party';
+  category: 'All' | '5th Anniversary' | 'Diwali' | '4th Anniversary' | 'Office Party' | string;
   image: string;
   caption: string;
   date: string;
+  photoCount?: number;
+  photos?: string[];
 }
 
 export interface QuizQuestion {
@@ -677,37 +679,30 @@ export const OUR_STORY_MILESTONES: StoryMilestone[] = [
   {
     year: '2019',
     title: 'Foundation & Engineering Vision',
-    description: 'Requin Solutions was founded in Jaipur with a clear conviction: to engineer software solutions that solve real business problems without bloat.',
-    impact: 'Assembled founding team of 6 engineers and delivered our first 8 client software systems.',
-    tag: 'Origin'
-  },
-  {
-    year: '2020',
-    title: 'Enterprise Systems & Web Platforms',
-    description: 'Expanded core engineering capabilities into complex web applications, high-performance backends, and multi-tenant architectures.',
-    impact: 'Scaled delivery to 25+ projects and secured partnerships with prominent regional enterprises.',
-    tag: 'Expansion'
+    description: 'Requin Solutions began its journey in Jaipur with a focus on building practical software solutions that solve real business problems.',
+    impact: 'Built the founding team and delivered the first set of software solutions for clients.',
+    tag: 'Foundation'
   },
   {
     year: '2022',
-    title: 'Cloud Practice & DevOps Automation',
-    description: 'Established a dedicated cloud engineering and infrastructure division to design resilient AWS and GCP architectures with automated CI/CD pipelines.',
-    impact: 'Migrated 15+ legacy on-premises databases to high-availability managed cloud platforms.',
-    tag: 'Cloud Maturity'
+    title: 'Expanding Digital Capabilities',
+    description: 'Expanded beyond core software development into web applications, mobile solutions, cloud services, and business-focused technology platforms.',
+    impact: 'Strengthened engineering capabilities and expanded the range of digital solutions delivered to businesses.',
+    tag: 'Growth & Expansion'
   },
   {
-    year: '2023',
-    title: 'Product Studio & Requin Suite Incubation',
-    description: 'Leveraged deep enterprise domain experience to incubate proprietary software products: Requin Ops CRM and Requin AMS workforce management.',
-    impact: 'Deployed internal beta products to 1,000+ daily active users across partner organizations.',
-    tag: 'Innovation'
+    year: '2024',
+    title: 'From Projects to Products',
+    description: 'Focused on building scalable technology products alongside client solutions, with a stronger emphasis on automation, business efficiency, and digital transformation.',
+    impact: 'Introduced and expanded in-house products including Requin Ops, Requin AMS, Requin HRMS, and Requin Chat.',
+    tag: 'Innovation & Product Development'
   },
   {
-    year: '2024–Present',
-    title: 'Global Delivery & Scaled Digital Solutions',
-    description: 'Accelerating digital transformation across international markets with modern full-stack development, mobile ecosystems, and enterprise software.',
-    impact: 'Operating out of expanded Malviya Nagar headquarters with 45+ engineers and designers.',
-    tag: 'Scale'
+    year: '2026',
+    title: 'Building for the Next Generation of Digital Business',
+    description: 'Today, Requin Solutions combines software engineering, cloud technologies, digital solutions, and in-house products to help organizations build, transform, and grow.',
+    impact: 'Growing as a technology solutions company with 100+ talented employees, 2K+ apps developed, and a portfolio of business-focused digital products and solutions.',
+    tag: 'Present'
   }
 ];
 
@@ -715,50 +710,47 @@ export const LIFE_AT_REQUIN_GALLERY: GalleryImage[] = [
   {
     id: 'g-1',
     title: '5th Anniversary Grand Celebration',
-    category: '5th Anniversary',
+    category: '5th Anniversary (2024)',
     image: '/images/requin_software_team_1790576614688.jpg',
     caption: 'Celebrating half a decade of engineering excellence, team camaraderie, and shared milestones.',
-    date: 'Annual Gala 2024'
+    date: 'Annual Gala 2024',
+    photoCount: 18
   },
   {
     id: 'g-2',
-    title: 'Engineering Sprint & Product Demo Day',
-    category: 'Office Party',
+    title: 'An Evening to Unwind & Celebrate',
+    category: 'Office Party ',
     image: '/images/digital_agency_office_1790576645354.jpg',
     caption: 'Our quarterly demo day showcasing newly engineered features and cross-team design innovations.',
-    date: 'Quarterly Showcase'
+    date: 'Quarterly Showcase 2024',
+    photoCount: 12
   },
   {
     id: 'g-3',
-    title: 'Diwali Festive Evening at HQ',
-    category: 'Diwali',
+    title: 'Diwali Festive Evening at Requin',
+    category: 'Diwali Party (2024)',
     image: '/images/modern_software_mockup_1790576657118.jpg',
     caption: 'Tradition meets innovation: lighting up our Jaipur workspace with cultural warmth, sweets, and celebration.',
-    date: 'Festive Season'
+    date: 'Festive Season 2024',
+    photoCount: 24
   },
   {
     id: 'g-4',
-    title: '4th Anniversary Milestone Gala',
-    category: '4th Anniversary',
+    title: '4th Anniversary Milestone ',
+    category: '4th Anniversary (2023)',
     image: '/images/cloud_infrastructure_1790576629897.jpg',
     caption: 'Reflecting on four continuous years of high-velocity growth and rewarding our longest-tenured team members.',
-    date: 'Annual Milestone'
+    date: 'Annual Milestone 2023',
+    photoCount: 16
   },
   {
     id: 'g-5',
-    title: 'Collaborative Design & Architecture Sync',
-    category: 'Office Party',
+    title: 'Because Great Teams Have Fun Together',
+    category: 'Fun at Requin',
     image: '/images/requin_software_team_1790576614688.jpg',
-    caption: 'Cross-functional design and backend teams sketching system diagrams and user flows.',
-    date: 'Studio Culture'
-  },
-  {
-    id: 'g-6',
-    title: 'Diwali Office Decor & Festive Team Games',
-    category: 'Diwali',
-    image: '/images/digital_agency_office_1790576645354.jpg',
-    caption: 'Team games, traditional attire, and celebratory togetherness across all departments.',
-    date: 'Cultural Fellowship'
+    caption: 'Energizing offsite team building, outdoor recreational activities, sports tournaments, and creative games.',
+    date: 'Team Offsite 2024',
+    photoCount: 22
   }
 ];
 
