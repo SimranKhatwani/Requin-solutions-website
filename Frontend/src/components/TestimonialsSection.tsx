@@ -343,7 +343,7 @@ export const TestimonialsSection: React.FC = () => {
           HEADER CONTENT
       ======================================================== */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10 mb-12 sm:mb-16">
-        <div className="text-lg sm:text-xl md:text-2xl font-bold tracking-[0.2em] text-[#08B9E8] uppercase mb-3">
+        <div className="text-lg sm:text-xl md:text-2xl font-bold  tracking-[0.2em] text-[#08B9E8] uppercase mb-3">
           Client Feedback
         </div>
         

@@ -39,7 +39,7 @@ export const ContactSection: React.FC = () => {
   return (
     <section
       id="contact"
-      className="pt-14 sm:pt-18 md:pt-22 pb-20 sm:pb-24 md:pb-28 bg-[#F5FAFD] text-[#0B1726] relative overflow-hidden selection:bg-[#08B9E8]/20 selection:text-[#08B9E8]"
+      className="pt-12 sm:pt-16 md:pt-18 pb-20 sm:pb-24 md:pb-28 bg-[#F5FAFD] text-[#0B1726] relative overflow-hidden selection:bg-[#08B9E8]/20 selection:text-[#08B9E8]"
     >
       {/* Background Technology-Inspired Ambience & Keyframe Animations */}
       <style>{`
