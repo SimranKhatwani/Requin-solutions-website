@@ -389,11 +389,62 @@ export const INDIA_MOTOR_PRODUCT: ShowcaseProductItem = {
   visualSide: 'right',
 };
 
+export const NEXUSBILL_PRODUCT: ShowcaseProductItem = {
+  id: 'nexusbill',
+  title: 'NexusBill',
+  tagline: 'Enterprise Invoicing, Purchase Terminals & GST Accounting',
+  description: 'An advanced accounting and billing system managing GST-compliant B2B sales invoices, purchase terminals, real-time inventory valuation, and automated fiscal bookkeeping.',
+  category: 'Fintech & Enterprise Accounting',
+  badge: 'Billing & GST Suite',
+  features: [
+    'GST-compliant B2B sales invoicing with live receivables tracking and automated status reconciliation',
+    'Procurement & purchases terminal with Input Tax Credit (ITC) calculation and supplier distribution analytics',
+    'Real-time multi-category inventory tracking with stock alarms, low-stock alerts, and live asset valuation',
+    'Dynamic procurement trend curves and automated expenditure manifest registries',
+    'Multi-tier business admin controls, verified fiscal nodes, and comprehensive party ledger reports',
+  ],
+  bullets: [
+    'GST-compliant B2B sales invoicing & receivables',
+    'Purchases terminal with Input Tax Credit (ITC) tracking',
+    'Real-time multi-category inventory & stock alarms',
+    'Procurement trends & supplier distribution analytics',
+    'Automated fiscal ledger & multi-tier tax reconciliation',
+  ],
+  gallery: [
+    {
+      title: 'B2B Sales Invoices & Receivables',
+      caption: 'GST-compliant business invoice management, total receivables and collection tracking, and entity identity ledgers.',
+      image: '/images/products/nexusbill-sales.png',
+    },
+    {
+      title: 'Purchases Terminal & ITC Calculation',
+      caption: 'Fiscal procurement metrics, Input Tax Credit (ITC) reconciliation, procurement trends, and supplier distribution charts.',
+      image: '/images/products/nexusbill-purchases.png',
+    },
+    {
+      title: 'Real-Time Inventory & Overall Stock Valuation',
+      caption: 'Sectional inventory clusters, live stock alarms, catalog pricing, and multi-category asset valuation.',
+      image: '/images/products/nexusbill-inventory.png',
+    },
+  ],
+  metrics: [
+    { label: 'Invoice Generation', value: '<1.2s' },
+    { label: 'GST Tax Accuracy', value: '100%' },
+  ],
+  image: '/images/products/nexusbill-dashboard.png',
+  architectureDetails: [
+    'Real-time fiscal ledger database with cryptographic invoice node validation',
+    'High-throughput inventory sync engine with multi-category stock valuation and automated ITC computing',
+  ],
+  visualSide: 'right',
+};
+
 export const ALL_PRODUCTS: ShowcaseProductItem[] = [
   ...SHOWCASE_PRODUCTS,
   DINE_AND_DUSK_PRODUCT,
   RKB_ENTERPRISES_PRODUCT,
   INDIA_MOTOR_PRODUCT,
+  NEXUSBILL_PRODUCT,
 ];
 
 export const EXPLORE_MORE_PRODUCTS: ShowcaseProductItem[] = [
@@ -401,6 +452,7 @@ export const EXPLORE_MORE_PRODUCTS: ShowcaseProductItem[] = [
   DINE_AND_DUSK_PRODUCT,
   RKB_ENTERPRISES_PRODUCT,
   INDIA_MOTOR_PRODUCT,
+  NEXUSBILL_PRODUCT,
 ];
 
 export const REQUIN_PRODUCTS: ProductItem[] = ALL_PRODUCTS;
