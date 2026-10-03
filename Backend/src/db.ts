@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
-import { AdminUser, BlogDoc, ProjectDoc, StoryDoc, MediaDoc, ActivityDoc } from './types';
+import { AdminUser, BlogDoc, ProjectDoc, StoryDoc, MediaDoc, ActivityDoc, TestimonialDoc } from './types';
 
 const DATA_DIR = path.resolve(process.cwd(), 'data');
 const STORE_PATH = path.join(DATA_DIR, 'cms_store.json');
@@ -16,6 +16,7 @@ interface CMSDatabase {
   blogs: BlogDoc[];
   projects: ProjectDoc[];
   stories: StoryDoc[];
+  testimonials: TestimonialDoc[];
   media: MediaDoc[];
   activities: ActivityDoc[];
 }
@@ -395,7 +396,114 @@ const getInitialSeed = (): CMSDatabase => {
     },
   ];
 
-  return { adminUsers, blogs, projects, stories, media, activities };
+  const testimonials: TestimonialDoc[] = [
+    {
+      id: 'test-1',
+      name: 'Rohan Agarwal',
+      role: 'Restaurant Owner',
+      location: 'Jaipur, India',
+      quote: 'Our table booking and online food orders grew by 45% within two months.',
+      image: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=600&q=80',
+      isHighlighted: false,
+      status: 'PUBLISHED',
+      displayOrder: 1,
+      createdAt: '2026-01-10T10:00:00.000Z',
+      updatedAt: '2026-01-10T10:00:00.000Z',
+    },
+    {
+      id: 'test-2',
+      name: 'Lucas Miller',
+      role: 'Wholesaler',
+      location: 'Munich, Germany',
+      quote: 'Inventory tracking and bulk supply invoices became 10x faster for our business.',
+      image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+      isHighlighted: false,
+      status: 'PUBLISHED',
+      displayOrder: 2,
+      createdAt: '2026-01-12T10:00:00.000Z',
+      updatedAt: '2026-01-12T10:00:00.000Z',
+    },
+    {
+      id: 'test-3',
+      name: 'Vikramaditya Rathore',
+      role: 'Businessman',
+      location: 'Jaipur, India',
+      quote: 'The digital catalog and billing system made festive sales completely smooth.',
+      image: 'https://images.unsplash.com/photo-1615813967515-e1838c1c5116?auto=format&fit=crop&w=600&q=80',
+      isHighlighted: false,
+      status: 'PUBLISHED',
+      displayOrder: 3,
+      createdAt: '2026-01-15T10:00:00.000Z',
+      updatedAt: '2026-01-15T10:00:00.000Z',
+    },
+    {
+      id: 'test-4',
+      name: 'Sarah Jenkins',
+      role: 'E-Commerce Founder',
+      location: 'Austin, USA',
+      quote: 'The custom web store handled 20,000+ daily orders seamlessly without lagging.',
+      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80',
+      isHighlighted: false,
+      status: 'PUBLISHED',
+      displayOrder: 4,
+      createdAt: '2026-01-20T10:00:00.000Z',
+      updatedAt: '2026-01-20T10:00:00.000Z',
+    },
+    {
+      id: 'test-5',
+      name: 'Suresh Patel',
+      role: 'Supermarket Owner',
+      location: 'Ahmedabad, India',
+      quote: 'Barcode billing and profit reports save us over 2 hours every evening.',
+      image: 'https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?auto=format&fit=crop&w=600&q=80',
+      isHighlighted: false,
+      status: 'PUBLISHED',
+      displayOrder: 5,
+      createdAt: '2026-01-25T10:00:00.000Z',
+      updatedAt: '2026-01-25T10:00:00.000Z',
+    },
+    {
+      id: 'test-6',
+      name: 'Marco Rossi',
+      role: 'Logistics Director',
+      location: 'Milan, Italy',
+      quote: 'Live fleet route tracking and automated dispatch eliminated delivery delays.',
+      image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80',
+      isHighlighted: false,
+      status: 'PUBLISHED',
+      displayOrder: 6,
+      createdAt: '2026-02-01T10:00:00.000Z',
+      updatedAt: '2026-02-01T10:00:00.000Z',
+    },
+    {
+      id: 'test-7',
+      name: 'Pooja Sharma',
+      role: 'Retail Store Owner',
+      location: 'Surat, India',
+      quote: 'Customer order management and stock alerts are now completely automated.',
+      image: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&w=600&q=80',
+      isHighlighted: false,
+      status: 'PUBLISHED',
+      displayOrder: 7,
+      createdAt: '2026-02-05T10:00:00.000Z',
+      updatedAt: '2026-02-05T10:00:00.000Z',
+    },
+    {
+      id: 'test-8',
+      name: 'David Chen',
+      role: 'Import-Export Trader',
+      location: 'Singapore',
+      quote: 'Multi-currency billing and quote generator cut our client reply time in half.',
+      image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=600&q=80',
+      isHighlighted: false,
+      status: 'PUBLISHED',
+      displayOrder: 8,
+      createdAt: '2026-02-10T10:00:00.000Z',
+      updatedAt: '2026-02-10T10:00:00.000Z',
+    },
+  ];
+
+  return { adminUsers, blogs, projects, stories, testimonials, media, activities };
 };
 
 // Safe File-backed store operations
@@ -409,6 +517,10 @@ export class CMSStore {
       if (fs.existsSync(STORE_PATH)) {
         const raw = fs.readFileSync(STORE_PATH, 'utf-8');
         this.data = JSON.parse(raw);
+        if (this.data && !this.data.testimonials) {
+          this.data.testimonials = getInitialSeed().testimonials;
+          this.save(this.data);
+        }
         return this.data!;
       }
     } catch (err) {

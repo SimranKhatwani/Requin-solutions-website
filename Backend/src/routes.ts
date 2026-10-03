@@ -5,7 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import { CMSStore } from './db';
 import { requireAdminAuth, generateToken, AuthenticatedRequest } from './auth';
-import { BlogDoc, ProjectDoc, StoryDoc, MediaDoc } from './types';
+import { BlogDoc, ProjectDoc, StoryDoc, MediaDoc, TestimonialDoc } from './types';
 
 export const apiRouter = express.Router();
 
@@ -123,6 +123,16 @@ apiRouter.get('/stories', (_req: Request, res: Response) => {
     .sort((a, b) => a.displayOrder - b.displayOrder);
 
   res.json({ success: true, count: stories.length, data: stories });
+});
+
+// Public: Get published testimonials
+apiRouter.get('/testimonials', (_req: Request, res: Response) => {
+  const db = CMSStore.get();
+  const testimonials = (db.testimonials || [])
+    .filter((t) => t.status === 'PUBLISHED')
+    .sort((a, b) => a.displayOrder - b.displayOrder);
+
+  res.json({ success: true, count: testimonials.length, data: testimonials });
 });
 
 // ========================================================
@@ -674,4 +684,93 @@ apiRouter.delete('/admin/media/:id', requireAdminAuth, (req: AuthenticatedReques
   CMSStore.addActivity(`Deleted media asset ${media.originalName}`, 'media', media.originalName, req.adminUser!.email);
 
   res.json({ success: true, message: 'Media file deleted.' });
+});
+
+// ========================================================
+// 8. ADMIN TESTIMONIALS MANAGEMENT
+// ========================================================
+
+apiRouter.get('/admin/testimonials', requireAdminAuth, (_req: AuthenticatedRequest, res: Response) => {
+  const db = CMSStore.get();
+  const list = [...(db.testimonials || [])].sort((a, b) => a.displayOrder - b.displayOrder);
+  res.json({ success: true, count: list.length, data: list });
+});
+
+apiRouter.post('/admin/testimonials', requireAdminAuth, (req: AuthenticatedRequest, res: Response) => {
+  const { name, role, location, quote, image, isHighlighted, status, displayOrder } = req.body;
+  if (!name || !role || !quote) {
+    res.status(400).json({ error: 'Name, role, and quote are required.' });
+    return;
+  }
+
+  const db = CMSStore.get();
+  if (!db.testimonials) db.testimonials = [];
+
+  const newTestimonial: TestimonialDoc = {
+    id: `test-${Date.now()}`,
+    name,
+    role,
+    location: location || '',
+    quote,
+    image: image || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
+    isHighlighted: !!isHighlighted,
+    status: status === 'DRAFT' ? 'DRAFT' : 'PUBLISHED',
+    displayOrder: typeof displayOrder === 'number' ? displayOrder : db.testimonials.length + 1,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  db.testimonials.push(newTestimonial);
+  CMSStore.save(db);
+  CMSStore.addActivity(`Created testimonial for ${newTestimonial.name}`, 'testimonial', newTestimonial.name, req.adminUser!.email);
+
+  res.status(201).json({ success: true, data: newTestimonial });
+});
+
+apiRouter.put('/admin/testimonials/:id', requireAdminAuth, (req: AuthenticatedRequest, res: Response) => {
+  const db = CMSStore.get();
+  if (!db.testimonials) db.testimonials = [];
+  const idx = db.testimonials.findIndex((t) => t.id === req.params.id);
+  if (idx === -1) {
+    res.status(404).json({ error: 'Testimonial not found.' });
+    return;
+  }
+
+  const existing = db.testimonials[idx];
+  const { name, role, location, quote, image, isHighlighted, status, displayOrder } = req.body;
+
+  const updated: TestimonialDoc = {
+    ...existing,
+    name: name ?? existing.name,
+    role: role ?? existing.role,
+    location: location !== undefined ? location : existing.location,
+    quote: quote ?? existing.quote,
+    image: image ?? existing.image,
+    isHighlighted: isHighlighted !== undefined ? isHighlighted : existing.isHighlighted,
+    status: status ?? existing.status,
+    displayOrder: typeof displayOrder === 'number' ? displayOrder : existing.displayOrder,
+    updatedAt: new Date().toISOString(),
+  };
+
+  db.testimonials[idx] = updated;
+  CMSStore.save(db);
+  CMSStore.addActivity(`Updated testimonial for ${updated.name}`, 'testimonial', updated.name, req.adminUser!.email);
+
+  res.json({ success: true, data: updated });
+});
+
+apiRouter.delete('/admin/testimonials/:id', requireAdminAuth, (req: AuthenticatedRequest, res: Response) => {
+  const db = CMSStore.get();
+  if (!db.testimonials) db.testimonials = [];
+  const idx = db.testimonials.findIndex((t) => t.id === req.params.id);
+  if (idx === -1) {
+    res.status(404).json({ error: 'Testimonial not found.' });
+    return;
+  }
+
+  const deleted = db.testimonials.splice(idx, 1)[0];
+  CMSStore.save(db);
+  CMSStore.addActivity(`Deleted testimonial for ${deleted.name}`, 'testimonial', deleted.name, req.adminUser!.email);
+
+  res.json({ success: true, message: 'Testimonial deleted successfully.' });
 });

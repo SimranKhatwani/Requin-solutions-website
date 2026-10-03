@@ -476,15 +476,24 @@ export interface StoryMilestone {
   tag: string;
 }
 
+export interface GalleryPhotoItem {
+  id: string;
+  image: string;
+  year: string;
+  title?: string;
+  caption?: string;
+}
+
 export interface GalleryImage {
   id: string;
   title: string;
-  category: 'All' | '5th Anniversary' | 'Diwali' | '4th Anniversary' | 'Office Party' | string;
+  category: 'All' | '5th Anniversary' | 'Diwali' | 'Diwali Party' | '4th Anniversary' | 'Office Party' | 'Fun at Requin' | string;
   image: string;
   caption: string;
   date: string;
   photoCount?: number;
-  photos?: string[];
+  years?: string[];
+  photos?: GalleryPhotoItem[];
 }
 
 export interface QuizQuestion {
@@ -505,12 +514,12 @@ export const REQUIN_COMPANY_INFO = {
   establishedYear: '2019',
   headquarters: 'Plot no 6/397, 1st Floor, Sec-6, Malviya Nagar, Jaipur, Rajasthan (302017)',
   emails: {
-    general: 'info@requinsolutions.com',
-    careers: 'hr@requinsolutions.com',
+    general: 'Info@requinsolutions.com',
+    careers: 'Hr@requinsolutions.com',
   },
   phones: {
-    primary: '+91 141 356 8920',
-    support: '+91 982 901 2489',
+    primary: '+91-9352220187',
+    
   },
   aboutProse: `Requin Solutions is an innovative technology enterprise delivering tailored software development, scalable cloud systems, intuitive mobile applications, and digital business solutions. We collaborate with high-growth startups and established corporations across North America, Europe, the Middle East, and Asia Pacific to engineer mission-critical digital products that elevate operational velocity and create lasting market value.`,
   experienceMetrics: [
@@ -710,38 +719,155 @@ export const LIFE_AT_REQUIN_GALLERY: GalleryImage[] = [
   {
     id: 'g-1',
     title: '5th Anniversary Grand Celebration',
-    category: '5th Anniversary (2024)',
+    category: '5th Anniversary',
     image: '/images/requin_software_team_1790576614688.jpg',
     caption: 'Celebrating half a decade of engineering excellence, team camaraderie, and shared milestones.',
     date: 'Annual Gala 2024',
-    photoCount: 18
+    photoCount: 18,
+    years: ['2024'],
+    photos: [
+      {
+        id: 'anniv5-1',
+        image: '/images/requin_software_team_1790576614688.jpg',
+        year: '2024',
+        title: '5th Anniversary Grand Gala 2024',
+        caption: 'Celebrating half a decade of engineering excellence, customer partnerships, and high-velocity team growth.'
+      },
+      {
+        id: 'anniv5-2',
+        image: '/images/digital_agency_office_1790576645354.jpg',
+        year: '2024',
+        title: 'Founders Keynote & Excellence Awards 2024',
+        caption: 'Honoring long-standing team members and leaders who shaped Requin Solutions from early beginnings.'
+      },
+      {
+        id: 'anniv5-3',
+        image: '/images/experience-team-collaboration.jpg',
+        year: '2024',
+        title: 'Future Horizons & Vision 2024',
+        caption: 'Unveiling our next generation AI, enterprise cloud engineering, and global product roadmap.'
+      }
+    ]
   },
   {
     id: 'g-2',
     title: 'An Evening to Unwind & Celebrate',
-    category: 'Office Party ',
+    category: 'Office Party',
     image: '/images/digital_agency_office_1790576645354.jpg',
     caption: 'Our quarterly demo day showcasing newly engineered features and cross-team design innovations.',
-    date: 'Quarterly Showcase 2024',
-    photoCount: 12
+    date: 'Quarterly Showcase & Events',
+    photoCount: 12,
+    years: ['2024', '2023', '2022'],
+    photos: [
+      {
+        id: 'op-2024-1',
+        image: '/images/digital_agency_office_1790576645354.jpg',
+        year: '2024',
+        title: 'Office Party 2024 - Annual Success Celebration',
+        caption: 'Teams across engineering, product, and operations coming together for an unforgettable celebration evening.'
+      },
+      {
+        id: 'op-2024-2',
+        image: '/images/experience-team-collaboration.jpg',
+        year: '2024',
+        title: 'Office Party 2024 - Mid-Year Team Mixer',
+        caption: 'Cross-functional engineering and design team collaboration session followed by games, pizza, and live music.'
+      },
+      {
+        id: 'op-2023-1',
+        image: '/images/cloud_infrastructure_1790576629897.jpg',
+        year: '2023',
+        title: 'Office Party 2023 - Annual Gala Dinner',
+        caption: 'Recognizing outstanding developers and contributors at the annual 2023 office party in Jaipur.'
+      },
+      {
+        id: 'op-2023-2',
+        image: '/images/requin_software_team_1790576614688.jpg',
+        year: '2023',
+        title: 'Office Party 2023 - Q4 Milestone Celebration',
+        caption: 'Celebrating year-end milestones, team wins, and record client project deliveries.'
+      },
+      {
+        id: 'op-2022-1',
+        image: '/images/hero-developer-desk.jpg',
+        year: '2022',
+        title: 'Office Party 2022 - Winter Social Gathering',
+        caption: 'Cozy winter celebration with team awards, live performances, and fun interactive activities.'
+      }
+    ]
   },
   {
     id: 'g-3',
     title: 'Diwali Festive Evening at Requin',
-    category: 'Diwali Party (2024)',
+    category: 'Diwali Party',
     image: '/images/modern_software_mockup_1790576657118.jpg',
     caption: 'Tradition meets innovation: lighting up our Jaipur workspace with cultural warmth, sweets, and celebration.',
-    date: 'Festive Season 2024',
-    photoCount: 24
+    date: 'Festive Season Celebrations',
+    photoCount: 24,
+    years: ['2024', '2023', '2022'],
+    photos: [
+      {
+        id: 'dp-2024-1',
+        image: '/images/modern_software_mockup_1790576657118.jpg',
+        year: '2024',
+        title: 'Diwali Party 2024 - Traditional Puja & Diyas',
+        caption: 'Lighting up our Jaipur workspace with handcrafted diyas, floral rangoli designs, and auspicious prayers.'
+      },
+      {
+        id: 'dp-2024-2',
+        image: '/images/requin_software_team_1790576614688.jpg',
+        year: '2024',
+        title: 'Diwali Party 2024 - Ethnic Wear Day & Sweets Distribution',
+        caption: 'Team dressed in vibrant festive attire celebrating prosperity, sweet hampers, and camaraderie.'
+      },
+      {
+        id: 'dp-2023-1',
+        image: '/images/digital_agency_office_1790576645354.jpg',
+        year: '2023',
+        title: 'Diwali Party 2023 - Cultural Evening & Workspace Decor',
+        caption: 'Festive office decor, cultural performances, and evening celebrations with the entire Requin family.'
+      },
+      {
+        id: 'dp-2023-2',
+        image: '/images/experience-team-collaboration.jpg',
+        year: '2023',
+        title: 'Diwali Party 2023 - Rangoli Art Contest & Team Games',
+        caption: 'Creative rangoli competitions and celebratory rewards for the most artistic workspace team.'
+      },
+      {
+        id: 'dp-2022-1',
+        image: '/images/cloud_infrastructure_1790576629897.jpg',
+        year: '2022',
+        title: 'Diwali Party 2022 - Festival of Lights Celebration',
+        caption: 'A heartfelt celebration of togetherness, traditional sweets, and festive illumination.'
+      }
+    ]
   },
   {
     id: 'g-4',
-    title: '4th Anniversary Milestone ',
-    category: '4th Anniversary (2023)',
+    title: '4th Anniversary Milestone',
+    category: '4th Anniversary',
     image: '/images/cloud_infrastructure_1790576629897.jpg',
     caption: 'Reflecting on four continuous years of high-velocity growth and rewarding our longest-tenured team members.',
     date: 'Annual Milestone 2023',
-    photoCount: 16
+    photoCount: 16,
+    years: ['2023'],
+    photos: [
+      {
+        id: 'anniv4-1',
+        image: '/images/cloud_infrastructure_1790576629897.jpg',
+        year: '2023',
+        title: '4th Anniversary Milestone Gala 2023',
+        caption: 'Reflecting on four continuous years of high-velocity growth and rewarding our exceptional team members.'
+      },
+      {
+        id: 'anniv4-2',
+        image: '/images/hero-developer-desk.jpg',
+        year: '2023',
+        title: '4th Anniversary - Engineering Excellence Awards',
+        caption: 'Recognizing team achievements across custom software, product engineering, and client success.'
+      }
+    ]
   },
   {
     id: 'g-5',
@@ -749,8 +875,32 @@ export const LIFE_AT_REQUIN_GALLERY: GalleryImage[] = [
     category: 'Fun at Requin',
     image: '/images/requin_software_team_1790576614688.jpg',
     caption: 'Energizing offsite team building, outdoor recreational activities, sports tournaments, and creative games.',
-    date: 'Team Offsite 2024',
-    photoCount: 22
+    date: 'Team Offsite & Fun',
+    photoCount: 22,
+    years: ['2024', '2023'],
+    photos: [
+      {
+        id: 'fun-2024-1',
+        image: '/images/requin_software_team_1790576614688.jpg',
+        year: '2024',
+        title: 'Annual Team Offsite & Adventure Trip 2024',
+        caption: 'Energizing offsite team building, outdoor activities, sports tournaments, and creative games.'
+      },
+      {
+        id: 'fun-2024-2',
+        image: '/images/experience-team-collaboration.jpg',
+        year: '2024',
+        title: 'Cricket Premier League & Sports Day 2024',
+        caption: 'Action-packed friendly sports tournaments and weekend team bonding matches.'
+      },
+      {
+        id: 'fun-2023-1',
+        image: '/images/digital_agency_office_1790576645354.jpg',
+        year: '2023',
+        title: 'Gaming Championship & Hack-Fun Day 2023',
+        caption: 'High-energy esports competitions, board games, and fun hackathon challenges in the office.'
+      }
+    ]
   }
 ];
 

@@ -9,6 +9,7 @@ import { OurStorySection } from '../components/OurStorySection';
 import { LifeAtRequinSection } from '../components/LifeAtRequinSection';
 import { QuizCTA } from '../components/QuizCTA';
 import { QuizModal } from '../components/QuizModal';
+import { TestimonialsSection } from '../components/TestimonialsSection';
 import { ContactSection } from '../components/ContactSection';
 import { LoginModal } from '../components/LoginModal';
 import { ChatWidget } from '../components/ChatWidget';
@@ -79,6 +80,9 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ initialScrollTo 
 
         {/* Quiz CTA: Abstract Cyan/Blue Visual */}
         <QuizCTA onStartQuiz={() => setIsQuizOpen(true)} />
+
+        {/* Our Clients Love Us: Moving Testimonials Carousel */}
+        <TestimonialsSection />
 
         {/* Contact Section: Office Info & Beautiful Clean White Card Form */}
         <ContactSection />

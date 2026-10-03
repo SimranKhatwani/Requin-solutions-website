@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  Camera,
   Calendar,
   ChevronLeft,
   ChevronRight,
   Play,
   ArrowRight,
   X,
-  Sparkles,
-  Maximize2
+  Sparkles
 } from 'lucide-react';
-import { LIFE_AT_REQUIN_GALLERY, GalleryImage } from '../data/requinData';
+import { LIFE_AT_REQUIN_GALLERY, GalleryImage, GalleryPhotoItem } from '../data/requinData';
 
 export const LifeAtRequinSection: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalActiveIndex, setModalActiveIndex] = useState<number>(0);
+  const [modalSelectedYear, setModalSelectedYear] = useState<string>('All');
+  const [modalPhotoIndex, setModalPhotoIndex] = useState<number>(0);
 
   // Touch swipe support
   const touchStartXRef = useRef<number | null>(null);
@@ -24,7 +24,7 @@ export const LifeAtRequinSection: React.FC = () => {
 
   const filteredList: GalleryImage[] = LIFE_AT_REQUIN_GALLERY;
 
-  // Safe navigation
+  // Safe carousel navigation
   const handlePrev = useCallback(() => {
     if (filteredList.length <= 1) return;
     setActiveIndex((prev) => (prev === 0 ? filteredList.length - 1 : prev - 1));
@@ -35,16 +35,79 @@ export const LifeAtRequinSection: React.FC = () => {
     setActiveIndex((prev) => (prev === filteredList.length - 1 ? 0 : prev + 1));
   }, [filteredList.length]);
 
-  // Modal navigation
+  const activeModalItem = filteredList[modalActiveIndex] || filteredList[0];
+
+  // Derive photos for the active modal event
+  const allEventPhotos: GalleryPhotoItem[] =
+    activeModalItem?.photos && activeModalItem.photos.length > 0
+      ? activeModalItem.photos
+      : [
+          {
+            id: activeModalItem?.id || 'photo-default',
+            image: activeModalItem?.image || '',
+            year: activeModalItem?.date || '2024',
+            title: activeModalItem?.title || '',
+            caption: activeModalItem?.caption || ''
+          }
+        ];
+
+  const availableYears: string[] =
+    activeModalItem?.years && activeModalItem.years.length > 0
+      ? activeModalItem.years
+      : Array.from(new Set(allEventPhotos.map((p) => p.year).filter(Boolean)));
+
+  const displayedPhotos: GalleryPhotoItem[] =
+    modalSelectedYear === 'All'
+      ? allEventPhotos
+      : allEventPhotos.filter((p) => p.year === modalSelectedYear);
+
+  const safePhotos: GalleryPhotoItem[] =
+    displayedPhotos.length > 0 ? displayedPhotos : allEventPhotos;
+
+  const currentActivePhoto: GalleryPhotoItem =
+    safePhotos[modalPhotoIndex] || safePhotos[0] || allEventPhotos[0];
+
+  // Modal navigation within photos
   const handleModalPrev = useCallback(() => {
-    if (filteredList.length <= 1) return;
-    setModalActiveIndex((prev) => (prev === 0 ? filteredList.length - 1 : prev - 1));
-  }, [filteredList.length]);
+    if (safePhotos.length <= 1) return;
+    setModalPhotoIndex((prev) => (prev === 0 ? safePhotos.length - 1 : prev - 1));
+  }, [safePhotos.length]);
 
   const handleModalNext = useCallback(() => {
-    if (filteredList.length <= 1) return;
-    setModalActiveIndex((prev) => (prev === filteredList.length - 1 ? 0 : prev + 1));
-  }, [filteredList.length]);
+    if (safePhotos.length <= 1) return;
+    setModalPhotoIndex((prev) => (prev === safePhotos.length - 1 ? 0 : prev + 1));
+  }, [safePhotos.length]);
+
+  const handleYearChange = (year: string) => {
+    setModalSelectedYear(year);
+    setModalPhotoIndex(0);
+  };
+
+  const handleOpenModal = (index: number) => {
+    setModalActiveIndex(index);
+    setModalSelectedYear('All');
+    setModalPhotoIndex(0);
+    setIsModalOpen(true);
+  };
+
+  // Lock background page scroll when modal is open
+  useEffect(() => {
+    if (isModalOpen) {
+      const originalOverflow = document.body.style.overflow;
+      const originalPaddingRight = document.body.style.paddingRight;
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+      document.body.style.overflow = 'hidden';
+      if (scrollBarWidth > 0) {
+        document.body.style.paddingRight = `${scrollBarWidth}px`;
+      }
+
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        document.body.style.paddingRight = originalPaddingRight;
+      };
+    }
+  }, [isModalOpen]);
 
   // Autoplay functionality (5.5s)
   useEffect(() => {
@@ -104,14 +167,11 @@ export const LifeAtRequinSection: React.FC = () => {
   // Card click behavior
   const handleCardClick = (index: number) => {
     if (index === activeIndex) {
-      setModalActiveIndex(index);
-      setIsModalOpen(true);
+      handleOpenModal(index);
     } else {
       setActiveIndex(index);
     }
   };
-
-  const activeModalItem = filteredList[modalActiveIndex] || filteredList[0];
 
   return (
     <section
@@ -438,102 +498,187 @@ export const LifeAtRequinSection: React.FC = () => {
       </div>
 
       {/* ========================================================
-          INTERACTIVE PHOTO GALLERY MODAL (Optimized Height & Scrollable)
+          INTERACTIVE PHOTO GALLERY MODAL (Scroll-Isolated, Full Cover Image, Summary & Thumbnails)
       ======================================================== */}
       {isModalOpen && activeModalItem && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-[#071827]/90 backdrop-blur-md animate-fadeIn"
+          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-[#071827]/90 backdrop-blur-md animate-fadeIn overflow-y-auto overscroll-contain"
           onClick={() => setIsModalOpen(false)}
         >
           <div
-            className="relative w-full max-w-4xl bg-[#0B1726] rounded-2xl sm:rounded-3xl border border-slate-700/80 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            className="relative w-[95vw] max-w-5xl lg:max-w-6xl bg-[#081524] rounded-2xl sm:rounded-3xl border border-slate-700/80 shadow-[0_25px_80px_rgba(0,0,0,0.85),0_0_50px_rgba(8,185,232,0.18)] overflow-hidden flex flex-col max-h-[90vh] my-auto overscroll-contain"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-800 bg-[#071827] shrink-0">
-              <div className="flex items-center gap-2 sm:gap-3 truncate pr-2">
-                <span className="px-2.5 py-1 rounded-full bg-[#08B9E8]/20 border border-[#08B9E8]/40 text-[#08B9E8] text-xs font-bold tracking-wide shrink-0">
-                  {activeModalItem.category}
-                </span>
-                <span className="text-xs text-slate-400 font-medium truncate">
-                  {activeModalItem.date}
-                </span>
-              </div>
+            {/* Modal Top Header (Fixed at top of modal) */}
+            <div className="px-4 sm:px-6 py-3 sm:py-3.5 border-b border-slate-800 bg-[#071827] shrink-0 z-20">
+              <div className="flex items-center justify-between gap-3">
+                {/* Left: Badge & Big Prominent Title */}
+                <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
+                  <span className="px-3 py-1 rounded-full bg-[#08B9E8]/15 border border-[#08B9E8]/40 text-[#08B9E8] text-xs sm:text-sm font-extrabold tracking-wide shrink-0 shadow-[0_0_15px_rgba(8,185,232,0.15)]">
+                    {activeModalItem.category}
+                  </span>
+                  <h2 className="text-base sm:text-xl md:text-2xl font-extrabold text-white tracking-tight truncate leading-tight">
+                    {activeModalItem.title}
+                  </h2>
+                </div>
 
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="text-xs text-slate-400 font-medium hidden sm:inline mr-1">
-                  Item {modalActiveIndex + 1} of {filteredList.length}
-                </span>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  aria-label="Close modal"
-                  className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition-all flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8]"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Modal Featured Image & Navigation */}
-            <div className="relative flex-1 bg-black flex items-center justify-center overflow-hidden min-h-[200px] max-h-[46vh]">
-              <img
-                src={activeModalItem.image}
-                alt={activeModalItem.title}
-                className="w-full h-full object-contain max-h-[46vh]"
-                referrerPolicy="no-referrer"
-              />
-
-              {/* Prev / Next Buttons in Modal */}
-              <button
-                onClick={handleModalPrev}
-                aria-label="Previous photo"
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/60 hover:bg-[#08B9E8] text-white backdrop-blur-md border border-white/20 transition-all flex items-center justify-center focus:outline-none"
-              >
-                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-              </button>
-              <button
-                onClick={handleModalNext}
-                aria-label="Next photo"
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/60 hover:bg-[#08B9E8] text-white backdrop-blur-md border border-white/20 transition-all flex items-center justify-center focus:outline-none"
-              >
-                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-              </button>
-            </div>
-
-            {/* Modal Bottom Panel: Title, Caption & All 6 Thumbnails */}
-            <div className="p-3.5 sm:p-4 bg-[#071827] border-t border-slate-800 text-left shrink-0">
-              <div className="mb-2.5">
-                <h3 className="text-sm sm:text-lg font-bold text-white leading-tight">
-                  {activeModalItem.title}
-                </h3>
-                <p className="text-[11px] sm:text-xs text-slate-300 leading-snug line-clamp-2 mt-0.5">
-                  {activeModalItem.caption}
-                </p>
-              </div>
-
-              {/* All 6 Thumbnails Strip */}
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-thin">
-                {filteredList.map((item, idx) => (
+                {/* Right: Counter & Close Button */}
+                <div className="flex items-center gap-2.5 shrink-0">
+                  <span className="text-xs text-slate-300 font-semibold bg-slate-800/90 border border-slate-700/80 px-2.5 py-1 rounded-full hidden sm:inline">
+                    Photo <span className="text-[#08B9E8] font-bold">{modalPhotoIndex + 1}</span> of {safePhotos.length}
+                  </span>
                   <button
-                    key={item.id}
-                    onClick={() => setModalActiveIndex(idx)}
-                    className={`relative w-16 h-11 sm:w-20 sm:h-13 rounded-lg overflow-hidden shrink-0 border transition-all duration-200 focus:outline-none ${
-                      idx === modalActiveIndex
-                        ? 'border-[#08B9E8] ring-2 ring-[#08B9E8]/60 scale-105 shadow-md'
-                        : 'border-slate-700 opacity-60 hover:opacity-100'
-                    }`}
+                    onClick={() => setIsModalOpen(false)}
+                    aria-label="Close modal"
+                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8] shadow-md hover:scale-105"
                   >
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
-                    <span className="absolute bottom-0.5 left-1 text-[8px] font-bold text-white bg-black/60 px-1 rounded truncate max-w-[90%]">
-                      {idx + 1}
-                    </span>
+                    <X className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
-                ))}
+                </div>
+              </div>
+
+              {/* Integrated Modern Year Category Filter Tabs */}
+              {availableYears.length > 1 && (
+                <div className="flex items-center gap-2.5 mt-2.5 pt-2.5 border-t border-slate-800/80 overflow-x-auto scrollbar-none">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mr-1 shrink-0">
+                    <Calendar className="w-3.5 h-3.5 text-[#08B9E8]" />
+                    Filter by Year:
+                  </span>
+                  <div className="inline-flex p-0.5 rounded-lg bg-slate-900/90 border border-slate-800 gap-1 shrink-0">
+                    <button
+                      onClick={() => handleYearChange('All')}
+                      className={`px-3 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 ${
+                        modalSelectedYear === 'All'
+                          ? 'bg-[#08B9E8] text-[#071827] shadow-sm font-extrabold'
+                          : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                      }`}
+                    >
+                      All Photos
+                      <span
+                        className={`px-1.5 py-0.2 rounded-full text-[10px] ${
+                          modalSelectedYear === 'All'
+                            ? 'bg-[#071827]/20 text-[#071827] font-extrabold'
+                            : 'bg-slate-800 text-slate-400 font-semibold'
+                        }`}
+                      >
+                        {allEventPhotos.length}
+                      </span>
+                    </button>
+                    {availableYears.map((yr) => {
+                      const yrCount = allEventPhotos.filter((p) => p.year === yr).length;
+                      const isSelected = modalSelectedYear === yr;
+                      return (
+                        <button
+                          key={yr}
+                          onClick={() => handleYearChange(yr)}
+                          className={`px-3 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 ${
+                            isSelected
+                              ? 'bg-[#08B9E8] text-[#071827] shadow-sm font-extrabold'
+                              : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                          }`}
+                        >
+                          {yr}
+                          {yrCount > 0 && (
+                            <span
+                              className={`px-1.5 py-0.2 rounded-full text-[10px] ${
+                                isSelected
+                                  ? 'bg-[#071827]/20 text-[#071827] font-extrabold'
+                                  : 'bg-slate-800 text-slate-400 font-semibold'
+                              }`}
+                            >
+                              {yrCount}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Scrollable Content Area */}
+            <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-thin min-h-0 flex flex-col">
+              {/* Modal Full Cover Image Stage (No Black Letterboxing) */}
+              <div className="relative w-full h-[260px] sm:h-[320px] md:h-[360px] lg:h-[390px] overflow-hidden bg-[#071827] shrink-0">
+                <img
+                  src={currentActivePhoto.image}
+                  alt={currentActivePhoto.title || activeModalItem.title}
+                  className="w-full h-full object-cover transition-all duration-300"
+                  referrerPolicy="no-referrer"
+                />
+
+                {/* Prev / Next Navigation Floating Buttons */}
+                {safePhotos.length > 1 && (
+                  <>
+                    <button
+                      onClick={handleModalPrev}
+                      aria-label="Previous photo"
+                      className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-[#08B9E8] text-white hover:text-[#071827] backdrop-blur-md border border-white/20 hover:scale-105 shadow-xl transition-all flex items-center justify-center focus:outline-none z-10"
+                    >
+                      <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </button>
+                    <button
+                      onClick={handleModalNext}
+                      aria-label="Next photo"
+                      className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-[#08B9E8] text-white hover:text-[#071827] backdrop-blur-md border border-white/20 hover:scale-105 shadow-xl transition-all flex items-center justify-center focus:outline-none z-10"
+                    >
+                      <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Modal Bottom Summary Panel & Thumbnails Strip */}
+              <div className="p-3.5 sm:p-4 md:p-5 bg-[#06111E] border-t border-slate-800 text-left shrink-0 mt-auto">
+                <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-1.5">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-base sm:text-lg md:text-xl font-extrabold text-white leading-tight">
+                      {currentActivePhoto.title || activeModalItem.title}
+                    </h3>
+                    {currentActivePhoto.year && (
+                      <span className="px-2 py-0.5 rounded-full bg-[#08B9E8]/15 border border-[#08B9E8]/35 text-[#08B9E8] text-xs font-bold">
+                        {currentActivePhoto.year}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-400 font-medium shrink-0">
+                    {modalSelectedYear !== 'All' ? `Filtered by ${modalSelectedYear}` : 'All photos'} ({safePhotos.length} {safePhotos.length === 1 ? 'item' : 'items'})
+                  </p>
+                </div>
+
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed line-clamp-2 mb-3">
+                  {currentActivePhoto.caption || activeModalItem.caption}
+                </p>
+
+                {/* Thumbnails Strip with Year Badges to select and see all images */}
+                <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto pb-1 pt-0.5 scrollbar-thin">
+                  {safePhotos.map((photo, idx) => (
+                    <button
+                      key={photo.id || idx}
+                      onClick={() => setModalPhotoIndex(idx)}
+                      className={`relative w-20 h-14 sm:w-24 sm:h-16 rounded-xl overflow-hidden shrink-0 border transition-all duration-200 focus:outline-none group ${
+                        idx === modalPhotoIndex
+                          ? 'border-[#08B9E8] ring-2 ring-[#08B9E8]/80 scale-105 shadow-[0_0_15px_rgba(8,185,232,0.4)]'
+                          : 'border-slate-700/80 opacity-60 hover:opacity-100 hover:border-slate-500'
+                      }`}
+                    >
+                      <img
+                        src={photo.image}
+                        alt={photo.title || `Photo ${idx + 1}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
+                      <span className="absolute top-1 right-1 text-[9px] font-bold text-[#08B9E8] bg-black/80 px-1.5 py-0.5 rounded-full border border-[#08B9E8]/30">
+                        {photo.year}
+                      </span>
+                      <span className="absolute bottom-1 left-1.5 text-[10px] font-bold text-white bg-black/80 px-1.5 py-0.5 rounded">
+                        #{idx + 1}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

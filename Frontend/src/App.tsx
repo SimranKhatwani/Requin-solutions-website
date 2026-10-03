@@ -16,6 +16,7 @@ import { AdminDashboard } from './admin/AdminDashboard';
 import { AdminBlogs } from './admin/AdminBlogs';
 import { AdminProjects } from './admin/AdminProjects';
 import { AdminStories } from './admin/AdminStories';
+import { AdminTestimonials } from './admin/AdminTestimonials';
 import { AdminMedia } from './admin/AdminMedia';
 import { AdminSettings } from './admin/AdminSettings';
 import { AdminQuickBar } from './components/AdminQuickBar';
@@ -56,6 +57,7 @@ export default function App() {
           <Route path="blogs" element={<AdminBlogs />} />
           <Route path="projects" element={<AdminProjects />} />
           <Route path="our-stories" element={<AdminStories />} />
+          <Route path="testimonials" element={<AdminTestimonials />} />
           <Route path="media" element={<AdminMedia />} />
           <Route path="settings" element={<AdminSettings />} />
         </Route>

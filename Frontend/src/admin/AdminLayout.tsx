@@ -5,6 +5,7 @@ import {
   FileText,
   FolderGit2,
   BookOpen,
+  MessageSquare,
   Image as ImageIcon,
   Settings,
   LogOut,
@@ -40,6 +41,7 @@ export const AdminLayout: React.FC = () => {
     { label: 'Blogs', path: '/admin/blogs', icon: FileText },
     { label: 'Projects', path: '/admin/projects', icon: FolderGit2 },
     { label: 'Our Stories', path: '/admin/our-stories', icon: BookOpen },
+    { label: 'Testimonials', path: '/admin/testimonials', icon: MessageSquare },
     { label: 'Media Library', path: '/admin/media', icon: ImageIcon },
     { label: 'Settings', path: '/admin/settings', icon: Settings },
   ];
@@ -49,6 +51,7 @@ export const AdminLayout: React.FC = () => {
     if (location.pathname.startsWith('/admin/blogs')) return 'Blog Management';
     if (location.pathname.startsWith('/admin/projects')) return 'Project Portfolio';
     if (location.pathname.startsWith('/admin/our-stories')) return 'Our Stories & Milestones';
+    if (location.pathname.startsWith('/admin/testimonials')) return 'Client Feedback & Testimonials';
     if (location.pathname.startsWith('/admin/media')) return 'Media Library';
     if (location.pathname.startsWith('/admin/settings')) return 'CMS Settings';
     return 'Admin Panel';

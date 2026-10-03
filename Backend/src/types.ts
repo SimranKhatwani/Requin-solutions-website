@@ -69,10 +69,24 @@ export interface MediaDoc {
   updatedAt: string;
 }
 
+export interface TestimonialDoc {
+  id: string;
+  name: string;
+  role: string;
+  location?: string;
+  quote: string;
+  image: string;
+  isHighlighted?: boolean;
+  status: 'DRAFT' | 'PUBLISHED';
+  displayOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ActivityDoc {
   id: string;
   action: string;
-  entityType: 'blog' | 'project' | 'story' | 'media' | 'auth';
+  entityType: 'blog' | 'project' | 'story' | 'media' | 'testimonial' | 'auth';
   entityTitle: string;
   adminEmail: string;
   timestamp: string;
