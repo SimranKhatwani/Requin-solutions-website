@@ -12,6 +12,7 @@ import {
   TestimonialDoc,
   CareerDoc,
   JobApplicationDoc,
+  SubscriberDoc,
 } from './types';
 
 const DATA_DIR = path.resolve(process.cwd(), 'data');
@@ -29,6 +30,7 @@ interface CMSDatabase {
   testimonials: TestimonialDoc[];
   careers: CareerDoc[];
   jobApplications?: JobApplicationDoc[];
+  subscribers?: SubscriberDoc[];
   media: MediaDoc[];
   activities: ActivityDoc[];
   supportInquiries?: { id: string; name: string; email: string; message: string; targetEmail: string; createdAt: string }[];

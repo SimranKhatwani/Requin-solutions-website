@@ -136,3 +136,10 @@ export interface JobApplicationDoc {
   createdAt: string;
 }
 
+export interface SubscriberDoc {
+  id: string;
+  email: string;
+  source?: string;
+  targetEmail: string;
+  createdAt: string;
+}

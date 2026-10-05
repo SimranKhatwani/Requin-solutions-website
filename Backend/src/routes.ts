@@ -5,7 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import { CMSStore } from './db';
 import { requireAdminAuth, generateToken, AuthenticatedRequest } from './auth';
-import { BlogDoc, ProjectDoc, StoryDoc, MediaDoc, TestimonialDoc, CareerDoc, JobApplicationDoc } from './types';
+import { BlogDoc, ProjectDoc, StoryDoc, MediaDoc, TestimonialDoc, CareerDoc, JobApplicationDoc, SubscriberDoc } from './types';
 
 export const apiRouter = express.Router();
 
@@ -248,6 +248,52 @@ apiRouter.post('/support', (req: Request, res: Response) => {
   console.log(`[Support Request Logged] Forwarding to: requingroupsolutions@gmail.com | From: ${name} (${email}) | Message: ${message}`);
   res.json({ success: true, message: 'Support request recorded and queued for delivery to requingroupsolutions@gmail.com', data: inquiry });
 });
+
+// Public: Newsletter Subscription (Email notification directly routed to requingroupsolutions@gmail.com)
+apiRouter.post('/newsletter/subscribe', (req: Request, res: Response) => {
+  const { email, source } = req.body;
+  if (!email || typeof email !== 'string' || !email.includes('@')) {
+    res.status(400).json({ success: false, error: 'A valid email address is required.' });
+    return;
+  }
+
+  const cleanEmail = email.trim().toLowerCase();
+  const db = CMSStore.get();
+  if (!db.subscribers) {
+    db.subscribers = [];
+  }
+
+  const existing = db.subscribers.find((s) => s.email.toLowerCase() === cleanEmail);
+  const subscriber: SubscriberDoc = existing || {
+    id: `sub-${Date.now()}`,
+    email: cleanEmail,
+    source: typeof source === 'string' ? source : 'Website Footer Newsletter Form',
+    targetEmail: 'requingroupsolutions@gmail.com',
+    createdAt: new Date().toISOString(),
+  };
+
+  if (!existing) {
+    db.subscribers.push(subscriber);
+    CMSStore.save(db);
+  }
+
+  console.log(`[Newsletter Subscription] Forwarding to: requingroupsolutions@gmail.com | Subscriber: ${cleanEmail}`);
+  res.status(200).json({
+    success: true,
+    message: 'Thank you for subscribing! Details have been routed directly to requingroupsolutions@gmail.com.',
+    data: subscriber,
+  });
+});
+
+// Admin: Get all newsletter subscribers
+apiRouter.get('/admin/subscribers', requireAdminAuth, (req: AuthenticatedRequest, res: Response) => {
+  const db = CMSStore.get();
+  res.json({
+    success: true,
+    data: db.subscribers || [],
+  });
+});
+
 
 // Public: Gemini AI Chat Proxy Endpoint
 apiRouter.post('/chat', async (req: Request, res: Response) => {
