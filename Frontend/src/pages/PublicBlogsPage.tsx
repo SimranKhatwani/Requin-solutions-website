@@ -94,37 +94,39 @@ export const PublicBlogsPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Search & Categories Bar */}
-          <div className="bg-[#0B2235]/90 border border-white/10 rounded-2xl p-4 sm:p-5 mb-10 flex flex-col md:flex-row items-center justify-between gap-4 backdrop-blur-md shadow-xl">
-            {/* Search Input */}
-            <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search articles or topics..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-[#071827] border border-white/15 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-[#08B9E8] transition-colors"
-              />
-            </div>
+          {/* Search & Categories Bar (visible when blogs exist) */}
+          {blogs.length > 0 && (
+            <div className="bg-[#0B2235]/90 border border-white/10 rounded-2xl p-4 sm:p-5 mb-10 flex flex-col md:flex-row items-center justify-between gap-4 backdrop-blur-md shadow-xl">
+              {/* Search Input */}
+              <div className="relative w-full md:w-80">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search articles or topics..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-[#071827] border border-white/15 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-[#08B9E8] transition-colors"
+                />
+              </div>
 
-            {/* Category Pills */}
-            <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                    selectedCategory === cat
-                      ? 'bg-[#08B9E8] text-[#071827] shadow-md shadow-[#08B9E8]/20'
-                      : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+              {/* Category Pills */}
+              <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                      selectedCategory === cat
+                        ? 'bg-[#08B9E8] text-[#071827] shadow-md shadow-[#08B9E8]/20'
+                        : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/10'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Blog Cards Grid */}
           {loading ? (
@@ -136,10 +138,20 @@ export const PublicBlogsPage: React.FC = () => {
             <div className="p-8 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-center">
               <p className="text-sm">{error}</p>
             </div>
+          ) : blogs.length === 0 ? (
+            <div className="py-24 text-center bg-[#0B2235]/40 rounded-3xl border border-white/10 max-w-2xl mx-auto px-6 shadow-2xl">
+              <div className="w-16 h-16 rounded-2xl bg-[#08B9E8]/10 text-[#08B9E8] flex items-center justify-center mx-auto mb-5 border border-[#08B9E8]/20">
+                <BookOpen className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">No Articles Published Yet</h3>
+              <p className="text-sm text-slate-400 leading-relaxed max-w-md mx-auto">
+                Our engineering team will publish upcoming technical architecture deep dives, case studies, and EdTech insights here. Check back soon!
+              </p>
+            </div>
           ) : filteredBlogs.length === 0 ? (
             <div className="py-20 text-center bg-[#0B2235]/40 rounded-2xl border border-white/10">
               <BookOpen className="w-12 h-12 text-slate-500 mx-auto mb-3" />
-              <p className="text-base font-bold text-white">No articles matched your criteria</p>
+              <p className="text-base font-bold text-white">No articles matched your search</p>
               <p className="text-xs text-slate-400 mt-1">Try another search keyword or reset the category filter.</p>
             </div>
           ) : (
