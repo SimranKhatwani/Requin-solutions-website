@@ -10,6 +10,7 @@ import {
   X,
   Sparkles,
 } from 'lucide-react';
+import { FAQModal } from './FAQModal';
 
 interface FooterProps {
   onNavigateSection?: (sectionId: string) => void;
@@ -333,10 +334,22 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
         </div>
       </div>
 
-      {/* Informative Modal Overlay */}
-      {activeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#071827]/85 backdrop-blur-md">
-          <div className="bg-[#0B2235] text-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-white/15 text-left relative max-h-[90vh] overflow-y-auto">
+      {/* Dedicated FAQ Modal matching requested design */}
+      <FAQModal
+        isOpen={activeModal === 'FAQs'}
+        onClose={() => setActiveModal(null)}
+      />
+
+      {/* Informative Modal Overlay for Terms & Careers */}
+      {activeModal && activeModal !== 'FAQs' && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#071827]/85 backdrop-blur-md"
+          onClick={() => setActiveModal(null)}
+        >
+          <div
+            className="bg-[#0B2235] text-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-white/15 text-left relative max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-5">
               <h3 className="text-xl font-bold text-white flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-[#08B9E8]" />
@@ -381,25 +394,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
                   <p>
                     Send your portfolio and resume to <span className="text-[#08B9E8]">careers@requinsolutions.com</span>.
                   </p>
-                </>
-              )}
-
-              {activeModal === 'FAQs' && (
-                <>
-                  <div className="space-y-3 text-xs">
-                    <div>
-                      <p className="font-semibold text-white text-sm">What services does Requin Solutions offer?</p>
-                      <p className="text-slate-300 mt-1">We engineer custom web apps, mobile apps, enterprise cloud architectures, ERP suites, and AI integrations.</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-white text-sm">Where are you located?</p>
-                      <p className="text-slate-300 mt-1">Our primary development center is headquartered in Malviya Nagar, Jaipur, Rajasthan, India.</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-white text-sm">How do we get started?</p>
-                      <p className="text-slate-300 mt-1">Contact us via the form on our website or email <span className="text-[#08B9E8]">info@requinsolutions.com</span> to schedule an architectural discovery session.</p>
-                    </div>
-                  </div>
                 </>
               )}
             </div>
