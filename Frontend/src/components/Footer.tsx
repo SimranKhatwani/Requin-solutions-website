@@ -6,7 +6,6 @@ import {
   MapPin,
   Linkedin,
   Instagram,
-  Facebook,
   CheckCircle2,
   X,
   Sparkles,
@@ -113,12 +112,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               </div>
             </div>
 
-            {/* Circular Social Media Buttons */}
+            {/* Circular Social Media Buttons (LinkedIn and Instagram only) */}
             <div className="flex items-center gap-3 pt-2">
               <a
                 href="https://www.linkedin.com/company/requin-solutions-pvt-ltdd/"
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
+                title="LinkedIn"
                 aria-label="LinkedIn"
                 className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-[#08B9E8] hover:border-[#08B9E8]/50 hover:bg-[#08B9E8]/10 transition-all duration-200 cursor-pointer"
               >
@@ -127,20 +127,12 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <a
                 href="https://www.instagram.com/requin_solutions/"
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
+                title="Instagram"
                 aria-label="Follow Requin Solutions on Instagram"
                 className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-[#08B9E8] hover:border-[#08B9E8]/50 hover:bg-[#08B9E8]/10 transition-all duration-200 cursor-pointer"
               >
                 <Instagram className="w-4 h-4" />
-              </a>
-              <a
-                href="https://www.facebook.com/requin_solutions/"
-                target="_blank"
-                rel="noopener"
-                aria-label="Facebook"
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-[#08B9E8] hover:border-[#08B9E8]/50 hover:bg-[#08B9E8]/10 transition-all duration-200 cursor-pointer"
-              >
-                <Facebook className="w-4 h-4" />
               </a>
             </div>
           </div>

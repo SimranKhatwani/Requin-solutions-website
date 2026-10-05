@@ -529,11 +529,10 @@ export const REQUIN_COMPANY_INFO = {
     { label: 'Client Retention Rate', value: '96%' },
   ],
   socials: [
+    { name: 'Justdial', url: 'https://www.justdial.com/Jaipur/Requin-Solutions-Pvt-Ltd-NWR-Office-Malviya-Nagar/0141PX141-X141-220903235425-A6N3_BZDET' },
+    { name: 'IndiaMART', url: 'https://www.indiamart.com/requin-solutions/?srsltid=AU7gw4W3xlGF3Dt7QtSFYWebQsTpKVdGYCHUi335idgbnklQFUuYTALw' },
     { name: 'LinkedIn', url: 'https://www.linkedin.com/company/requin-solutions-pvt-ltdd/' },
-    { name: 'Facebook', url: 'https://www.facebook.com/requin_solutions/' },
-    { name: 'Twitter / X', url: 'https://twitter.com' },
     { name: 'Instagram', url: 'https://www.instagram.com/requin_solutions/' },
-    { name: 'GitHub', url: 'https://github.com' },
   ],
 };
 
