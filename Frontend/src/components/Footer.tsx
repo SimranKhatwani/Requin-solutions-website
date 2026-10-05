@@ -89,7 +89,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
                 <Mail className="w-4 h-4 text-[#08B9E8] shrink-0" />
                 <a
                   href="mailto:info@requinsolutions.com"
-                  className="text-slate-300 hover:text-white transition-colors"
+                  className="text-slate-300 hover:text-[#08B9E8] transition-colors"
                 >
                   info@requinsolutions.com
                 </a>
@@ -100,7 +100,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
                 <Phone className="w-4 h-4 text-[#08B9E8] shrink-0" />
                 <a
                   href="tel:+919352220187"
-                  className="text-slate-300 hover:text-white transition-colors"
+                  className="text-slate-300 hover:text-[#08B9E8] transition-colors"
                 >
                   +91 9352220187
                 </a>
@@ -116,29 +116,29 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
             {/* Circular Social Media Buttons */}
             <div className="flex items-center gap-3 pt-2">
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/company/requin-solutions-pvt-ltdd/"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener"
                 aria-label="LinkedIn"
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:border-[#08B9E8]/50 hover:bg-[#08B9E8]/10 transition-all duration-200 cursor-pointer"
+                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-[#08B9E8] hover:border-[#08B9E8]/50 hover:bg-[#08B9E8]/10 transition-all duration-200 cursor-pointer"
               >
                 <Linkedin className="w-4 h-4" />
               </a>
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/requin_solutions/"
                 target="_blank"
-                rel="noreferrer"
-                aria-label="Instagram"
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:border-[#08B9E8]/50 hover:bg-[#08B9E8]/10 transition-all duration-200 cursor-pointer"
+                rel="noopener"
+                aria-label="Follow Requin Solutions on Instagram"
+                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-[#08B9E8] hover:border-[#08B9E8]/50 hover:bg-[#08B9E8]/10 transition-all duration-200 cursor-pointer"
               >
                 <Instagram className="w-4 h-4" />
               </a>
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/requin_solutions/"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener"
                 aria-label="Facebook"
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:border-[#08B9E8]/50 hover:bg-[#08B9E8]/10 transition-all duration-200 cursor-pointer"
+                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-[#08B9E8] hover:border-[#08B9E8]/50 hover:bg-[#08B9E8]/10 transition-all duration-200 cursor-pointer"
               >
                 <Facebook className="w-4 h-4" />
               </a>
@@ -154,7 +154,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <li>
                 <button
                   onClick={() => handleNav('hero')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
+                  className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Home
                 </button>
@@ -162,7 +162,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <li>
                 <button
                   onClick={() => handleNav('services')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
+                  className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Services
                 </button>
@@ -170,7 +170,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <li>
                 <button
                   onClick={() => navigate('/our-stories')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
+                  className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   About Us
                 </button>
@@ -178,7 +178,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <li>
                 <button
                   onClick={() => handleNav('contact')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
+                  className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Contact
                 </button>
@@ -186,7 +186,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <li>
                 <button
                   onClick={() => (onOpenQuiz ? onOpenQuiz() : handleNav('quiz'))}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
+                  className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Quiz
                 </button>
@@ -194,7 +194,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <li>
                 <button
                   onClick={() => navigate('/products')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
+                  className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Our Products
                 </button>
@@ -202,7 +202,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <li>
                 <button
                   onClick={() => setActiveModal('Terms and Conditions')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
+                  className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Terms and Conditions
                 </button>
@@ -219,7 +219,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <li>
                 <button
                   onClick={() => handleNav('services')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
+                  className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Web Design & Development
                 </button>
@@ -227,7 +227,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <li>
                 <button
                   onClick={() => handleNav('services')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
+                  className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Mobile App Development
                 </button>
@@ -235,7 +235,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <li>
                 <button
                   onClick={() => handleNav('services')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
+                  className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Software Solutions
                 </button>
@@ -243,7 +243,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <li>
                 <button
                   onClick={() => handleNav('services')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
+                  className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Academic Assistance
                 </button>
@@ -251,7 +251,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <li>
                 <button
                   onClick={() => handleNav('services')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
+                  className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Cloud Solutions
                 </button>
@@ -259,7 +259,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <li>
                 <button
                   onClick={() => handleNav('services')}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
+                  className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Digital Marketing
                 </button>
@@ -309,19 +309,19 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   onClick={() => navigate('/blogs')}
-                  className="px-3.5 py-1 rounded-full bg-[#0B2235] border border-white/10 text-xs font-normal text-slate-300 hover:text-white hover:border-[#08B9E8] hover:bg-[#08B9E8]/10 transition-all cursor-pointer"
+                  className="px-3.5 py-1 rounded-full bg-[#0B2235] border border-white/10 text-xs font-normal text-slate-300 hover:text-[#08B9E8] hover:border-[#08B9E8] hover:bg-[#08B9E8]/10 transition-all cursor-pointer"
                 >
                   Blog
                 </button>
                 <button
                   onClick={() => setActiveModal('Career')}
-                  className="px-3.5 py-1 rounded-full bg-[#0B2235] border border-white/10 text-xs font-normal text-slate-300 hover:text-white hover:border-[#08B9E8] hover:bg-[#08B9E8]/10 transition-all cursor-pointer"
+                  className="px-3.5 py-1 rounded-full bg-[#0B2235] border border-white/10 text-xs font-normal text-slate-300 hover:text-[#08B9E8] hover:border-[#08B9E8] hover:bg-[#08B9E8]/10 transition-all cursor-pointer"
                 >
                   Career
                 </button>
                 <button
                   onClick={() => setActiveModal('FAQs')}
-                  className="px-3.5 py-1 rounded-full bg-[#0B2235] border border-white/10 text-xs font-normal text-slate-300 hover:text-white hover:border-[#08B9E8] hover:bg-[#08B9E8]/10 transition-all cursor-pointer"
+                  className="px-3.5 py-1 rounded-full bg-[#0B2235] border border-white/10 text-xs font-normal text-slate-300 hover:text-[#08B9E8] hover:border-[#08B9E8] hover:bg-[#08B9E8]/10 transition-all cursor-pointer"
                 >
                   FAQs
                 </button>

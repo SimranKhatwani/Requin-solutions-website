@@ -529,9 +529,10 @@ export const REQUIN_COMPANY_INFO = {
     { label: 'Client Retention Rate', value: '96%' },
   ],
   socials: [
-    { name: 'LinkedIn', url: 'https://linkedin.com' },
+    { name: 'LinkedIn', url: 'https://www.linkedin.com/company/requin-solutions-pvt-ltdd/' },
+    { name: 'Facebook', url: 'https://www.facebook.com/requin_solutions/' },
     { name: 'Twitter / X', url: 'https://twitter.com' },
-    { name: 'Instagram', url: 'https://instagram.com' },
+    { name: 'Instagram', url: 'https://www.instagram.com/requin_solutions/' },
     { name: 'GitHub', url: 'https://github.com' },
   ],
 };

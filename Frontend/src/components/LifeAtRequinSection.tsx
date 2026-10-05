@@ -6,13 +6,12 @@ import {
   Play,
   ArrowRight,
   X,
-  Sparkles
+  Sparkles,
 } from 'lucide-react';
 import { LIFE_AT_REQUIN_GALLERY, GalleryImage, GalleryPhotoItem } from '../data/requinData';
 
 export const LifeAtRequinSection: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalActiveIndex, setModalActiveIndex] = useState<number>(0);
   const [modalSelectedYear, setModalSelectedYear] = useState<string>('All');
@@ -35,6 +34,17 @@ export const LifeAtRequinSection: React.FC = () => {
     setActiveIndex((prev) => (prev === filteredList.length - 1 ? 0 : prev + 1));
   }, [filteredList.length]);
 
+  // Continuous Auto-Advancing Moving State (Auto-slides every 2 seconds)
+  useEffect(() => {
+    if (isModalOpen || filteredList.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % filteredList.length);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [isModalOpen, filteredList.length, activeIndex]);
+
   const activeModalItem = filteredList[modalActiveIndex] || filteredList[0];
 
   // Derive photos for the active modal event
@@ -47,8 +57,8 @@ export const LifeAtRequinSection: React.FC = () => {
             image: activeModalItem?.image || '',
             year: activeModalItem?.date || '2024',
             title: activeModalItem?.title || '',
-            caption: activeModalItem?.caption || ''
-          }
+            caption: activeModalItem?.caption || '',
+          },
         ];
 
   const availableYears: string[] =
@@ -109,22 +119,6 @@ export const LifeAtRequinSection: React.FC = () => {
     }
   }, [isModalOpen]);
 
-  // Autoplay functionality (5.5s)
-  useEffect(() => {
-    if (isHovered || isModalOpen || filteredList.length <= 1) return;
-
-    // Respect prefers-reduced-motion
-    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      return;
-    }
-
-    const timer = setInterval(() => {
-      handleNext();
-    }, 5500);
-
-    return () => clearInterval(timer);
-  }, [isHovered, isModalOpen, filteredList.length, handleNext]);
-
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -132,7 +126,7 @@ export const LifeAtRequinSection: React.FC = () => {
         if (e.key === 'Escape') setIsModalOpen(false);
         if (e.key === 'ArrowLeft') handleModalPrev();
         if (e.key === 'ArrowRight') handleModalNext();
-      } else if (isHovered) {
+      } else {
         if (e.key === 'ArrowLeft') handlePrev();
         if (e.key === 'ArrowRight') handleNext();
       }
@@ -140,7 +134,7 @@ export const LifeAtRequinSection: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isModalOpen, isHovered, handleModalPrev, handleModalNext, handlePrev, handleNext]);
+  }, [isModalOpen, handleModalPrev, handleModalNext, handlePrev, handleNext]);
 
   // Touch handlers
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -177,13 +171,11 @@ export const LifeAtRequinSection: React.FC = () => {
     <section
       id="life-at-requin"
       className="pt-8 sm:pt-12 md:pt-14 pb-16 sm:pb-20 md:pb-24 bg-[#F5FAFD] text-[#071827] relative overflow-hidden selection:bg-[#08B9E8]/20 selection:text-[#08B9E8]"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Background Ambience & Animation Keyframes */}
+      {/* Background Ambience Animations */}
       <style>{`
         @keyframes ambientFloatLife {
           0%, 100% {
@@ -201,55 +193,24 @@ export const LifeAtRequinSection: React.FC = () => {
             opacity: 1;
           }
         }
-        @keyframes waveFloatLife {
-          0%, 100% {
-            transform: translateX(0);
-          }
-          50% {
-            transform: translateX(20px);
-          }
-        }
         .animate-ambient-life {
           animation: ambientFloatLife 16s ease-in-out infinite;
         }
         .animate-network-life {
           animation: networkPulseLife 12s ease-in-out infinite;
         }
-        .animate-wave-life {
-          animation: waveFloatLife 20s ease-in-out infinite;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .animate-ambient-life,
-          .animate-network-life,
-          .animate-wave-life {
-            animation: none !important;
-          }
-        }
       `}</style>
 
       {/* ========================================================
-          BACKGROUND LAYER 1: Amplified Radiant Ambient Glows (Light Blue Theme)
+          BACKGROUND LAYER 1: Ambient Glows
       ======================================================== */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Top-Left Radiant Cyan Glow */}
         <div className="absolute -top-24 -left-20 w-[750px] h-[550px] bg-[radial-gradient(circle_at_30%_30%,rgba(8,185,232,0.18),transparent_65%)] blur-[100px] animate-ambient-life" />
-        
-        {/* Top-Right Soft Sky Glow */}
         <div
           className="absolute -top-20 -right-20 w-[700px] h-[520px] bg-[radial-gradient(circle_at_70%_30%,rgba(0,194,255,0.16),transparent_65%)] blur-[100px] animate-ambient-life"
           style={{ animationDelay: '-5s' }}
         />
-        
-        {/* Center Glowing Tech Aura */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-[radial-gradient(circle,rgba(8,185,232,0.12),transparent_70%)] blur-[120px] pointer-events-none" />
-
-        {/* Bottom-Left Luminous Cyan Glow */}
-        <div
-          className="absolute -bottom-24 -left-16 w-[680px] h-[520px] bg-[radial-gradient(circle_at_40%_70%,rgba(8,185,232,0.16),transparent_65%)] blur-[100px] animate-ambient-life"
-          style={{ animationDelay: '-9s' }}
-        />
-        
-        {/* Bottom-Right Deep Azure Glow */}
         <div
           className="absolute -bottom-24 -right-16 w-[720px] h-[540px] bg-[radial-gradient(circle_at_70%_70%,rgba(2,132,199,0.14),transparent_65%)] blur-[100px] animate-ambient-life"
           style={{ animationDelay: '-3s' }}
@@ -257,7 +218,7 @@ export const LifeAtRequinSection: React.FC = () => {
       </div>
 
       {/* ========================================================
-          BACKGROUND LAYER 2: Subtle Digital Network & Constellations
+          BACKGROUND LAYER 2: Digital Network Constellation Web
       ======================================================== */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none z-0 animate-network-life"
@@ -270,10 +231,6 @@ export const LifeAtRequinSection: React.FC = () => {
             <stop offset="50%" stopColor="#00c2ff" stopOpacity="0.08" />
             <stop offset="100%" stopColor="#0284c7" stopOpacity="0.12" />
           </linearGradient>
-          <filter id="nodeGlowLife" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
         </defs>
 
         <g stroke="url(#netGradLife)" strokeWidth="1" fill="none">
@@ -285,42 +242,14 @@ export const LifeAtRequinSection: React.FC = () => {
         </g>
         <g fill="#08B9E8">
           <circle cx="5%" cy="12%" r="3" fillOpacity="0.4" />
-          <circle cx="12%" cy="22%" r="4" fillOpacity="0.3" filter="url(#nodeGlowLife)" />
           <circle cx="12%" cy="22%" r="2" fillOpacity="0.85" />
           <circle cx="8%" cy="35%" r="2.5" fillOpacity="0.4" />
           <circle cx="19%" cy="28%" r="3" fillOpacity="0.4" />
           <circle cx="95%" cy="14%" r="3" fillOpacity="0.4" />
-          <circle cx="88%" cy="24%" r="3.5" fillOpacity="0.4" filter="url(#nodeGlowLife)" />
           <circle cx="88%" cy="24%" r="1.5" fillOpacity="0.85" />
           <circle cx="92%" cy="38%" r="2.5" fillOpacity="0.4" />
         </g>
       </svg>
-
-      {/* ========================================================
-          BACKGROUND LAYER 3: Flowing Bottom Waves
-      ======================================================== */}
-      <div className="absolute inset-x-0 bottom-0 h-44 pointer-events-none z-0 overflow-hidden opacity-60 animate-wave-life">
-        <svg
-          viewBox="0 0 1440 200"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full preserve-3d"
-        >
-          <path
-            d="M-50,130 C220,70 540,170 880,100 C1180,40 1350,140 1500,90"
-            stroke="#08B9E8"
-            strokeWidth="1.2"
-            strokeOpacity="0.08"
-            strokeDasharray="5 7"
-          />
-          <path
-            d="M-50,165 C300,110 650,200 1000,125 C1300,65 1420,150 1500,120"
-            stroke="#00c2ff"
-            strokeWidth="1"
-            strokeOpacity="0.06"
-          />
-        </svg>
-      </div>
 
       {/* ========================================================
           MAIN CONTENT LAYER
@@ -341,14 +270,14 @@ export const LifeAtRequinSection: React.FC = () => {
         </div>
 
         {/* ========================================================
-            CENTER-FOCUSED 3D CAROUSEL STAGE
+            CENTER-FOCUSED 3D COVERFLOW MOVING CAROUSEL
         ======================================================== */}
         <div className="relative w-full max-w-6xl mx-auto h-[380px] sm:h-[440px] md:h-[480px] lg:h-[500px] flex items-center justify-center my-2 sm:my-3">
           {/* Left Arrow Control */}
           <button
             onClick={handlePrev}
             aria-label="Previous event"
-            className="absolute left-1 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 z-40 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/95 backdrop-blur-md border border-[#D8E5EC] text-[#071827] shadow-lg hover:border-[#08B9E8] hover:text-[#08B9E8] hover:shadow-[0_0_25px_rgba(8,185,232,0.35)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8]"
+            className="absolute left-1 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 z-40 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/95 backdrop-blur-md border border-[#D8E5EC] text-[#071827] shadow-lg hover:border-[#08B9E8] hover:text-[#08B9E8] hover:shadow-[0_0_25px_rgba(8,185,232,0.35)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8] cursor-pointer"
           >
             <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7" />
           </button>
@@ -357,12 +286,12 @@ export const LifeAtRequinSection: React.FC = () => {
           <button
             onClick={handleNext}
             aria-label="Next event"
-            className="absolute right-1 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 z-40 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/95 backdrop-blur-md border border-[#D8E5EC] text-[#071827] shadow-lg hover:border-[#08B9E8] hover:text-[#08B9E8] hover:shadow-[0_0_25px_rgba(8,185,232,0.35)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8]"
+            className="absolute right-1 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 z-40 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/95 backdrop-blur-md border border-[#D8E5EC] text-[#071827] shadow-lg hover:border-[#08B9E8] hover:text-[#08B9E8] hover:shadow-[0_0_25px_rgba(8,185,232,0.35)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8] cursor-pointer"
           >
             <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7" />
           </button>
 
-          {/* Carousel Track Cards */}
+          {/* 3D Coverflow Stage Cards */}
           <div className="relative w-full h-full flex items-center justify-center overflow-visible">
             {filteredList.map((item, idx) => {
               const total = filteredList.length;
@@ -423,7 +352,7 @@ export const LifeAtRequinSection: React.FC = () => {
                     opacity,
                     filter: `blur(${blur}px)`,
                     pointerEvents,
-                    transition: 'transform 600ms cubic-bezier(0.22, 1, 0.36, 1), opacity 600ms cubic-bezier(0.22, 1, 0.36, 1), filter 600ms cubic-bezier(0.22, 1, 0.36, 1)',
+                    transition: 'transform 700ms cubic-bezier(0.25, 1, 0.5, 1), opacity 700ms cubic-bezier(0.25, 1, 0.5, 1), filter 700ms cubic-bezier(0.25, 1, 0.5, 1)',
                   }}
                   className={`absolute left-1/2 top-1/2 w-[88%] sm:w-[74%] md:w-[62%] lg:w-[58%] h-[350px] sm:h-[400px] md:h-[440px] lg:h-[460px] rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer select-none bg-[#071827] border transition-all duration-300 ${
                     isCenter
@@ -442,7 +371,7 @@ export const LifeAtRequinSection: React.FC = () => {
                       referrerPolicy="no-referrer"
                     />
 
-                    {/* Gradient Vignette Overlay (Dark Navy -> Transparent) */}
+                    {/* Gradient Vignette Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#071827]/90 via-[#071827]/30 to-transparent pointer-events-none" />
 
                     {/* Top-Left Category Badge */}
@@ -461,7 +390,7 @@ export const LifeAtRequinSection: React.FC = () => {
                       </div>
                     )}
 
-                    {/* Bottom Content: Clean Big Title and Explore Gallery */}
+                    {/* Bottom Content: Title and Explore Gallery */}
                     <div className="absolute bottom-0 inset-x-0 p-5 sm:p-7 md:p-8 text-left z-10">
                       <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-snug group-hover:text-[#08B9E8] transition-colors">
                         {item.title}
@@ -487,7 +416,7 @@ export const LifeAtRequinSection: React.FC = () => {
               key={idx}
               onClick={() => setActiveIndex(idx)}
               aria-label={`Go to slide ${idx + 1}`}
-              className={`h-2.5 rounded-full transition-all duration-400 focus:outline-none focus:ring-2 focus:ring-[#08B9E8] ${
+              className={`h-2.5 rounded-full transition-all duration-400 focus:outline-none focus:ring-2 focus:ring-[#08B9E8] cursor-pointer ${
                 idx === activeIndex
                   ? 'w-8 bg-[#08B9E8] shadow-[0_0_12px_rgba(8,185,232,0.6)]'
                   : 'w-2.5 bg-slate-300 hover:bg-slate-400'
@@ -498,7 +427,7 @@ export const LifeAtRequinSection: React.FC = () => {
       </div>
 
       {/* ========================================================
-          INTERACTIVE PHOTO GALLERY MODAL (Scroll-Isolated, Full Cover Image, Summary & Thumbnails)
+          INTERACTIVE PHOTO GALLERY MODAL
       ======================================================== */}
       {isModalOpen && activeModalItem && (
         <div
@@ -509,7 +438,7 @@ export const LifeAtRequinSection: React.FC = () => {
             className="relative w-[95vw] max-w-5xl lg:max-w-6xl bg-[#081524] rounded-2xl sm:rounded-3xl border border-slate-700/80 shadow-[0_25px_80px_rgba(0,0,0,0.85),0_0_50px_rgba(8,185,232,0.18)] overflow-hidden flex flex-col max-h-[90vh] my-auto overscroll-contain"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Top Header (Fixed at top of modal) */}
+            {/* Modal Top Header */}
             <div className="px-4 sm:px-6 py-3 sm:py-3.5 border-b border-slate-800 bg-[#071827] shrink-0 z-20">
               <div className="flex items-center justify-between gap-3">
                 {/* Left: Badge & Big Prominent Title */}
@@ -530,14 +459,14 @@ export const LifeAtRequinSection: React.FC = () => {
                   <button
                     onClick={() => setIsModalOpen(false)}
                     aria-label="Close modal"
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8] shadow-md hover:scale-105"
+                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8] shadow-md hover:scale-105 cursor-pointer"
                   >
                     <X className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 </div>
               </div>
 
-              {/* Integrated Modern Year Category Filter Tabs */}
+              {/* Integrated Year Category Filter Tabs */}
               {availableYears.length > 1 && (
                 <div className="flex items-center gap-2.5 mt-2.5 pt-2.5 border-t border-slate-800/80 overflow-x-auto scrollbar-none">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mr-1 shrink-0">
@@ -547,7 +476,7 @@ export const LifeAtRequinSection: React.FC = () => {
                   <div className="inline-flex p-0.5 rounded-lg bg-slate-900/90 border border-slate-800 gap-1 shrink-0">
                     <button
                       onClick={() => handleYearChange('All')}
-                      className={`px-3 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 ${
+                      className={`px-3 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                         modalSelectedYear === 'All'
                           ? 'bg-[#08B9E8] text-[#071827] shadow-sm font-extrabold'
                           : 'text-slate-300 hover:text-white hover:bg-slate-800'
@@ -571,7 +500,7 @@ export const LifeAtRequinSection: React.FC = () => {
                         <button
                           key={yr}
                           onClick={() => handleYearChange(yr)}
-                          className={`px-3 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 ${
+                          className={`px-3 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                             isSelected
                               ? 'bg-[#08B9E8] text-[#071827] shadow-sm font-extrabold'
                               : 'text-slate-300 hover:text-white hover:bg-slate-800'
@@ -599,7 +528,7 @@ export const LifeAtRequinSection: React.FC = () => {
 
             {/* Modal Scrollable Content Area */}
             <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-thin min-h-0 flex flex-col">
-              {/* Modal Full Cover Image Stage (No Black Letterboxing) */}
+              {/* Full Cover Image Stage */}
               <div className="relative w-full h-[260px] sm:h-[320px] md:h-[360px] lg:h-[390px] overflow-hidden bg-[#071827] shrink-0">
                 <img
                   src={currentActivePhoto.image}
@@ -614,14 +543,14 @@ export const LifeAtRequinSection: React.FC = () => {
                     <button
                       onClick={handleModalPrev}
                       aria-label="Previous photo"
-                      className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-[#08B9E8] text-white hover:text-[#071827] backdrop-blur-md border border-white/20 hover:scale-105 shadow-xl transition-all flex items-center justify-center focus:outline-none z-10"
+                      className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-[#08B9E8] text-white hover:text-[#071827] backdrop-blur-md border border-white/20 hover:scale-105 shadow-xl transition-all flex items-center justify-center focus:outline-none z-10 cursor-pointer"
                     >
                       <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
                     </button>
                     <button
                       onClick={handleModalNext}
                       aria-label="Next photo"
-                      className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-[#08B9E8] text-white hover:text-[#071827] backdrop-blur-md border border-white/20 hover:scale-105 shadow-xl transition-all flex items-center justify-center focus:outline-none z-10"
+                      className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/60 hover:bg-[#08B9E8] text-white hover:text-[#071827] backdrop-blur-md border border-white/20 hover:scale-105 shadow-xl transition-all flex items-center justify-center focus:outline-none z-10 cursor-pointer"
                     >
                       <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
                     </button>
@@ -651,13 +580,13 @@ export const LifeAtRequinSection: React.FC = () => {
                   {currentActivePhoto.caption || activeModalItem.caption}
                 </p>
 
-                {/* Thumbnails Strip with Year Badges to select and see all images */}
+                {/* Thumbnails Strip with Year Badges */}
                 <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto pb-1 pt-0.5 scrollbar-thin">
                   {safePhotos.map((photo, idx) => (
                     <button
                       key={photo.id || idx}
                       onClick={() => setModalPhotoIndex(idx)}
-                      className={`relative w-20 h-14 sm:w-24 sm:h-16 rounded-xl overflow-hidden shrink-0 border transition-all duration-200 focus:outline-none group ${
+                      className={`relative w-20 h-14 sm:w-24 sm:h-16 rounded-xl overflow-hidden shrink-0 border transition-all duration-200 focus:outline-none group cursor-pointer ${
                         idx === modalPhotoIndex
                           ? 'border-[#08B9E8] ring-2 ring-[#08B9E8]/80 scale-105 shadow-[0_0_15px_rgba(8,185,232,0.4)]'
                           : 'border-slate-700/80 opacity-60 hover:opacity-100 hover:border-slate-500'

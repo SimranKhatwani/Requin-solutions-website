@@ -537,9 +537,9 @@ export const ContactSection: React.FC = () => {
                   <div className="flex items-center gap-3">
                     {/* Facebook */}
                     <a
-                      href="https://facebook.com/requinsolutions"
+                      href="https://www.facebook.com/requin_solutions/"
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener"
                       aria-label="Follow Requin Solutions on Facebook"
                       className="w-10 h-10 rounded-full bg-[#E8F7FC] text-[#08B9E8] hover:bg-[#08B9E8] hover:text-white transition-all flex items-center justify-center shadow-sm hover:scale-105"
                     >
@@ -550,7 +550,7 @@ export const ContactSection: React.FC = () => {
                     <a
                       href="https://x.com/requinsolutions"
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener"
                       aria-label="Follow Requin Solutions on X"
                       className="w-10 h-10 rounded-full bg-[#E8F7FC] text-[#08B9E8] hover:bg-[#08B9E8] hover:text-white transition-all flex items-center justify-center shadow-sm hover:scale-105"
                     >
@@ -561,9 +561,9 @@ export const ContactSection: React.FC = () => {
 
                     {/* LinkedIn */}
                     <a
-                      href="https://linkedin.com/company/requinsolutions"
+                      href="https://www.linkedin.com/company/requin-solutions-pvt-ltdd/"
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener"
                       aria-label="Follow Requin Solutions on LinkedIn"
                       className="w-10 h-10 rounded-full bg-[#E8F7FC] text-[#08B9E8] hover:bg-[#08B9E8] hover:text-white transition-all flex items-center justify-center shadow-sm hover:scale-105"
                     >
@@ -574,7 +574,7 @@ export const ContactSection: React.FC = () => {
                     <a
                       href="https://www.instagram.com/requin_solutions/"
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener"
                       aria-label="Follow Requin Solutions on Instagram"
                       className="w-10 h-10 rounded-full bg-[#E8F7FC] text-[#08B9E8] hover:bg-[#08B9E8] hover:text-white transition-all flex items-center justify-center shadow-sm hover:scale-105"
                     >
