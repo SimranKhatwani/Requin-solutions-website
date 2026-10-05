@@ -281,7 +281,7 @@ export const DINE_AND_DUSK_PRODUCT: ShowcaseProductItem = {
     { label: 'Order-to-KDS Sync', value: '<0.5s' },
     { label: 'Table Turnover', value: '+35%' },
   ],
-  image: '/images/products/dine-dusk-dashboard.png',
+  image: '/images/products/dine-dusk-demo.jpg',
   architectureDetails: [
     'Low-latency WebSocket event streaming between POS terminals and kitchen display stations',
     'Offline-first local network synchronization ensuring uninterrupted billing during peak hours',
@@ -331,7 +331,7 @@ export const RKB_ENTERPRISES_PRODUCT: ShowcaseProductItem = {
     { label: 'Catalog Scale', value: '5,000+ SKUs' },
     { label: 'Wholesale Dispatch', value: '24-48h' },
   ],
-  image: '/images/products/rkb-enterprises-home.png',
+  image: '/images/products/rkb-enterprises-demo.jpg',
   architectureDetails: [
     'High-performance headless e-commerce catalog optimized for high-resolution imagery and fast filtering',
     'B2B tier pricing engine with bulk volume discounts and WhatsApp order API gateway',
@@ -381,7 +381,7 @@ export const INDIA_MOTOR_PRODUCT: ShowcaseProductItem = {
     { label: 'RTO Pass Rate', value: '98%' },
     { label: 'Learners Trained', value: '5,000+' },
   ],
-  image: '/images/products/india-motor-hero.png',
+  image: '/images/products/india-motor-demo.jpg',
   architectureDetails: [
     'Real-time geolocation WebSockets for live trainer dispatch and telemetry tracking',
     'Automated slot reservation engine with multi-trainer calendar synchronization',
@@ -431,7 +431,7 @@ export const NEXUSBILL_PRODUCT: ShowcaseProductItem = {
     { label: 'Invoice Generation', value: '<1.2s' },
     { label: 'GST Tax Accuracy', value: '100%' },
   ],
-  image: '/images/products/nexusbill-dashboard.png',
+  image: '/images/products/nexusbill-demo.jpg',
   architectureDetails: [
     'Real-time fiscal ledger database with cryptographic invoice node validation',
     'High-throughput inventory sync engine with multi-category stock valuation and automated ITC computing',

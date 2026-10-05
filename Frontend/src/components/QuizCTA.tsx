@@ -7,7 +7,7 @@ interface QuizCTAProps {
 
 export const QuizCTA: React.FC<QuizCTAProps> = ({ onStartQuiz }) => {
   return (
-    <section className="py-20 md:py-28 bg-[#071827] text-white relative overflow-hidden">
+    <section id="quiz" className="py-20 md:py-28 bg-[#071827] text-white relative overflow-hidden scroll-mt-20">
       {/* Abstract Cyan / Blue Visual & Radial Glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[350px] bg-gradient-to-r from-[#08B9E8]/20 via-[#0B2235]/60 to-[#4DD4F5]/10 blur-[120px] rounded-full pointer-events-none"

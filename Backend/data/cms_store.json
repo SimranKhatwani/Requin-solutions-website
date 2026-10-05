@@ -113,12 +113,129 @@
   ],
   "projects": [
     {
-      "id": "proj-1",
-      "projectName": "Enterprise Cloud Infrastructure & CI/CD Pipeline Automation",
+      "id": "proj-vastra",
+      "projectName": "Smart Garment POS, High-Velocity Tailoring Pipelines",
+      "slug": "vastra-erp",
+      "shortDescription": "Enterprise Garment, Fashion Studio & Tailoring POS Management Suite",
+      "fullDescription": "VASTRA ERP is an all-in-one software platform tailored for luxury garment studios, fashion boutiques, and multi-store apparel chains. It provides real-time POS barcode billing, tailor assignment pipelines, automated SMS readiness alerts, catalog management, and stock auditing.",
+      "featuredImage": "/images/products/vastra-erp-overview.png",
+      "galleryImages": [
+        "/images/products/vastra-erp-overview.png",
+        "/images/products/vastra-erp-pos.png",
+        "/images/products/vastra-erp-alteration.png",
+        "/images/products/vastra-erp-catalog.png"
+      ],
+      "category": "Enterprise ERP & Retail",
+      "technologies": [
+        "React",
+        "TypeScript",
+        "Node.js",
+        "PostgreSQL",
+        "Thermal POS",
+        "Tailor Workflow"
+      ],
+      "projectUrl": "https://www.requingroup.com/",
+      "clientName": "Luxury Fashion & Boutique Chains",
+      "status": "PUBLISHED",
+      "displayOrder": 1,
+      "createdAt": "2025-11-20T10:00:00.000Z",
+      "updatedAt": "2026-02-15T12:00:00.000Z"
+    },
+    {
+      "id": "proj-ops-crm",
+      "projectName": "Smart CRM, High-Velocity Pipelines",
+      "slug": "requin-ops-crm",
+      "shortDescription": "Enterprise CRM & Operations Suite Optimizing Customer Relationships Across Industries",
+      "fullDescription": "Requin Ops empowers businesses with high-velocity lead pipelines, customer communication timelines, automated deal progression triggers, and unified team effort dashboards.",
+      "featuredImage": "/images/products/requin-ops-demo.jpg",
+      "galleryImages": [
+        "/images/products/requin-ops-pipeline.png",
+        "/images/products/requin-ops-leads.png",
+        "/images/products/requin-ops-login.png",
+        "/images/products/requin-ops-report.png",
+        "/images/products/requin-ops-tasklist.png"
+      ],
+      "category": "Operations & CRM",
+      "technologies": [
+        "Next.js",
+        "TypeScript",
+        "Node.js",
+        "Redis",
+        "WebSocket",
+        "PostgreSQL"
+      ],
+      "projectUrl": "https://www.requingroup.com/",
+      "clientName": "Enterprise Sales & Operations Groups",
+      "status": "PUBLISHED",
+      "displayOrder": 2,
+      "createdAt": "2025-10-12T11:00:00.000Z",
+      "updatedAt": "2026-02-01T15:00:00.000Z"
+    },
+    {
+      "id": "proj-nexusbill",
+      "projectName": "Intelligent Retail POS, Instant Barcode Billing",
+      "slug": "nexusbill-pos-inventory",
+      "shortDescription": "High-Speed Retail Billing, Barcode Scanning, Multi-Warehouse Inventory & Tax Engine",
+      "fullDescription": "NexusBill enables supermarkets, wholesale distributors, and retail franchises to accelerate counter checkout times, track stock across multiple physical locations, and generate real-time ledger accounting.",
+      "featuredImage": "/images/products/nexusbill-demo.jpg",
+      "galleryImages": [
+        "/images/products/nexusbill-dashboard.png",
+        "/images/products/nexusbill-sales.png",
+        "/images/products/nexusbill-inventory.png",
+        "/images/products/nexusbill-purchases.png"
+      ],
+      "category": "FinTech & Retail POS",
+      "technologies": [
+        "React",
+        "TypeScript",
+        "Electron",
+        "SQLite",
+        "Node.js",
+        "Thermal POS"
+      ],
+      "projectUrl": "https://www.requingroup.com/",
+      "clientName": "Retail & Supermarket Chains",
+      "status": "PUBLISHED",
+      "displayOrder": 3,
+      "createdAt": "2025-09-15T09:00:00.000Z",
+      "updatedAt": "2026-01-28T10:00:00.000Z"
+    },
+    {
+      "id": "proj-dine-dusk",
+      "projectName": "Live Table Booking, Kitchen Display KDS Mesh",
+      "slug": "dine-dusk-restaurant-os",
+      "shortDescription": "High-Velocity Restaurant Operating System with Real-Time Kitchen Routing & POS",
+      "fullDescription": "Engineered for high-volume cafes, fine dining, and cloud kitchens. Dine & Dusk eliminates order confusion with sub-second kitchen ticket printing, QR table self-ordering, and real-time inventory deduction.",
+      "featuredImage": "/images/products/dine-dusk-demo.jpg",
+      "galleryImages": [
+        "/images/products/dine-dusk-pos.png",
+        "/images/products/dine-dusk-dashboard.png",
+        "/images/products/dine-dusk-tables.png",
+        "/images/products/dine-dusk-kds.png"
+      ],
+      "category": "Hospitality & POS",
+      "technologies": [
+        "React",
+        "Node.js",
+        "WebSocket",
+        "PostgreSQL",
+        "Thermal Printing",
+        "Stripe"
+      ],
+      "projectUrl": "https://www.requingroup.com/",
+      "clientName": "Hospitality & Cloud Kitchens",
+      "status": "PUBLISHED",
+      "displayOrder": 4,
+      "createdAt": "2025-08-20T14:00:00.000Z",
+      "updatedAt": "2026-01-18T11:00:00.000Z"
+    },
+    {
+      "id": "proj-cloud-infra",
+      "projectName": "Multi-Cloud Automation, Zero-Downtime Releases",
       "slug": "cloud-infrastructure-cicd-automation",
-      "shortDescription": "Architected automated multi-cloud CI/CD deployment pipelines with Kubernetes container orchestration, cutting deployment time by 82%.",
-      "fullDescription": "Comprehensive infrastructure overhaul for high-traffic financial and enterprise clients. Built automated GitOps release workflows with automated integration testing, vulnerability scans, dynamic autoscaling, and centralized Prometheus/Grafana telemetry.",
-      "featuredImage": "/images/cloud_infrastructure_1790576629897.jpg",
+      "shortDescription": "Kubernetes Container Orchestration, Terraform Infrastructure as Code & Automated GitOps",
+      "fullDescription": "Comprehensive infrastructure overhaul for high-traffic financial and enterprise clients. Built automated GitOps release workflows with dynamic autoscaling, and centralized Prometheus/Grafana telemetry.",
+      "featuredImage": "/images/products/cloud-infra-demo.jpg",
       "galleryImages": [
         "/images/cloud_infrastructure_1790576629897.jpg",
         "/images/modern_software_mockup_1790576657118.jpg"
@@ -135,88 +252,125 @@
       "projectUrl": "https://www.requingroup.com/",
       "clientName": "Global FinTech Client",
       "status": "PUBLISHED",
-      "displayOrder": 1,
+      "displayOrder": 5,
       "createdAt": "2025-11-01T10:00:00.000Z",
       "updatedAt": "2026-01-15T12:00:00.000Z"
     },
     {
-      "id": "proj-2",
-      "projectName": "Requin Ops: Academic & Enterprise ERP Management Suite",
-      "slug": "requin-ops-academic-erp-suite",
-      "shortDescription": "Unified end-to-end institution operating system handling admissions, faculty workload, automated grading pipelines, and fee disbursement.",
-      "fullDescription": "Requin Ops is our flagship enterprise ERP deployed across universities and colleges. It consolidates disparate legacy databases into a real-time reactive dashboard, providing role-based security, automated SMS/WhatsApp alerts, and audit-ready reporting.",
-      "featuredImage": "/images/modern_software_mockup_1790576657118.jpg",
+      "id": "proj-requin-ams",
+      "projectName": "Smart Biometric Sync, Real-Time Attendance Mesh",
+      "slug": "requin-ams-workforce",
+      "shortDescription": "Workforce Operations & QR Biometric Sync Suite with Real-Time Geofencing",
+      "fullDescription": "Requin AMS combines dynamic rolling QR codes, geofenced boundaries, and time-stamped biometric auth to automate overtime, shifts, and payroll reporting.",
+      "featuredImage": "/images/products/requin-ams-demo.jpg",
       "galleryImages": [
-        "/images/modern_software_mockup_1790576657118.jpg",
-        "/images/digital_agency_office_1790576645354.jpg"
+        "/images/products/requin-ams-dashboard.jpg",
+        "/images/products/requin-ams-demo.jpg",
+        "/images/products/requin-ams-attendance-rules.jpg",
+        "/images/products/requin-ams-login.jpg"
       ],
-      "category": "Enterprise Software",
+      "category": "Workforce & IoT",
+      "technologies": [
+        "React Native",
+        "Go",
+        "Node.js",
+        "PostgreSQL",
+        "Docker",
+        "MQTT"
+      ],
+      "projectUrl": "https://www.requingroup.com/",
+      "clientName": "Enterprise Workforce Operations",
+      "status": "PUBLISHED",
+      "displayOrder": 6,
+      "createdAt": "2025-07-10T12:00:00.000Z",
+      "updatedAt": "2026-01-10T10:00:00.000Z"
+    },
+    {
+      "id": "proj-requin-hrms",
+      "projectName": "Enterprise HRMS, Automated Payroll & Leave Mesh",
+      "slug": "requin-hrms-suite",
+      "shortDescription": "Unified Human Resource Management, Dynamic Role Permissions, Asset Tracking & Payroll",
+      "fullDescription": "Complete workforce operations and HR management system featuring automated salary slip generation, department-level leave approvals, asset assignment, and organization hierarchy visualization.",
+      "featuredImage": "/images/products/requin-hrms-demo.jpg",
+      "galleryImages": [
+        "/images/products/requin-hrms-dashboard.png",
+        "/images/products/requin-hrms-roles.png",
+        "/images/products/requin-hrms-assets.png",
+        "/images/products/requin-hrms-demo.jpg"
+      ],
+      "category": "Workforce & HR",
       "technologies": [
         "React",
         "TypeScript",
         "Node.js",
         "PostgreSQL",
-        "Redis",
-        "Docker"
+        "TailwindCSS",
+        "Redis"
       ],
       "projectUrl": "https://www.requingroup.com/",
-      "clientName": "University Consortia",
+      "clientName": "Corporate Enterprises & Staffing Groups",
       "status": "PUBLISHED",
-      "displayOrder": 2,
-      "createdAt": "2025-10-12T11:00:00.000Z",
-      "updatedAt": "2026-02-01T15:00:00.000Z"
+      "displayOrder": 7,
+      "createdAt": "2025-06-18T10:00:00.000Z",
+      "updatedAt": "2026-01-05T14:00:00.000Z"
     },
     {
-      "id": "proj-3",
-      "projectName": "FinTech Microservices Payment Gateway & Compliance Engine",
-      "slug": "fintech-microservices-payment-gateway",
-      "shortDescription": "High-throughput distributed ledger and payment routing engine processing 200,000+ daily transactions with ISO27001 PCI-DSS compliance.",
-      "fullDescription": "Engineered an ultra-resilient payment gateway architecture with smart bank switch routing, fraud detection scoring in under 45ms, and automated settlement reconciliation.",
-      "featuredImage": "/images/requin_software_team_1790576614688.jpg",
+      "id": "proj-rkb-enterprises",
+      "projectName": "Multi-Category B2B Commerce, Live Catalog Engine",
+      "slug": "rkb-enterprises-commerce",
+      "shortDescription": "High-Speed Wholesale E-Commerce & Product Comparison Portal with Instant RFQ Quotes",
+      "fullDescription": "Modern digital marketplace architecture featuring dynamic product category filters, multi-item specification comparisons, bulk inquiry carts, and high-performance image caching.",
+      "featuredImage": "/images/products/rkb-enterprises-demo.jpg",
       "galleryImages": [
-        "/images/requin_software_team_1790576614688.jpg",
-        "/images/cloud_infrastructure_1790576629897.jpg"
+        "/images/products/rkb-enterprises-home.png",
+        "/images/products/rkb-enterprises-catalog.png",
+        "/images/products/rkb-enterprises-categories.png",
+        "/images/products/rkb-enterprises-comparison.png"
       ],
-      "category": "FinTech & Security",
+      "category": "E-Commerce & B2B",
       "technologies": [
-        "Go",
-        "Node.js",
-        "Apache Kafka",
+        "Next.js",
+        "TypeScript",
+        "TailwindCSS",
         "PostgreSQL",
-        "Vault",
-        "Stripe API"
+        "Stripe",
+        "Node.js"
       ],
       "projectUrl": "https://www.requingroup.com/",
-      "clientName": "Apex Pay Solutions",
+      "clientName": "RKB Enterprises Industrial Supply",
       "status": "PUBLISHED",
-      "displayOrder": 3,
-      "createdAt": "2025-09-05T09:00:00.000Z",
-      "updatedAt": "2026-01-20T10:00:00.000Z"
+      "displayOrder": 8,
+      "createdAt": "2025-05-12T09:00:00.000Z",
+      "updatedAt": "2025-12-20T16:00:00.000Z"
     },
     {
-      "id": "proj-4",
-      "projectName": "Smart IoT Supply Chain & Fleet Telemetry System",
-      "slug": "smart-iot-fleet-telemetry",
-      "shortDescription": "Real-time GPS, temperature sensor mesh, and route optimization engine for cold-chain pharmaceutical transport across 14 states.",
-      "fullDescription": "Connected 3,500+ commercial vehicles with edge IoT hardware, streaming continuous sensor data via MQTT to cloud time-series databases with geofence anomaly triggers.",
-      "featuredImage": "/images/digital_agency_office_1790576645354.jpg",
+      "id": "proj-india-motor",
+      "projectName": "Instructor Dispatch, Real-Time Student Portal",
+      "slug": "india-motor-training",
+      "shortDescription": "Digital Driver Training School OS with Real-Time Trainer Booking & Progress Telemetry",
+      "fullDescription": "Streamlined training school management platform with automated batch scheduling, trainer availability calendars, student performance scorecards, and instant course checkout.",
+      "featuredImage": "/images/products/india-motor-demo.jpg",
       "galleryImages": [
-        "/images/digital_agency_office_1790576645354.jpg"
+        "/images/products/india-motor-hero.png",
+        "/images/products/india-motor-features.png",
+        "/images/products/india-motor-pricing.png",
+        "/images/products/india-motor-trainers.png"
       ],
-      "category": "IoT & Smart Infrastructure",
+      "category": "EdTech & Operations",
       "technologies": [
-        "MQTT",
+        "React",
+        "TypeScript",
         "Node.js",
-        "InfluxDB",
-        "React Native",
-        "AWS IoT Core"
+        "Express",
+        "MongoDB",
+        "Razorpay"
       ],
       "projectUrl": "https://www.requingroup.com/",
-      "clientName": "LogiTrans National",
+      "clientName": "India Motor Driving Academy",
       "status": "PUBLISHED",
-      "displayOrder": 4,
-      "createdAt": "2025-08-14T14:00:00.000Z",
-      "updatedAt": "2026-01-08T11:00:00.000Z"
+      "displayOrder": 9,
+      "createdAt": "2025-04-05T11:00:00.000Z",
+      "updatedAt": "2025-11-15T10:00:00.000Z"
     }
   ],
   "stories": [

@@ -53,25 +53,83 @@ export const ProductsSection: React.FC<ProductsSectionProps> = () => {
 
   const isVisualLeft = activeProduct.visualSide === 'left';
 
-  // Visual Mockup Container (Clean showcase preview without video icons/demo badges)
+  const getProductBadges = (id: string) => {
+    switch (id) {
+      case 'vastra-erp':
+        return {
+          url: 'requingroup.com / vastra-erp',
+          top: '⚡ Real-Time Boutique POS & Billing Terminal',
+          bottom: '📍 Multi-Store Inventory & Alteration Mesh',
+        };
+      case 'requin-ops':
+        return {
+          url: 'requingroup.com / ops / crm',
+          top: '⚡ Automated Lead Progression • Multi-Stage Sales',
+          bottom: '📍 Client Portal • Multi-Tenant Ready',
+        };
+      case 'requin-ams':
+        return {
+          url: 'requingroup.com / ams / attendance',
+          top: '⚡ Dynamic Rolling QR & Sub-Second Latency',
+          bottom: '📍 Geofenced Campus & Biometric Check-in',
+        };
+      case 'requin-hrms':
+        return {
+          url: 'requingroup.com / hrms / enterprise',
+          top: '⚡ Automated Payroll & Role Hierarchy Engine',
+          bottom: '📍 Leave Approval & Asset Allocation Suite',
+        };
+      case 'dine-and-dusk':
+      case 'dine-dusk':
+        return {
+          url: 'requingroup.com / dine-dusk / pos',
+          top: '⚡ Real-Time Kitchen Display (KDS) & Order Routing',
+          bottom: '📍 Dynamic Table Reservation & Floor Visualizer',
+        };
+      case 'rkb-enterprises':
+        return {
+          url: 'requingroup.com / rkb / commerce',
+          top: '⚡ Multi-Category Dynamic Wholesale Catalog',
+          bottom: '📍 Instant RFQ Quotes & Bulk Spec Compare',
+        };
+      default:
+        return {
+          url: `requingroup.com / ${id}`,
+          top: '⚡ Enterprise Engineering & Cloud Architecture',
+          bottom: '📍 Production Deployed • High Availability',
+        };
+    }
+  };
+
+  const productBadge = getProductBadges(activeProduct.id);
+
+  // Visual Mockup Container (3D Isometric Tilted Browser Showcase matching Requin Apps UI)
   const visualBlock = (
     <div
       onClick={() => handleOpenFeatures(activeProduct)}
-      className="relative rounded-[24px] sm:rounded-[28px] overflow-hidden bg-[#0A1826] border border-[#08B9E8]/30 shadow-2xl group cursor-pointer aspect-[16/10] sm:aspect-video flex items-center justify-center p-2 sm:p-3.5 transition-all duration-300 hover:border-[#08B9E8] hover:shadow-[0_0_40px_rgba(8,185,232,0.3)]"
+      className="relative py-4 sm:py-6 cursor-pointer"
+      style={{ perspective: '1100px' }}
     >
-      {/* Product Visual Image - Object Contain to preserve complete software UI */}
-      <img
-        src={activeProduct.image}
-        alt={`${activeProduct.title} Interface`}
-        className="w-full h-full object-contain rounded-xl sm:rounded-2xl transition-transform duration-500 group-hover:scale-[1.02]"
-      />
+      {/* 3D Angled Browser Container */}
+      <div className="relative transition-all duration-700 ease-out lg:[transform:perspective(1100px)_rotateY(-14deg)_rotateX(6deg)_scale(0.96)] hover:lg:[transform:perspective(1100px)_rotateY(0deg)_rotateX(0deg)_scale(1.02)]">
+        {/* Showcase Image Frame */}
+        <div className="rounded-2xl sm:rounded-3xl bg-[#0B1B2B] border border-slate-700/90 shadow-[0_25px_60px_rgba(0,0,0,0.9),0_0_35px_rgba(0,194,255,0.15)] overflow-hidden transition-all duration-300 hover:border-[#08B9E8]/70 hover:shadow-[0_30px_70px_rgba(8,185,232,0.3)]">
+          {/* Product Image */}
+          <div className="relative w-full overflow-hidden bg-slate-950">
+            <img
+              src={activeProduct.image}
+              alt={`${activeProduct.title} Interface`}
+              className="w-full h-auto max-h-[380px] object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
+            />
 
-      {/* Subtle Bottom Hover Indicator */}
-      <div className="absolute bottom-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#061827]/95 text-[#08B9E8] border border-[#08B9E8]/60 text-xs font-bold shadow-xl backdrop-blur-md">
-          <Layers className="w-3.5 h-3.5" />
-          <span>View Feature Gallery</span>
-        </span>
+            {/* Hover overlay prompt */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#071827]/75 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end justify-center p-3">
+              <span className="px-3 py-1 rounded-full bg-[#00c2ff] text-[#071827] text-xs font-bold shadow-lg flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5" /> View Feature Gallery
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

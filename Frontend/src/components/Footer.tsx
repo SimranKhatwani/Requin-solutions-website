@@ -185,7 +185,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               </li>
               <li>
                 <button
-                  onClick={() => (onOpenQuiz ? onOpenQuiz() : handleNav('quiz'))}
+                  onClick={() => handleNav('quiz')}
                   className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Quiz

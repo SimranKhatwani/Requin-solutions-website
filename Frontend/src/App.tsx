@@ -7,6 +7,7 @@ import { PublicProjectsPage } from './pages/PublicProjectsPage';
 import { PublicStoriesPage } from './pages/PublicStoriesPage';
 import { PublicServiceDetailPage } from './pages/PublicServiceDetailPage';
 import { PublicProductsPage } from './pages/PublicProductsPage';
+import { PublicQuizPage } from './pages/PublicQuizPage';
 
 // Admin CMS Components
 import { AdminLogin } from './admin/AdminLogin';
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/blogs" element={<PublicBlogsPage />} />
         <Route path="/blog/:slug" element={<PublicBlogDetailPage />} />
         <Route path="/our-stories" element={<PublicStoriesPage />} />
+        <Route path="/quiz" element={<PublicQuizPage />} />
         <Route path="/contact" element={<PublicHomePage initialScrollTo="contact" />} />
 
         {/* ========================================================

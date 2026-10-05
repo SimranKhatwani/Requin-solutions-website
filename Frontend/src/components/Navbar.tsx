@@ -4,13 +4,12 @@ import { Menu, X, ArrowRight } from 'lucide-react';
 
 interface NavbarProps {
   onOpenLogin: () => void;
-  onOpenQuiz: () => void;
+  onOpenQuiz?: () => void;
   onNavigateSection: (sectionId: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenLogin,
-  onOpenQuiz,
   onNavigateSection,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -90,13 +89,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
 
             <button
-              onClick={onOpenQuiz}
-              className="hover:text-[#00c2ff] transition-colors duration-150 py-1 focus:outline-none cursor-pointer"
-            >
-              Quiz
-            </button>
-
-            <button
               onClick={() => handleNavClick('contact')}
               className="hover:text-[#00c2ff] transition-colors duration-150 py-1 focus:outline-none cursor-pointer"
             >
@@ -113,7 +105,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* Solid Get Started CTA Button */}
             <button
-              onClick={() => handleNavClick('contact')}
+              onClick={() => handleNavClick('quiz')}
               className="inline-flex items-center gap-1.5 px-4.5 py-2 text-md font-semibold text-[#05131f] bg-[#00c2ff] hover:bg-[#38d4ff] rounded-lg transition-all duration-200 shadow-sm hover:shadow-md hover:shadow-[#00c2ff]/25 focus:outline-none active:scale-[0.98] cursor-pointer"
             >
               <span>Get Started</span>
@@ -130,7 +122,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               Login
             </button>
             <button
-              onClick={() => handleNavClick('contact')}
+              onClick={() => handleNavClick('quiz')}
               className="px-3 py-1 bg-[#00c2ff] text-[#05131f] rounded-lg text-xs font-semibold"
             >
               Get Started
@@ -174,15 +166,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             Our Products
           </button>
           <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              onOpenQuiz();
-            }}
-            className="block w-full text-left py-2 text-base font-semibold text-white hover:text-[#00c2ff]"
-          >
-            Quiz
-          </button>
-          <button
             onClick={() => handleNavClick('contact')}
             className="block w-full text-left py-2 text-base font-semibold text-white hover:text-[#00c2ff]"
           >
@@ -199,7 +182,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               Login
             </button>
             <button
-              onClick={() => handleNavClick('contact')}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                handleNavClick('quiz');
+              }}
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-[#05131f] bg-[#00c2ff] hover:bg-[#38d4ff] rounded-lg shadow-sm"
             >
               <span>Get Started</span>

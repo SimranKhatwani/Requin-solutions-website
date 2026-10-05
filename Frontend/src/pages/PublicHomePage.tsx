@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Hero } from '../components/Hero';
 import { ServicesSection } from '../components/ServicesSection';
@@ -26,6 +26,7 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ initialScrollTo 
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
 
+  const navigate = useNavigate();
   const location = useLocation();
 
   const scrollToSection = (sectionId: string) => {
