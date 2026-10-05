@@ -2,7 +2,17 @@ import fs from 'fs';
 import path from 'path';
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
-import { AdminUser, BlogDoc, ProjectDoc, StoryDoc, MediaDoc, ActivityDoc, TestimonialDoc } from './types';
+import {
+  AdminUser,
+  BlogDoc,
+  ProjectDoc,
+  StoryDoc,
+  MediaDoc,
+  ActivityDoc,
+  TestimonialDoc,
+  CareerDoc,
+  JobApplicationDoc,
+} from './types';
 
 const DATA_DIR = path.resolve(process.cwd(), 'data');
 const STORE_PATH = path.join(DATA_DIR, 'cms_store.json');
@@ -17,6 +27,8 @@ interface CMSDatabase {
   projects: ProjectDoc[];
   stories: StoryDoc[];
   testimonials: TestimonialDoc[];
+  careers: CareerDoc[];
+  jobApplications?: JobApplicationDoc[];
   media: MediaDoc[];
   activities: ActivityDoc[];
   supportInquiries?: { id: string; name: string; email: string; message: string; targetEmail: string; createdAt: string }[];
@@ -560,7 +572,10 @@ const getInitialSeed = (): CMSDatabase => {
     },
   ];
 
-  return { adminUsers, blogs, projects, stories, testimonials, media, activities };
+  const careers: CareerDoc[] = [];
+  const jobApplications: JobApplicationDoc[] = [];
+
+  return { adminUsers, blogs, projects, stories, testimonials, careers, jobApplications, media, activities };
 };
 
 // Safe File-backed store operations
@@ -574,8 +589,20 @@ export class CMSStore {
       if (fs.existsSync(STORE_PATH)) {
         const raw = fs.readFileSync(STORE_PATH, 'utf-8');
         this.data = JSON.parse(raw);
+        let modified = false;
         if (this.data && !this.data.testimonials) {
           this.data.testimonials = getInitialSeed().testimonials;
+          modified = true;
+        }
+        if (this.data && !this.data.careers) {
+          this.data.careers = [];
+          modified = true;
+        }
+        if (this.data && !this.data.jobApplications) {
+          this.data.jobApplications = [];
+          modified = true;
+        }
+        if (modified) {
           this.save(this.data);
         }
         return this.data!;

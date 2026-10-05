@@ -8,6 +8,7 @@ import { PublicStoriesPage } from './pages/PublicStoriesPage';
 import { PublicServiceDetailPage } from './pages/PublicServiceDetailPage';
 import { PublicProductsPage } from './pages/PublicProductsPage';
 import { PublicQuizPage } from './pages/PublicQuizPage';
+import { PublicCareersPage } from './pages/PublicCareersPage';
 
 // Admin CMS Components
 import { AdminLogin } from './admin/AdminLogin';
@@ -16,6 +17,7 @@ import { AdminLayout } from './admin/AdminLayout';
 import { AdminDashboard } from './admin/AdminDashboard';
 import { AdminBlogs } from './admin/AdminBlogs';
 import { AdminProjects } from './admin/AdminProjects';
+import { AdminCareers } from './admin/AdminCareers';
 import { AdminStories } from './admin/AdminStories';
 import { AdminTestimonials } from './admin/AdminTestimonials';
 import { AdminMedia } from './admin/AdminMedia';
@@ -38,6 +40,7 @@ export default function App() {
         <Route path="/projects" element={<PublicProjectsPage />} />
         <Route path="/blogs" element={<PublicBlogsPage />} />
         <Route path="/blog/:slug" element={<PublicBlogDetailPage />} />
+        <Route path="/careers" element={<PublicCareersPage />} />
         <Route path="/our-stories" element={<PublicStoriesPage />} />
         <Route path="/quiz" element={<PublicQuizPage />} />
         <Route path="/contact" element={<PublicHomePage initialScrollTo="contact" />} />
@@ -58,6 +61,7 @@ export default function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="blogs" element={<AdminBlogs />} />
           <Route path="projects" element={<AdminProjects />} />
+          <Route path="careers" element={<AdminCareers />} />
           <Route path="our-stories" element={<AdminStories />} />
           <Route path="testimonials" element={<AdminTestimonials />} />
           <Route path="media" element={<AdminMedia />} />

@@ -28,7 +28,7 @@ KEY FACTS ABOUT REQUIN SOLUTIONS:
 • Primary Phone: +91 9352220187
 • Official Emails: info@requinsolutions.com, Hr@requinsolutions.com
 • Direct Support Mailbox: requingroupsolutions@gmail.com
-• Experience: 5+ years of engineering excellence, 80+ delivered projects, 96% client retention.
+• Experience: 5+ years of engineering excellence, 2K+ apps developed, 40+ expert consultants, 100+ talented employees, 96% client retention.
 
 WEBSITE CORNERS & DESTINATIONS TO GUIDE VISITORS TO:
 1. "Services" (Web Development in React/Next.js, Mobile Apps for iOS/Android, Custom Enterprise Software, Academic/EdTech Systems, Cloud & DevOps on AWS/GCP).
@@ -149,7 +149,7 @@ export const ChatWidget: React.FC = () => {
       lower.includes('team') ||
       lower.includes('experience')
     ) {
-      return `🏢 About Requin Solutions:\n\n• 5+ Years of Engineering Excellence\n• 80+ Enterprise Projects Successfully Delivered\n• 45+ Full-time Tech Specialists & Solution Architects\n• 96% Client Retention across North America, Europe & APAC\n\n📌 Visit our "About Us / Our Stories" page from the navigation bar to discover our timeline and mission!${mailCTA}`;
+      return `🏢 About Requin Solutions:\n\n• 5+ Years of Engineering Excellence\n• 2K+ Apps Developed\n• 40+ Expert Consultants\n• 100+ Talented Employees\n• 96% Client Retention across North America, Europe & APAC\n\n📌 Visit our "About Us / Our Stories" page from the navigation bar to discover our timeline and mission!${mailCTA}`;
     } else if (
       lower.includes('blog') ||
       lower.includes('article') ||

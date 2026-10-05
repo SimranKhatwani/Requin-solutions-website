@@ -3,7 +3,7 @@ import { apiClient } from './apiClient';
 export interface ActivityItem {
   id: string;
   action: string;
-  entityType: 'blog' | 'project' | 'story' | 'media' | 'auth';
+  entityType: 'blog' | 'project' | 'story' | 'media' | 'testimonial' | 'career' | 'auth' | 'support';
   entityTitle: string;
   adminEmail: string;
   timestamp: string;
@@ -18,6 +18,10 @@ export interface CMSStats {
   totalStories: number;
   publishedStories: number;
   totalMedia: number;
+  totalCareers?: number;
+  publishedCareers?: number;
+  draftCareers?: number;
+  totalApplications?: number;
   recentActivity: ActivityItem[];
 }
 

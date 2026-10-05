@@ -307,7 +307,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
                   Blog
                 </button>
                 <button
-                  onClick={() => setActiveModal('Career')}
+                  onClick={() => navigate('/careers')}
                   className="px-3.5 py-1 rounded-full bg-[#0B2235] border border-white/10 text-xs font-normal text-slate-300 hover:text-[#08B9E8] hover:border-[#08B9E8] hover:bg-[#08B9E8]/10 transition-all cursor-pointer"
                 >
                   Career

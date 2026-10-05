@@ -5,7 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import { CMSStore } from './db';
 import { requireAdminAuth, generateToken, AuthenticatedRequest } from './auth';
-import { BlogDoc, ProjectDoc, StoryDoc, MediaDoc, TestimonialDoc } from './types';
+import { BlogDoc, ProjectDoc, StoryDoc, MediaDoc, TestimonialDoc, CareerDoc, JobApplicationDoc } from './types';
 
 export const apiRouter = express.Router();
 
@@ -135,6 +135,91 @@ apiRouter.get('/testimonials', (_req: Request, res: Response) => {
   res.json({ success: true, count: testimonials.length, data: testimonials });
 });
 
+// Public: Get published careers / job openings
+apiRouter.get('/careers', (req: Request, res: Response) => {
+  const db = CMSStore.get();
+  let careers = (db.careers || []).filter((c) => c.status === 'PUBLISHED');
+
+  const { department, employmentType, search } = req.query;
+  if (department && typeof department === 'string' && department !== 'All') {
+    careers = careers.filter((c) => c.department.toLowerCase() === department.toLowerCase());
+  }
+  if (employmentType && typeof employmentType === 'string' && employmentType !== 'All') {
+    careers = careers.filter((c) => c.employmentType.toLowerCase() === employmentType.toLowerCase());
+  }
+  if (search && typeof search === 'string') {
+    const q = search.toLowerCase();
+    careers = careers.filter(
+      (c) =>
+        c.title.toLowerCase().includes(q) ||
+        c.shortDescription.toLowerCase().includes(q) ||
+        c.department.toLowerCase().includes(q) ||
+        c.requirements.some((r) => r.toLowerCase().includes(q))
+    );
+  }
+
+  // Sort by displayOrder ascending
+  careers.sort((a, b) => a.displayOrder - b.displayOrder);
+
+  res.json({ success: true, count: careers.length, data: careers });
+});
+
+// Public: Get single career by slug or id
+apiRouter.get('/careers/:slug', (req: Request, res: Response) => {
+  const db = CMSStore.get();
+  const career = (db.careers || []).find(
+    (c) => (c.slug === req.params.slug || c.id === req.params.slug) && c.status === 'PUBLISHED'
+  );
+
+  if (!career) {
+    res.status(404).json({ success: false, error: 'Job opening not found or no longer active.' });
+    return;
+  }
+
+  res.json({ success: true, data: career });
+});
+
+// Public: Submit job application (forwards to Hr@requinsolutions.com)
+apiRouter.post('/careers/apply', (req: Request, res: Response) => {
+  const { careerId, jobTitle, name, email, phone, experienceLevel, portfolioUrl, resumeUrl, message } = req.body;
+
+  if (!name || !email || !jobTitle) {
+    res.status(400).json({ success: false, error: 'Name, email, and job title are required.' });
+    return;
+  }
+
+  const db = CMSStore.get();
+  if (!db.jobApplications) {
+    db.jobApplications = [];
+  }
+
+  const application: JobApplicationDoc = {
+    id: `app-${Date.now()}`,
+    careerId: careerId ? String(careerId) : undefined,
+    jobTitle: String(jobTitle).trim(),
+    name: String(name).trim(),
+    email: String(email).trim(),
+    phone: phone ? String(phone).trim() : '',
+    experienceLevel: experienceLevel ? String(experienceLevel).trim() : '',
+    portfolioUrl: portfolioUrl ? String(portfolioUrl).trim() : '',
+    resumeUrl: resumeUrl ? String(resumeUrl).trim() : '',
+    message: message ? String(message).trim() : '',
+    status: 'NEW',
+    createdAt: new Date().toISOString(),
+  };
+
+  db.jobApplications.unshift(application);
+  CMSStore.save(db);
+
+  console.log(`[Job Application Received] Candidate: ${name} (${email}, ${phone}) | Role: ${jobTitle} | Forwarding to Hr@requinsolutions.com`);
+
+  res.status(201).json({
+    success: true,
+    message: 'Your application has been received and forwarded to our HR engineering team at Hr@requinsolutions.com.',
+    data: application,
+  });
+});
+
 // Public: Submit support inquiry (email to requingroupsolutions@gmail.com)
 apiRouter.post('/support', (req: Request, res: Response) => {
   const { name, email, message } = req.body;
@@ -184,7 +269,7 @@ COMPANY KNOWLEDGE & DETAILS:
 • Primary Contact Phone: +91 9352220187
 • Official Contact Emails: info@requinsolutions.com, Hr@requinsolutions.com
 • Support Mailbox: requingroupsolutions@gmail.com
-• Experience: 5+ years of engineering excellence, 80+ delivered projects, 96% client retention across North America, Europe & APAC.
+• Experience: 5+ years of engineering excellence, 2K+ apps developed, 40+ expert consultants, 100+ talented employees, 96% client retention across North America, Europe & APAC.
 
 WEBSITE CORNERS & SECTIONS TO GUIDE VISITORS TO:
 1. "Services" (Web Development in React/Next.js, Mobile Apps for iOS/Android, Custom Enterprise Software, Academic/EdTech Systems, Cloud & DevOps on AWS/GCP).
@@ -382,6 +467,11 @@ apiRouter.get('/admin/stats', requireAdminAuth, (_req: AuthenticatedRequest, res
 
   const totalMedia = db.media.length;
 
+  const totalCareers = (db.careers || []).length;
+  const publishedCareers = (db.careers || []).filter((c) => c.status === 'PUBLISHED').length;
+  const draftCareers = totalCareers - publishedCareers;
+  const totalApplications = (db.jobApplications || []).length;
+
   res.json({
     success: true,
     data: {
@@ -393,6 +483,10 @@ apiRouter.get('/admin/stats', requireAdminAuth, (_req: AuthenticatedRequest, res
       totalStories,
       publishedStories,
       totalMedia,
+      totalCareers,
+      publishedCareers,
+      draftCareers,
+      totalApplications,
       recentActivity: db.activities.slice(0, 10),
     },
   });
@@ -905,4 +999,222 @@ apiRouter.delete('/admin/testimonials/:id', requireAdminAuth, (req: Authenticate
   CMSStore.addActivity(`Deleted testimonial for ${deleted.name}`, 'testimonial', deleted.name, req.adminUser!.email);
 
   res.json({ success: true, message: 'Testimonial deleted successfully.' });
+});
+
+// ========================================================
+// 9. ADMIN CAREERS & JOB OPENINGS MANAGEMENT
+// ========================================================
+
+apiRouter.get('/admin/careers', requireAdminAuth, (_req: AuthenticatedRequest, res: Response) => {
+  const db = CMSStore.get();
+  const careers = [...(db.careers || [])].sort((a, b) => a.displayOrder - b.displayOrder);
+  res.json({ success: true, data: careers });
+});
+
+apiRouter.post('/admin/careers', requireAdminAuth, (req: AuthenticatedRequest, res: Response) => {
+  const {
+    title,
+    slug,
+    department,
+    location,
+    employmentType,
+    experience,
+    salary,
+    shortDescription,
+    responsibilities,
+    requirements,
+    benefits,
+    status,
+    displayOrder,
+    applyEmail,
+  } = req.body;
+
+  if (!title || !shortDescription || !department) {
+    res.status(400).json({ error: 'Title, department, and short description are required.' });
+    return;
+  }
+
+  const generatedSlug = (slug || title)
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-');
+
+  const db = CMSStore.get();
+  if (!db.careers) db.careers = [];
+
+  const now = new Date().toISOString();
+  const newCareer: CareerDoc = {
+    id: `career-${Date.now()}`,
+    title,
+    slug: generatedSlug,
+    department: department || 'Engineering',
+    location: location || 'Jaipur, Rajasthan (Onsite / Hybrid)',
+    employmentType: employmentType || 'Full-time',
+    experience: experience || '2+ Years',
+    salary: salary || 'Competitive / Best in Industry',
+    shortDescription,
+    responsibilities: Array.isArray(responsibilities)
+      ? responsibilities
+      : typeof responsibilities === 'string'
+      ? responsibilities.split('\n').map((s: string) => s.trim()).filter(Boolean)
+      : [],
+    requirements: Array.isArray(requirements)
+      ? requirements
+      : typeof requirements === 'string'
+      ? requirements.split('\n').map((s: string) => s.trim()).filter(Boolean)
+      : [],
+    benefits: Array.isArray(benefits)
+      ? benefits
+      : typeof benefits === 'string'
+      ? benefits.split('\n').map((s: string) => s.trim()).filter(Boolean)
+      : [],
+    status: status === 'PUBLISHED' ? 'PUBLISHED' : status === 'CLOSED' ? 'CLOSED' : 'DRAFT',
+    displayOrder: typeof displayOrder === 'number' ? displayOrder : db.careers.length + 1,
+    applyEmail: applyEmail || 'Hr@requinsolutions.com',
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  db.careers.push(newCareer);
+  CMSStore.save(db);
+  CMSStore.addActivity(`Created job opening "${title}"`, 'career', title, req.adminUser!.email);
+
+  res.status(201).json({ success: true, data: newCareer });
+});
+
+apiRouter.put('/admin/careers/:id', requireAdminAuth, (req: AuthenticatedRequest, res: Response) => {
+  const db = CMSStore.get();
+  if (!db.careers) db.careers = [];
+  const idx = db.careers.findIndex((c) => c.id === req.params.id);
+  if (idx === -1) {
+    res.status(404).json({ error: 'Career not found.' });
+    return;
+  }
+
+  const prev = db.careers[idx];
+  const {
+    title,
+    slug,
+    department,
+    location,
+    employmentType,
+    experience,
+    salary,
+    shortDescription,
+    responsibilities,
+    requirements,
+    benefits,
+    status,
+    displayOrder,
+    applyEmail,
+  } = req.body;
+
+  const now = new Date().toISOString();
+  const updated: CareerDoc = {
+    ...prev,
+    title: title ?? prev.title,
+    slug: slug ? slug.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-') : prev.slug,
+    department: department ?? prev.department,
+    location: location ?? prev.location,
+    employmentType: employmentType ?? prev.employmentType,
+    experience: experience ?? prev.experience,
+    salary: salary !== undefined ? salary : prev.salary,
+    shortDescription: shortDescription ?? prev.shortDescription,
+    responsibilities: responsibilities
+      ? Array.isArray(responsibilities)
+        ? responsibilities
+        : typeof responsibilities === 'string'
+        ? responsibilities.split('\n').map((s: string) => s.trim()).filter(Boolean)
+        : prev.responsibilities
+      : prev.responsibilities,
+    requirements: requirements
+      ? Array.isArray(requirements)
+        ? requirements
+        : typeof requirements === 'string'
+        ? requirements.split('\n').map((s: string) => s.trim()).filter(Boolean)
+        : prev.requirements
+      : prev.requirements,
+    benefits: benefits
+      ? Array.isArray(benefits)
+        ? benefits
+        : typeof benefits === 'string'
+        ? benefits.split('\n').map((s: string) => s.trim()).filter(Boolean)
+        : prev.benefits
+      : prev.benefits,
+    status: status ?? prev.status,
+    displayOrder: typeof displayOrder === 'number' ? displayOrder : prev.displayOrder,
+    applyEmail: applyEmail ?? prev.applyEmail,
+    updatedAt: now,
+  };
+
+  db.careers[idx] = updated;
+  CMSStore.save(db);
+  CMSStore.addActivity(`Updated job opening "${updated.title}"`, 'career', updated.title, req.adminUser!.email);
+
+  res.json({ success: true, data: updated });
+});
+
+apiRouter.patch('/admin/careers/:id/publish', requireAdminAuth, (req: AuthenticatedRequest, res: Response) => {
+  const db = CMSStore.get();
+  if (!db.careers) db.careers = [];
+  const idx = db.careers.findIndex((c) => c.id === req.params.id);
+  if (idx === -1) {
+    res.status(404).json({ error: 'Career not found.' });
+    return;
+  }
+
+  const prev = db.careers[idx];
+  const nextStatus = prev.status === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED';
+  prev.status = nextStatus;
+  prev.updatedAt = new Date().toISOString();
+  db.careers[idx] = prev;
+  CMSStore.save(db);
+
+  CMSStore.addActivity(`Changed career "${prev.title}" status to ${nextStatus}`, 'career', prev.title, req.adminUser!.email);
+  res.json({ success: true, data: prev });
+});
+
+apiRouter.delete('/admin/careers/:id', requireAdminAuth, (req: AuthenticatedRequest, res: Response) => {
+  const db = CMSStore.get();
+  if (!db.careers) db.careers = [];
+  const idx = db.careers.findIndex((c) => c.id === req.params.id);
+  if (idx === -1) {
+    res.status(404).json({ error: 'Career not found.' });
+    return;
+  }
+
+  const deleted = db.careers.splice(idx, 1)[0];
+  CMSStore.save(db);
+  CMSStore.addActivity(`Deleted job opening "${deleted.title}"`, 'career', deleted.title, req.adminUser!.email);
+
+  res.json({ success: true, message: 'Job opening deleted successfully.' });
+});
+
+// Admin: Get all candidate job applications
+apiRouter.get('/admin/careers/applications', requireAdminAuth, (_req: AuthenticatedRequest, res: Response) => {
+  const db = CMSStore.get();
+  const applications = db.jobApplications || [];
+  res.json({ success: true, count: applications.length, data: applications });
+});
+
+// Admin: Update candidate application status
+apiRouter.patch('/admin/careers/applications/:id/status', requireAdminAuth, (req: AuthenticatedRequest, res: Response) => {
+  const db = CMSStore.get();
+  if (!db.jobApplications) db.jobApplications = [];
+  const idx = db.jobApplications.findIndex((a) => a.id === req.params.id);
+  if (idx === -1) {
+    res.status(404).json({ error: 'Application not found.' });
+    return;
+  }
+
+  const { status } = req.body;
+  if (!status) {
+    res.status(400).json({ error: 'Status is required.' });
+    return;
+  }
+
+  db.jobApplications[idx].status = status;
+  CMSStore.save(db);
+  res.json({ success: true, data: db.jobApplications[idx] });
 });

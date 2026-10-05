@@ -86,7 +86,7 @@ export interface TestimonialDoc {
 export interface ActivityDoc {
   id: string;
   action: string;
-  entityType: 'blog' | 'project' | 'story' | 'media' | 'testimonial' | 'auth' | 'support';
+  entityType: 'blog' | 'project' | 'story' | 'media' | 'testimonial' | 'career' | 'auth' | 'support';
   entityTitle: string;
   adminEmail: string;
   timestamp: string;
@@ -98,6 +98,41 @@ export interface SupportInquiryDoc {
   email: string;
   message: string;
   targetEmail: string;
+  createdAt: string;
+}
+
+export interface CareerDoc {
+  id: string;
+  title: string;
+  slug: string;
+  department: string;
+  location: string;
+  employmentType: 'Full-time' | 'Part-time' | 'Contract' | 'Internship';
+  experience: string;
+  salary?: string;
+  shortDescription: string;
+  responsibilities: string[];
+  requirements: string[];
+  benefits: string[];
+  status: 'DRAFT' | 'PUBLISHED' | 'CLOSED';
+  displayOrder: number;
+  applyEmail?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface JobApplicationDoc {
+  id: string;
+  careerId?: string;
+  jobTitle: string;
+  name: string;
+  email: string;
+  phone: string;
+  experienceLevel: string;
+  portfolioUrl?: string;
+  resumeUrl?: string;
+  message?: string;
+  status?: 'NEW' | 'REVIEWED' | 'SHORTLISTED' | 'REJECTED';
   createdAt: string;
 }
 

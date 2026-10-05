@@ -4,6 +4,7 @@ import {
   FileText,
   FolderGit2,
   BookOpen,
+  Briefcase,
   Image as ImageIcon,
   Plus,
   ArrowRight,
@@ -84,6 +85,14 @@ export const AdminDashboard: React.FC = () => {
       icon: FolderGit2,
       path: '/admin/projects',
       color: 'bg-emerald-500',
+    },
+    {
+      title: 'Careers & Openings',
+      count: stats.totalCareers ?? 0,
+      subtext: `${stats.publishedCareers ?? 0} active · ${stats.totalApplications ?? 0} applicants`,
+      icon: Briefcase,
+      path: '/admin/careers',
+      color: 'bg-cyan-500',
     },
     {
       title: 'Our Stories & Milestones',

@@ -524,9 +524,9 @@ export const REQUIN_COMPANY_INFO = {
   aboutProse: `Requin Solutions is an innovative technology enterprise delivering tailored software development, scalable cloud systems, intuitive mobile applications, and digital business solutions. We collaborate with high-growth startups and established corporations across North America, Europe, the Middle East, and Asia Pacific to engineer mission-critical digital products that elevate operational velocity and create lasting market value.`,
   experienceMetrics: [
     { label: 'Years of Excellence', value: '5+' },
-    { label: 'Projects Delivered', value: '80+' },
-    { label: 'Tech Specialists', value: '45+' },
-    { label: 'Client Retention Rate', value: '96%' },
+    { label: 'Apps Developed', value: '2K+' },
+    { label: 'Expert Consultants', value: '40+' },
+    { label: 'Talented Employees', value: '100+' },
   ],
   socials: [
     { name: 'Justdial', url: 'https://www.justdial.com/Jaipur/Requin-Solutions-Pvt-Ltd-NWR-Office-Malviya-Nagar/0141PX141-X141-220903235425-A6N3_BZDET' },

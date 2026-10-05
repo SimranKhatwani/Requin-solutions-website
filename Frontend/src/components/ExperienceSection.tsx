@@ -412,7 +412,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                 </div>
                 <div>
                   <div className="text-2xl sm:text-3xl font-extrabold text-[#061827] tracking-tight">
-                    {consultantsCount}
+                    {consultantsCount}+
                   </div>
                   <div className="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">
                     Expert Consultants
