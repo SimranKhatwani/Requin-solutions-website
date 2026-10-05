@@ -135,6 +135,138 @@ apiRouter.get('/testimonials', (_req: Request, res: Response) => {
   res.json({ success: true, count: testimonials.length, data: testimonials });
 });
 
+// Public: Submit support inquiry (email to requingroupsolutions@gmail.com)
+apiRouter.post('/support', (req: Request, res: Response) => {
+  const { name, email, message } = req.body;
+  if (!name || !email || !message) {
+    res.status(400).json({ success: false, error: 'Name, email, and message are required.' });
+    return;
+  }
+
+  const db = CMSStore.get();
+  if (!db.supportInquiries) {
+    db.supportInquiries = [];
+  }
+
+  const inquiry = {
+    id: `inquiry-${Date.now()}`,
+    name: String(name).trim(),
+    email: String(email).trim(),
+    message: String(message).trim(),
+    targetEmail: 'requingroupsolutions@gmail.com',
+    createdAt: new Date().toISOString(),
+  };
+
+  db.supportInquiries.push(inquiry);
+  CMSStore.save(db);
+
+  console.log(`[Support Request Logged] Forwarding to: requingroupsolutions@gmail.com | From: ${name} (${email}) | Message: ${message}`);
+  res.json({ success: true, message: 'Support request recorded and queued for delivery to requingroupsolutions@gmail.com', data: inquiry });
+});
+
+// Public: Gemini AI Chat Proxy Endpoint
+apiRouter.post('/chat', async (req: Request, res: Response) => {
+  try {
+    const { message, history } = req.body;
+    if (!message || typeof message !== 'string') {
+      res.status(400).json({ success: false, error: 'Message is required.' });
+      return;
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || '';
+
+    const systemPrompt = `You are the official AI Technical Assistant for Requin Solutions Pvt Ltd (requinsolutions.com).
+Your role is to assist visitors, clients, and developers inquiring about Requin Solutions' services, enterprise software products, and technology capabilities.
+
+COMPANY KNOWLEDGE & DETAILS:
+• Company Name: Requin Solutions Pvt Ltd
+• Headquarters: Plot no 6/397, 1st Floor, Sec-6, Malviya Nagar, Jaipur, Rajasthan (302017), India
+• Primary Contact Phone: +91 9352220187
+• Official Contact Emails: info@requinsolutions.com, Hr@requinsolutions.com
+• Support Mailbox: requingroupsolutions@gmail.com
+• Experience: 5+ years of engineering excellence, 80+ delivered projects, 96% client retention across North America, Europe & APAC.
+
+WEBSITE CORNERS & SECTIONS TO GUIDE VISITORS TO:
+1. "Services" (Web Development in React/Next.js, Mobile Apps for iOS/Android, Custom Enterprise Software, Academic/EdTech Systems, Cloud & DevOps on AWS/GCP).
+2. "Our Products" (Flagship platforms: Requin Ops CRM & Pipeline, Requin AMS Attendance, Vastra ERP for apparel/manufacturing, NexusBill POS Billing & Inventory, Dine & Dusk Restaurant POS, India Motor Logistics).
+3. "About Us / Our Stories" (Milestones, leadership team, Jaipur development center).
+4. "Blog" (Engineering deep dives, EdTech & cloud architecture insights).
+5. "Quiz" (Interactive 2-minute technology stack and architecture readiness assessment).
+6. "Contact" (Jaipur headquarters address, phone, and direct consultation form).
+7. "Careers" (Hiring React, TypeScript, Node.js, and Cloud engineers in Jaipur; send resume to Hr@requinsolutions.com).
+
+INSTRUCTIONS:
+1. Give concise, highly professional, technically sound, and enthusiastic responses.
+2. Direct the user to the relevant sections or pages of the website ("Services", "Our Products", "About Us", "Blogs", "Quiz", "Contact").
+3. ALWAYS conclude every single response with this exact sentence on a new line:
+👉 Click on "For more support connect with us on mail" below to connect directly with our engineering team!`;
+
+    if (!apiKey) {
+      res.json({
+        success: true,
+        source: 'local_fallback',
+        reply: null,
+      });
+      return;
+    }
+
+    const GEMINI_MODELS = [
+      'gemini-flash-lite-latest',
+      'gemini-3.5-flash-lite',
+      'gemini-flash-latest',
+      'gemini-3.7-flash',
+      'gemini-3.8-flash',
+    ];
+
+    let geminiReply: string | null = null;
+    let successfulModel = '';
+
+    for (const model of GEMINI_MODELS) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: 'user',
+                parts: [{ text: `${systemPrompt}\n\nUser Question: ${message}` }],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 600,
+            },
+          }),
+        });
+
+        if (response.ok) {
+          const data: any = await response.json();
+          const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (reply && reply.trim()) {
+            geminiReply = reply.trim();
+            successfulModel = model;
+            break;
+          }
+        }
+      } catch (err) {
+        console.warn(`Backend Gemini attempt for model ${model} failed:`, err);
+      }
+    }
+
+    if (geminiReply) {
+      console.log(`[Backend Gemini AI] Generated reply using ${successfulModel}`);
+      res.json({ success: true, source: 'gemini', model: successfulModel, reply: geminiReply });
+    } else {
+      res.json({ success: true, source: 'fallback', reply: null });
+    }
+  } catch (error: any) {
+    console.error('Chat endpoint error:', error);
+    res.json({ success: true, source: 'fallback', reply: null });
+  }
+});
+
 // ========================================================
 // 2. ADMIN AUTHENTICATION
 // ========================================================

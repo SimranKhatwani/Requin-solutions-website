@@ -86,8 +86,18 @@ export interface TestimonialDoc {
 export interface ActivityDoc {
   id: string;
   action: string;
-  entityType: 'blog' | 'project' | 'story' | 'media' | 'testimonial' | 'auth';
+  entityType: 'blog' | 'project' | 'story' | 'media' | 'testimonial' | 'auth' | 'support';
   entityTitle: string;
   adminEmail: string;
   timestamp: string;
 }
+
+export interface SupportInquiryDoc {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  targetEmail: string;
+  createdAt: string;
+}
+

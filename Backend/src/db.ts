@@ -19,6 +19,7 @@ interface CMSDatabase {
   testimonials: TestimonialDoc[];
   media: MediaDoc[];
   activities: ActivityDoc[];
+  supportInquiries?: { id: string; name: string; email: string; message: string; targetEmail: string; createdAt: string }[];
 }
 
 // Initial seed data authentic to https://www.requingroup.com/
