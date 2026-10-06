@@ -86,7 +86,7 @@ export interface TestimonialDoc {
 export interface ActivityDoc {
   id: string;
   action: string;
-  entityType: 'blog' | 'project' | 'story' | 'media' | 'testimonial' | 'career' | 'auth' | 'support';
+  entityType: 'blog' | 'project' | 'story' | 'media' | 'testimonial' | 'career' | 'lifeAtRequin' | 'auth' | 'support';
   entityTitle: string;
   adminEmail: string;
   timestamp: string;
@@ -142,4 +142,28 @@ export interface SubscriberDoc {
   source?: string;
   targetEmail: string;
   createdAt: string;
+}
+
+export interface LifeAtRequinPhotoDoc {
+  id: string;
+  image: string;
+  year: string;
+  title: string;
+  caption: string;
+}
+
+export interface LifeAtRequinDoc {
+  id: string;
+  title: string;
+  category: string;
+  image: string;
+  caption: string;
+  date: string;
+  photoCount: number;
+  years: string[];
+  photos: LifeAtRequinPhotoDoc[];
+  displayOrder?: number;
+  status: 'DRAFT' | 'PUBLISHED';
+  createdAt: string;
+  updatedAt: string;
 }

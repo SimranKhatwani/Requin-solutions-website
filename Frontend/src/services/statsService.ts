@@ -3,7 +3,7 @@ import { apiClient } from './apiClient';
 export interface ActivityItem {
   id: string;
   action: string;
-  entityType: 'blog' | 'project' | 'story' | 'media' | 'testimonial' | 'career' | 'auth' | 'support';
+  entityType: 'blog' | 'project' | 'story' | 'media' | 'testimonial' | 'career' | 'lifeAtRequin' | 'auth' | 'support';
   entityTitle: string;
   adminEmail: string;
   timestamp: string;
@@ -22,6 +22,8 @@ export interface CMSStats {
   publishedCareers?: number;
   draftCareers?: number;
   totalApplications?: number;
+  totalLifeAtRequin?: number;
+  publishedLifeAtRequin?: number;
   recentActivity: ActivityItem[];
 }
 

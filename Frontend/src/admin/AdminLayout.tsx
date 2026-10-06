@@ -6,6 +6,7 @@ import {
   FolderGit2,
   BookOpen,
   Briefcase,
+  Sparkles,
   MessageSquare,
   Image as ImageIcon,
   Settings,
@@ -42,6 +43,7 @@ export const AdminLayout: React.FC = () => {
     { label: 'Blogs', path: '/admin/blogs', icon: FileText },
     { label: 'Projects', path: '/admin/projects', icon: FolderGit2 },
     { label: 'Careers', path: '/admin/careers', icon: Briefcase },
+    { label: 'Life at Requin', path: '/admin/life-at-requin', icon: Sparkles },
     { label: 'Our Stories', path: '/admin/our-stories', icon: BookOpen },
     { label: 'Testimonials', path: '/admin/testimonials', icon: MessageSquare },
     { label: 'Media Library', path: '/admin/media', icon: ImageIcon },
@@ -53,6 +55,7 @@ export const AdminLayout: React.FC = () => {
     if (location.pathname.startsWith('/admin/blogs')) return 'Blog Management';
     if (location.pathname.startsWith('/admin/projects')) return 'Project Portfolio';
     if (location.pathname.startsWith('/admin/careers')) return 'Careers & Openings';
+    if (location.pathname.startsWith('/admin/life-at-requin')) return 'Life at Requin Gallery';
     if (location.pathname.startsWith('/admin/our-stories')) return 'Our Stories & Milestones';
     if (location.pathname.startsWith('/admin/testimonials')) return 'Client Feedback & Testimonials';
     if (location.pathname.startsWith('/admin/media')) return 'Media Library';

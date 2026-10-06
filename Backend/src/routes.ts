@@ -518,6 +518,9 @@ apiRouter.get('/admin/stats', requireAdminAuth, (_req: AuthenticatedRequest, res
   const draftCareers = totalCareers - publishedCareers;
   const totalApplications = (db.jobApplications || []).length;
 
+  const totalLifeAtRequin = (db.lifeAtRequin || []).length;
+  const publishedLifeAtRequin = (db.lifeAtRequin || []).filter((g) => g.status === 'PUBLISHED').length;
+
   res.json({
     success: true,
     data: {
@@ -533,6 +536,8 @@ apiRouter.get('/admin/stats', requireAdminAuth, (_req: AuthenticatedRequest, res
       publishedCareers,
       draftCareers,
       totalApplications,
+      totalLifeAtRequin,
+      publishedLifeAtRequin,
       recentActivity: db.activities.slice(0, 10),
     },
   });
@@ -1263,4 +1268,157 @@ apiRouter.patch('/admin/careers/applications/:id/status', requireAdminAuth, (req
   db.jobApplications[idx].status = status;
   CMSStore.save(db);
   res.json({ success: true, data: db.jobApplications[idx] });
+});
+
+// ========================================================
+// 10. LIFE AT REQUIN MANAGEMENT (PUBLIC & ADMIN)
+// ========================================================
+
+// Public: Get all published Life at Requin galleries
+apiRouter.get('/life-at-requin', (_req: Request, res: Response) => {
+  const db = CMSStore.get();
+  const galleries = (db.lifeAtRequin || [])
+    .filter((g) => g.status === 'PUBLISHED')
+    .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+  res.json({ success: true, count: galleries.length, data: galleries });
+});
+
+// Admin: Get all Life at Requin galleries (including drafts)
+apiRouter.get('/admin/life-at-requin', requireAdminAuth, (_req: AuthenticatedRequest, res: Response) => {
+  const db = CMSStore.get();
+  const galleries = [...(db.lifeAtRequin || [])].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+  res.json({ success: true, count: galleries.length, data: galleries });
+});
+
+// Admin: Create a new Life at Requin gallery item
+apiRouter.post('/admin/life-at-requin', requireAdminAuth, (req: AuthenticatedRequest, res: Response) => {
+  const { title, category, image, caption, date, photoCount, years, photos, displayOrder, status } = req.body;
+
+  if (!title || !category || !image) {
+    res.status(400).json({ error: 'Title, category, and cover image are required.' });
+    return;
+  }
+
+  const db = CMSStore.get();
+  if (!db.lifeAtRequin) db.lifeAtRequin = [];
+
+  const safePhotos = Array.isArray(photos) ? photos : [];
+  const safeYears = Array.isArray(years) && years.length > 0
+    ? years
+    : Array.from(new Set(safePhotos.map((p: any) => p.year).filter(Boolean)));
+
+  const newGallery: any = {
+    id: `g-${Date.now()}`,
+    title,
+    category,
+    image,
+    caption: caption || '',
+    date: date || 'Annual Showcase',
+    photoCount: typeof photoCount === 'number' ? photoCount : (safePhotos.length || 1),
+    years: safeYears.length > 0 ? safeYears : ['2024'],
+    photos: safePhotos.map((p: any, idx: number) => ({
+      id: p.id || `photo-${Date.now()}-${idx}`,
+      image: p.image || image,
+      year: p.year || '2024',
+      title: p.title || title,
+      caption: p.caption || '',
+    })),
+    displayOrder: typeof displayOrder === 'number' ? displayOrder : db.lifeAtRequin.length + 1,
+    status: status === 'DRAFT' ? 'DRAFT' : 'PUBLISHED',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  db.lifeAtRequin.push(newGallery);
+  CMSStore.save(db);
+  CMSStore.addActivity(`Created Life at Requin gallery "${newGallery.title}"`, 'media' as any, newGallery.title, req.adminUser!.email);
+
+  res.status(201).json({ success: true, data: newGallery });
+});
+
+// Admin: Update an existing Life at Requin gallery item
+apiRouter.put('/admin/life-at-requin/:id', requireAdminAuth, (req: AuthenticatedRequest, res: Response) => {
+  const db = CMSStore.get();
+  if (!db.lifeAtRequin) db.lifeAtRequin = [];
+
+  const idx = db.lifeAtRequin.findIndex((g) => g.id === req.params.id);
+  if (idx === -1) {
+    res.status(404).json({ error: 'Life at Requin gallery not found.' });
+    return;
+  }
+
+  const prev = db.lifeAtRequin[idx];
+  const { title, category, image, caption, date, photoCount, years, photos, displayOrder, status } = req.body;
+
+  const safePhotos = Array.isArray(photos) ? photos : prev.photos;
+  const safeYears = Array.isArray(years) && years.length > 0
+    ? years
+    : Array.from(new Set(safePhotos.map((p: any) => p.year).filter(Boolean)));
+
+  const updated: any = {
+    ...prev,
+    title: title ?? prev.title,
+    category: category ?? prev.category,
+    image: image ?? prev.image,
+    caption: caption ?? prev.caption,
+    date: date ?? prev.date,
+    photoCount: typeof photoCount === 'number' ? photoCount : (safePhotos.length || prev.photoCount),
+    years: safeYears.length > 0 ? safeYears : prev.years,
+    photos: safePhotos.map((p: any, i: number) => ({
+      id: p.id || `photo-${Date.now()}-${i}`,
+      image: p.image || prev.image,
+      year: p.year || '2024',
+      title: p.title || prev.title,
+      caption: p.caption || '',
+    })),
+    displayOrder: typeof displayOrder === 'number' ? displayOrder : prev.displayOrder,
+    status: status ?? prev.status,
+    updatedAt: new Date().toISOString(),
+  };
+
+  db.lifeAtRequin[idx] = updated;
+  CMSStore.save(db);
+  CMSStore.addActivity(`Updated Life at Requin gallery "${updated.title}"`, 'media' as any, updated.title, req.adminUser!.email);
+
+  res.json({ success: true, data: updated });
+});
+
+// Admin: Toggle publish status
+apiRouter.patch('/admin/life-at-requin/:id/publish', requireAdminAuth, (req: AuthenticatedRequest, res: Response) => {
+  const db = CMSStore.get();
+  if (!db.lifeAtRequin) db.lifeAtRequin = [];
+
+  const idx = db.lifeAtRequin.findIndex((g) => g.id === req.params.id);
+  if (idx === -1) {
+    res.status(404).json({ error: 'Gallery not found.' });
+    return;
+  }
+
+  const prev = db.lifeAtRequin[idx];
+  const nextStatus = prev.status === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED';
+  prev.status = nextStatus;
+  prev.updatedAt = new Date().toISOString();
+  db.lifeAtRequin[idx] = prev;
+  CMSStore.save(db);
+
+  CMSStore.addActivity(`Changed Life at Requin "${prev.title}" status to ${nextStatus}`, 'media' as any, prev.title, req.adminUser!.email);
+  res.json({ success: true, data: prev });
+});
+
+// Admin: Delete a Life at Requin gallery
+apiRouter.delete('/admin/life-at-requin/:id', requireAdminAuth, (req: AuthenticatedRequest, res: Response) => {
+  const db = CMSStore.get();
+  if (!db.lifeAtRequin) db.lifeAtRequin = [];
+
+  const idx = db.lifeAtRequin.findIndex((g) => g.id === req.params.id);
+  if (idx === -1) {
+    res.status(404).json({ error: 'Gallery not found.' });
+    return;
+  }
+
+  const deleted = db.lifeAtRequin.splice(idx, 1)[0];
+  CMSStore.save(db);
+  CMSStore.addActivity(`Deleted Life at Requin gallery "${deleted.title}"`, 'media' as any, deleted.title, req.adminUser!.email);
+
+  res.json({ success: true, message: 'Gallery deleted successfully.' });
 });

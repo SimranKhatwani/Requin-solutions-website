@@ -1,0 +1,1826 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import {
+  Sparkles,
+  Plus,
+  Edit2,
+  Trash2,
+  Image as ImageIcon,
+  CheckCircle,
+  X,
+  AlertCircle,
+  Loader2,
+  Calendar,
+  Layers,
+  ArrowUpRight,
+  ExternalLink,
+  Upload,
+  FolderPlus,
+  ArrowUp,
+  ArrowDown,
+  Star,
+  Search,
+  Check,
+  Grid,
+  Filter,
+  Eye,
+  RefreshCw,
+  Folder,
+  Tag,
+} from 'lucide-react';
+import { lifeAtRequinService, LifeAtRequinItem } from '../services/lifeAtRequinService';
+import { mediaService, MediaItem } from '../services/mediaService';
+import { GalleryPhotoItem } from '../data/requinData';
+
+const CATEGORY_PRESETS = [
+  '5th Anniversary',
+  'Office Party',
+  'Diwali Party',
+  'Sports & Fitness',
+  'Team Outings',
+  'Hackathon & Tech Demo',
+  'Annual Gala',
+];
+
+export const AdminLifeAtRequin: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [galleries, setGalleries] = useState<LifeAtRequinItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Filters
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('ALL');
+
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [editingGallery, setEditingGallery] = useState<LifeAtRequinItem | null>(null);
+  const [activeTab, setActiveTab] = useState<'photos' | 'details'>('photos');
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [formSubmitting, setFormSubmitting] = useState<boolean>(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  // Year-wise Distribution in Modal
+  const [selectedYearTab, setSelectedYearTab] = useState<string>('ALL');
+  const [targetUploadYear, setTargetUploadYear] = useState<string>(new Date().getFullYear().toString());
+  const [customYearsList, setCustomYearsList] = useState<string[]>([]);
+  const [showAddYearInput, setShowAddYearInput] = useState<boolean>(false);
+  const [newYearInputValue, setNewYearInputValue] = useState<string>('');
+
+  // Media picker modal
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState<boolean>(false);
+  const [mediaList, setMediaList] = useState<MediaItem[]>([]);
+  const [loadingMedia, setLoadingMedia] = useState<boolean>(false);
+  const [mediaSearchTerm, setMediaSearchTerm] = useState<string>('');
+  const [mediaPickerTarget, setMediaPickerTarget] = useState<'cover' | 'photo-replace' | 'add-photo'>('cover');
+  const [mediaReplacePhotoIndex, setMediaReplacePhotoIndex] = useState<number | null>(null);
+  const [mediaTargetYear, setMediaTargetYear] = useState<string>(new Date().getFullYear().toString());
+
+  // Uploading state for batch uploads
+  const [isUploadingFiles, setIsUploadingFiles] = useState<boolean>(false);
+  const [uploadStatusMessage, setUploadStatusMessage] = useState<string>('');
+
+  // Form State
+  const [formData, setFormData] = useState<{
+    title: string;
+    category: string;
+    image: string;
+    caption: string;
+    date: string;
+    displayOrder: number;
+    status: 'DRAFT' | 'PUBLISHED';
+    photos: GalleryPhotoItem[];
+  }>({
+    title: '',
+    category: '',
+    image: '',
+    caption: '',
+    date: '',
+    displayOrder: 1,
+    status: 'PUBLISHED',
+    photos: [],
+  });
+
+  // Manual URL Add sub-photo box
+  const [showManualUrlInput, setShowManualUrlInput] = useState<boolean>(false);
+  const [manualPhotoUrl, setManualPhotoUrl] = useState<string>('');
+  const [manualPhotoTitle, setManualPhotoTitle] = useState<string>('');
+  const [manualPhotoYear, setManualPhotoYear] = useState<string>(new Date().getFullYear().toString());
+  const [manualPhotoCaption, setManualPhotoCaption] = useState<string>('');
+
+  // File input refs
+  const batchFileInputRef = useRef<HTMLInputElement>(null);
+  const coverFileInputRef = useRef<HTMLInputElement>(null);
+  const singlePhotoFileInputRef = useRef<HTMLInputElement>(null);
+  const [photoToReplaceWithFileIndex, setPhotoToReplaceWithFileIndex] = useState<number | null>(null);
+
+  const fetchGalleries = async () => {
+    try {
+      setLoading(true);
+      const res = await lifeAtRequinService.getAllGalleries();
+      if (res.success && res.data) {
+        setGalleries(res.data);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to load Life at Requin galleries.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGalleries();
+    if (searchParams.get('action') === 'new') {
+      handleOpenCreateModal();
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams]);
+
+  const fetchMediaList = async () => {
+    try {
+      setLoadingMedia(true);
+      const res = await mediaService.getMediaList();
+      if (res.data) setMediaList(res.data);
+    } catch (err) {
+      console.error('Failed to load media list', err);
+    } finally {
+      setLoadingMedia(false);
+    }
+  };
+
+  const handleOpenCreateModal = () => {
+    const currentYear = new Date().getFullYear().toString();
+    setEditingGallery(null);
+    setFormError(null);
+    setActiveTab('photos');
+    setSelectedYearTab('ALL');
+    setTargetUploadYear(currentYear);
+    setCustomYearsList([currentYear]);
+    setFormData({
+      title: '',
+      category: 'Office Celebrations',
+      image: '/images/requin_software_team_1790576614688.jpg',
+      caption: '',
+      date: `Annual Gala ${currentYear}`,
+      displayOrder: galleries.length + 1,
+      status: 'PUBLISHED',
+      photos: [],
+    });
+    setShowManualUrlInput(false);
+    setManualPhotoUrl('');
+    setManualPhotoTitle('');
+    setManualPhotoYear(currentYear);
+    setManualPhotoCaption('');
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEditModal = (
+    gallery: LifeAtRequinItem,
+    initialTab: 'photos' | 'details' = 'photos',
+    initialYearFilter: string = 'ALL'
+  ) => {
+    setEditingGallery(gallery);
+    setFormError(null);
+    setActiveTab(initialTab);
+    setSelectedYearTab(initialYearFilter);
+
+    const existingYears = gallery.years && gallery.years.length > 0
+      ? gallery.years
+      : Array.from(new Set((gallery.photos || []).map((p) => p.year).filter(Boolean)));
+
+    const currentYear = new Date().getFullYear().toString();
+    const finalYears = Array.from(new Set([...existingYears, currentYear])).sort().reverse();
+    setCustomYearsList(finalYears);
+    setTargetUploadYear(initialYearFilter !== 'ALL' ? initialYearFilter : finalYears[0] || currentYear);
+
+    setFormData({
+      title: gallery.title,
+      category: gallery.category,
+      image: gallery.image,
+      caption: gallery.caption,
+      date: gallery.date,
+      displayOrder: gallery.displayOrder || 1,
+      status: gallery.status || 'PUBLISHED',
+      photos: gallery.photos ? [...gallery.photos] : [
+        {
+          id: `photo-${Date.now()}-1`,
+          image: gallery.image,
+          year: gallery.date || currentYear,
+          title: gallery.title,
+          caption: gallery.caption,
+        }
+      ],
+    });
+    setShowManualUrlInput(false);
+    setManualPhotoUrl('');
+    setManualPhotoTitle('');
+    setManualPhotoYear(initialYearFilter !== 'ALL' ? initialYearFilter : currentYear);
+    setManualPhotoCaption('');
+    setIsModalOpen(true);
+  };
+
+  // Compute all unique years from photos + custom years
+  const computedAllYears = Array.from(
+    new Set([
+      ...customYearsList,
+      ...formData.photos.map((p) => p.year?.trim()).filter(Boolean),
+    ])
+  ).sort().reverse();
+
+  // Cover image direct upload
+  const handleCoverFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploadingFiles(true);
+      setUploadStatusMessage('Uploading cover image...');
+      const res = await mediaService.uploadMedia(file);
+      if (res.success && res.data) {
+        setFormData((prev) => ({ ...prev, image: res.data.url }));
+      }
+    } catch (err: any) {
+      setFormError(err.message || 'Failed to upload cover image.');
+    } finally {
+      setIsUploadingFiles(false);
+      setUploadStatusMessage('');
+      if (coverFileInputRef.current) coverFileInputRef.current.value = '';
+    }
+  };
+
+  // Batch Multi-Photo Upload to target year
+  const handleBatchPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploadingFiles(true);
+    setFormError(null);
+
+    const fileArray = Array.from(files);
+    const newPhotosToAdd: GalleryPhotoItem[] = [];
+    const yearForUpload = targetUploadYear || new Date().getFullYear().toString();
+
+    try {
+      for (let i = 0; i < fileArray.length; i++) {
+        const file = fileArray[i];
+        setUploadStatusMessage(`Uploading photo ${i + 1} of ${fileArray.length} to ${yearForUpload}...`);
+        const res = await mediaService.uploadMedia(file);
+        if (res.success && res.data) {
+          const cleanName = file.name
+            .replace(/\.[^/.]+$/, '')
+            .replace(/[_-]/g, ' ')
+            .replace(/\b\w/g, (c) => c.toUpperCase());
+
+          newPhotosToAdd.push({
+            id: `photo-${Date.now()}-${i}-${Math.random().toString(36).substring(2, 6)}`,
+            image: res.data.url,
+            year: yearForUpload,
+            title: cleanName,
+            caption: '',
+          });
+        }
+      }
+
+      setFormData((prev) => {
+        const updatedPhotos = [...prev.photos, ...newPhotosToAdd];
+        const updatedImage = (!prev.image || prev.image.includes('requin_software_team')) && updatedPhotos.length > 0
+          ? updatedPhotos[0].image
+          : prev.image;
+
+        return {
+          ...prev,
+          image: updatedImage,
+          photos: updatedPhotos,
+        };
+      });
+    } catch (err: any) {
+      setFormError(err.message || 'Error uploading photos. Please check your network.');
+    } finally {
+      setIsUploadingFiles(false);
+      setUploadStatusMessage('');
+      if (batchFileInputRef.current) batchFileInputRef.current.value = '';
+    }
+  };
+
+  // Single Photo Replace File Upload
+  const handleSinglePhotoReplaceUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || photoToReplaceWithFileIndex === null) return;
+
+    try {
+      setIsUploadingFiles(true);
+      setUploadStatusMessage('Uploading replacement photo...');
+      const res = await mediaService.uploadMedia(file);
+      if (res.success && res.data) {
+        setFormData((prev) => {
+          const updated = [...prev.photos];
+          if (updated[photoToReplaceWithFileIndex]) {
+            updated[photoToReplaceWithFileIndex] = {
+              ...updated[photoToReplaceWithFileIndex],
+              image: res.data.url,
+            };
+          }
+          return { ...prev, photos: updated };
+        });
+      }
+    } catch (err: any) {
+      setFormError(err.message || 'Failed to upload photo replacement.');
+    } finally {
+      setIsUploadingFiles(false);
+      setUploadStatusMessage('');
+      setPhotoToReplaceWithFileIndex(null);
+      if (singlePhotoFileInputRef.current) singlePhotoFileInputRef.current.value = '';
+    }
+  };
+
+  // Add photo via manual URL input
+  const handleAddManualPhoto = () => {
+    if (!manualPhotoUrl.trim()) {
+      setFormError('Please enter a valid photo image URL.');
+      return;
+    }
+
+    const yearVal = manualPhotoYear.trim() || targetUploadYear || new Date().getFullYear().toString();
+
+    const newPhoto: GalleryPhotoItem = {
+      id: `photo-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      image: manualPhotoUrl.trim(),
+      year: yearVal,
+      title: manualPhotoTitle.trim() || 'Event Photo',
+      caption: manualPhotoCaption.trim(),
+    };
+
+    setFormData((prev) => ({
+      ...prev,
+      photos: [...prev.photos, newPhoto],
+      image: !prev.image ? newPhoto.image : prev.image,
+    }));
+
+    setManualPhotoUrl('');
+    setManualPhotoTitle('');
+    setManualPhotoCaption('');
+    setShowManualUrlInput(false);
+    setFormError(null);
+  };
+
+  // Add a new Year Category group
+  const handleAddNewYearCategory = () => {
+    const yr = newYearInputValue.trim();
+    if (!yr) return;
+    if (!customYearsList.includes(yr)) {
+      setCustomYearsList((prev) => [yr, ...prev].sort().reverse());
+    }
+    setSelectedYearTab(yr);
+    setTargetUploadYear(yr);
+    setManualPhotoYear(yr);
+    setNewYearInputValue('');
+    setShowAddYearInput(false);
+  };
+
+  // Update photo fields inline
+  const handleUpdatePhotoField = (index: number, field: keyof GalleryPhotoItem, value: string) => {
+    setFormData((prev) => {
+      const updated = [...prev.photos];
+      if (updated[index]) {
+        updated[index] = { ...updated[index], [field]: value };
+      }
+      return { ...prev, photos: updated };
+    });
+  };
+
+  // Delete photo from form
+  const handleRemovePhoto = (index: number) => {
+    setFormData((prev) => {
+      const updated = prev.photos.filter((_, idx) => idx !== index);
+      return { ...prev, photos: updated };
+    });
+  };
+
+  // Reorder photos
+  const handleMovePhoto = (index: number, direction: 'up' | 'down') => {
+    setFormData((prev) => {
+      const updated = [...prev.photos];
+      const targetIndex = direction === 'up' ? index - 1 : index + 1;
+      if (targetIndex < 0 || targetIndex >= updated.length) return prev;
+      const temp = updated[index];
+      updated[index] = updated[targetIndex];
+      updated[targetIndex] = temp;
+      return { ...prev, photos: updated };
+    });
+  };
+
+  // Set photo as album cover
+  const handleSetAsCover = (imageUrl: string) => {
+    setFormData((prev) => ({ ...prev, image: imageUrl }));
+  };
+
+  // Media Library Chooser handling
+  const handleOpenMediaPicker = (
+    target: 'cover' | 'photo-replace' | 'add-photo',
+    photoIndex: number | null = null,
+    yearForAdd: string = targetUploadYear
+  ) => {
+    setMediaPickerTarget(target);
+    setMediaReplacePhotoIndex(photoIndex);
+    setMediaTargetYear(yearForAdd);
+    fetchMediaList();
+    setIsMediaPickerOpen(true);
+  };
+
+  const handleSelectMediaItem = (item: MediaItem) => {
+    if (mediaPickerTarget === 'cover') {
+      setFormData((prev) => ({ ...prev, image: item.url }));
+    } else if (mediaPickerTarget === 'photo-replace' && mediaReplacePhotoIndex !== null) {
+      setFormData((prev) => {
+        const updated = [...prev.photos];
+        if (updated[mediaReplacePhotoIndex]) {
+          updated[mediaReplacePhotoIndex] = {
+            ...updated[mediaReplacePhotoIndex],
+            image: item.url,
+          };
+        }
+        return { ...prev, photos: updated };
+      });
+    } else if (mediaPickerTarget === 'add-photo') {
+      const cleanName = item.originalName
+        .replace(/\.[^/.]+$/, '')
+        .replace(/[_-]/g, ' ')
+        .replace(/\b\w/g, (c) => c.toUpperCase());
+
+      const newPhoto: GalleryPhotoItem = {
+        id: `photo-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        image: item.url,
+        year: mediaTargetYear || targetUploadYear || new Date().getFullYear().toString(),
+        title: cleanName,
+        caption: '',
+      };
+
+      setFormData((prev) => ({
+        ...prev,
+        photos: [...prev.photos, newPhoto],
+        image: !prev.image ? newPhoto.image : prev.image,
+      }));
+    }
+
+    setIsMediaPickerOpen(false);
+  };
+
+  // Trigger file upload targeted to a specific year
+  const triggerUploadForSpecificYear = (year: string) => {
+    setTargetUploadYear(year);
+    batchFileInputRef.current?.click();
+  };
+
+  // Submit Album
+  const handleSaveGallery = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.title.trim()) {
+      setFormError('Please enter an event gallery title.');
+      setActiveTab('details');
+      return;
+    }
+
+    if (!formData.image.trim() && formData.photos.length === 0) {
+      setFormError('Please upload at least one photo or set a cover image for this album.');
+      setActiveTab('photos');
+      return;
+    }
+
+    // Auto calculate distinct years
+    const uniqueYears = Array.from(
+      new Set(
+        formData.photos
+          .map((p) => p.year?.trim())
+          .filter(Boolean)
+      )
+    ).sort().reverse();
+
+    const safeCoverImage = formData.image.trim() || (formData.photos.length > 0 ? formData.photos[0].image : '');
+
+    const payload = {
+      title: formData.title.trim(),
+      category: formData.category.trim() || 'Office Events',
+      image: safeCoverImage,
+      caption: formData.caption.trim(),
+      date: formData.date.trim() || `Event ${new Date().getFullYear()}`,
+      photoCount: formData.photos.length,
+      years: uniqueYears.length > 0 ? uniqueYears : [new Date().getFullYear().toString()],
+      photos: formData.photos.map((p, idx) => ({
+        id: p.id || `photo-${Date.now()}-${idx}`,
+        image: p.image || safeCoverImage,
+        year: p.year || new Date().getFullYear().toString(),
+        title: p.title || `Photo ${idx + 1}`,
+        caption: p.caption || '',
+      })),
+      displayOrder: Number(formData.displayOrder) || 1,
+      status: formData.status,
+    };
+
+    setFormSubmitting(true);
+    setFormError(null);
+
+    try {
+      if (editingGallery) {
+        await lifeAtRequinService.updateGallery(editingGallery.id, payload);
+      } else {
+        await lifeAtRequinService.createGallery(payload);
+      }
+      setIsModalOpen(false);
+      fetchGalleries();
+    } catch (err: any) {
+      setFormError(err.message || 'Failed to save event gallery.');
+    } finally {
+      setFormSubmitting(false);
+    }
+  };
+
+  const handleTogglePublish = async (id: string) => {
+    try {
+      await lifeAtRequinService.togglePublishGallery(id);
+      fetchGalleries();
+    } catch (err: any) {
+      alert(err.message || 'Failed to update publication status.');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await lifeAtRequinService.deleteGallery(id);
+      setDeleteConfirmId(null);
+      fetchGalleries();
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete gallery album.');
+    }
+  };
+
+  // Filtered List
+  const filteredGalleries = galleries.filter((g) => {
+    const matchesSearch =
+      g.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      g.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (g.caption && g.caption.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    const matchesCategory =
+      selectedCategoryFilter === 'ALL' ||
+      g.category.toLowerCase().includes(selectedCategoryFilter.toLowerCase());
+
+    return matchesSearch && matchesCategory;
+  });
+
+  const allCategories = ['ALL', ...Array.from(new Set(galleries.map((g) => g.category).filter(Boolean)))];
+
+  // Helper to group photos by year
+  const getPhotosGroupedByYear = () => {
+    const groups: { [year: string]: { photo: GalleryPhotoItem; originalIndex: number }[] } = {};
+
+    // Ensure all computed years exist in order
+    computedAllYears.forEach((yr) => {
+      groups[yr] = [];
+    });
+
+    formData.photos.forEach((photo, idx) => {
+      const yr = photo.year?.trim() || '2024';
+      if (!groups[yr]) groups[yr] = [];
+      groups[yr].push({ photo, originalIndex: idx });
+    });
+
+    return groups;
+  };
+
+  const photoGroups = getPhotosGroupedByYear();
+
+  return (
+    <div className="space-y-6 text-left pb-16">
+      {/* Hidden file inputs */}
+      <input
+        ref={batchFileInputRef}
+        type="file"
+        multiple
+        accept="image/*"
+        onChange={handleBatchPhotoUpload}
+        className="hidden"
+      />
+      <input
+        ref={coverFileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleCoverFileUpload}
+        className="hidden"
+      />
+      <input
+        ref={singlePhotoFileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleSinglePhotoReplaceUpload}
+        className="hidden"
+      />
+
+      {/* Header & Quick Action */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="p-2 rounded-xl bg-pink-100 text-pink-600">
+              <Sparkles className="w-5 h-5" />
+            </span>
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              Life at Requin & Team Culture
+            </h2>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            Manage year-wise photo collections, office celebrations, annual galas, and festive moments.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <a
+            href="/#life-at-requin"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 shadow-2xs transition-colors"
+          >
+            <span>Preview on Live Site</span>
+            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+          </a>
+
+          <button
+            onClick={handleOpenCreateModal}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs text-slate-950 bg-[#08B9E8] hover:bg-[#4DD4F5] transition-all shadow-md shadow-[#08B9E8]/20 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>+ Add Event Album</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Filter and Search Bar */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+        {/* Search */}
+        <div className="relative flex-1 max-w-md">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Search albums, categories, keywords..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:border-[#08B9E8] transition-colors"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+
+        {/* Category Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-xl">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 shrink-0">
+            Category:
+          </span>
+          {allCategories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategoryFilter(cat)}
+              className={`px-3 py-1 rounded-xl text-xs font-semibold shrink-0 transition-all cursor-pointer ${
+                selectedCategoryFilter === cat
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Error display */}
+      {error && (
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+          <button
+            onClick={fetchGalleries}
+            className="px-3 py-1 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-700"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* Loading state */}
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+          <Loader2 className="w-8 h-8 text-[#08B9E8] animate-spin mb-3" />
+          <p className="text-sm font-medium">Loading Life at Requin albums from CMS database...</p>
+        </div>
+      ) : filteredGalleries.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+          <div className="w-12 h-12 rounded-2xl bg-pink-50 text-pink-500 flex items-center justify-center mx-auto mb-3">
+            <Sparkles className="w-6 h-6" />
+          </div>
+          <h3 className="text-base font-bold text-slate-900">No Gallery Albums Found</h3>
+          <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+            {searchQuery
+              ? `No albums match "${searchQuery}". Try clearing your search.`
+              : 'Create your first event gallery album to showcase company milestones, office parties, and festivals.'}
+          </p>
+          <button
+            onClick={handleOpenCreateModal}
+            className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[#08B9E8] text-slate-950 rounded-xl font-bold text-xs hover:bg-[#4DD4F5] transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Create First Album</span>
+          </button>
+        </div>
+      ) : (
+        /* Albums Grid */
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredGalleries.map((gallery) => {
+            // Count photos per year for this album
+            const yearCounts: { [yr: string]: number } = {};
+            (gallery.photos || []).forEach((p) => {
+              const y = p.year || '2024';
+              yearCounts[y] = (yearCounts[y] || 0) + 1;
+            });
+
+            return (
+              <div
+                key={gallery.id}
+                className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between group"
+              >
+                <div>
+                  {/* Cover Image Header */}
+                  <div className="relative h-56 sm:h-64 w-full overflow-hidden bg-slate-900">
+                    <img
+                      src={gallery.image}
+                      alt={gallery.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/30" />
+
+                    {/* Top Badges */}
+                    <div className="absolute top-4 left-4 flex items-center gap-2">
+                      <span className="px-3 py-1 rounded-lg text-xs font-bold bg-white/95 backdrop-blur-md text-[#0284c7] border border-slate-200 shadow-xs">
+                        {gallery.category}
+                      </span>
+                      <button
+                        onClick={() => handleTogglePublish(gallery.id)}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all shadow-xs cursor-pointer ${
+                          gallery.status === 'PUBLISHED'
+                            ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                            : 'bg-amber-500 hover:bg-amber-600 text-white'
+                        }`}
+                        title="Click to toggle live publication status"
+                      >
+                        {gallery.status === 'PUBLISHED' ? '● LIVE' : '○ DRAFT'}
+                      </button>
+                    </div>
+
+                    {/* Photo Count Badge */}
+                    <div className="absolute top-4 right-4 bg-slate-950/80 backdrop-blur-md text-white px-3 py-1 rounded-xl text-xs font-bold flex items-center gap-1.5 border border-white/10">
+                      <ImageIcon className="w-3.5 h-3.5 text-[#08B9E8]" />
+                      <span>{gallery.photos?.length || gallery.photoCount || 1} Photos</span>
+                    </div>
+
+                    {/* Bottom title overlay on cover */}
+                    <div className="absolute bottom-4 left-4 right-4 text-white">
+                      <div className="flex items-center gap-2 text-xs font-medium text-slate-300 mb-1">
+                        <Calendar className="w-3.5 h-3.5 text-[#08B9E8]" />
+                        <span>{gallery.date || 'Celebration Event'}</span>
+                        <span>·</span>
+                        <span>Order #{gallery.displayOrder || 1}</span>
+                      </div>
+                      <h3 className="text-lg sm:text-xl font-bold text-white leading-snug drop-shadow-sm">
+                        {gallery.title}
+                      </h3>
+                    </div>
+                  </div>
+
+                  {/* Body Content */}
+                  <div className="p-5 sm:p-6 space-y-4">
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-2">
+                      {gallery.caption || 'No album description provided.'}
+                    </p>
+
+                    {/* Year-Wise Categories Distribution Pills */}
+                    {Object.keys(yearCounts).length > 0 && (
+                      <div className="pt-2">
+                        <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                          <Folder className="w-3.5 h-3.5 text-[#08B9E8]" />
+                          <span>Year-Wise Categories ({Object.keys(yearCounts).length}):</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {Object.entries(yearCounts).map(([yr, count]) => (
+                            <button
+                              key={yr}
+                              onClick={() => handleOpenEditModal(gallery, 'photos', yr)}
+                              className="px-2.5 py-1 rounded-lg bg-[#E0F7FE] hover:bg-[#c2eefc] text-[#0284c7] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                              title={`View ${count} photos in ${yr}`}
+                            >
+                              <span>{yr}</span>
+                              <span className="w-5 h-5 rounded-full bg-white/80 text-[#0284c7] text-[10px] font-extrabold flex items-center justify-center">
+                                {count}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Visual Sub-Photos Ribbon */}
+                    {gallery.photos && gallery.photos.length > 0 && (
+                      <div className="pt-3 border-t border-slate-100">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                            Photo Previews ({gallery.photos.length})
+                          </span>
+                          <button
+                            onClick={() => handleOpenEditModal(gallery, 'photos')}
+                            className="text-[11px] font-bold text-[#0284c7] hover:underline"
+                          >
+                            View & Edit All →
+                          </button>
+                        </div>
+
+                        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                          {gallery.photos.slice(0, 6).map((p, pIdx) => (
+                            <div
+                              key={pIdx}
+                              onClick={() => handleOpenEditModal(gallery, 'photos', p.year || 'ALL')}
+                              className="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 relative cursor-pointer group/thumb"
+                              title={`${p.title} (${p.year})`}
+                            >
+                              <img
+                                src={p.image}
+                                alt={p.title}
+                                className="w-full h-full object-cover group-hover/thumb:scale-110 transition-transform"
+                              />
+                              <div className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[9px] font-bold text-center py-0.5 truncate">
+                                {p.year}
+                              </div>
+                            </div>
+                          ))}
+                          {gallery.photos.length > 6 && (
+                            <button
+                              onClick={() => handleOpenEditModal(gallery, 'photos')}
+                              className="w-14 h-14 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-xs font-bold text-slate-600 shrink-0 transition-colors"
+                            >
+                              +{gallery.photos.length - 6}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="px-5 py-3.5 border-t border-slate-100 bg-slate-50/70 flex items-center justify-between rounded-b-2xl sm:rounded-b-3xl">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleOpenEditModal(gallery, 'photos')}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-[#08B9E8] hover:text-[#0284c7] text-xs font-bold text-slate-700 shadow-2xs transition-all cursor-pointer"
+                    >
+                      <ImageIcon className="w-3.5 h-3.5 text-[#08B9E8]" />
+                      <span>Manage Photos ({gallery.photos?.length || 0})</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleOpenEditModal(gallery, 'details')}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-semibold text-slate-700 shadow-2xs transition-all cursor-pointer"
+                    >
+                      <Edit2 className="w-3.5 h-3.5 text-slate-500" />
+                      <span>Edit Details</span>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setDeleteConfirmId(gallery.id)}
+                      className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                      title="Delete Album"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ========================================================
+          ADD / EDIT LIFE AT REQUIN ALBUM MODAL
+      ======================================================== */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-900/75 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white rounded-2xl sm:rounded-3xl max-w-4xl w-full max-h-[94vh] flex flex-col shadow-2xl border border-slate-200 text-left overflow-hidden animate-in zoom-in-95 duration-150">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0 bg-white z-10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 leading-tight">
+                    {editingGallery ? 'Edit Event Gallery Album' : 'Create New Event Gallery Album'}
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Organize photos into year categories (e.g. 2024, 2023, 2022) with direct multi-upload.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Top Navigation Tabs */}
+            <div className="flex items-center gap-2 px-6 pt-3 border-b border-slate-100 bg-slate-50/50 shrink-0">
+              <button
+                type="button"
+                onClick={() => setActiveTab('photos')}
+                className={`pb-3 px-4 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
+                  activeTab === 'photos'
+                    ? 'border-[#08B9E8] text-[#0284c7]'
+                    : 'border-transparent text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                <ImageIcon className="w-4 h-4" />
+                <span>📸 Manage Album Photos ({formData.photos.length})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('details')}
+                className={`pb-3 px-4 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
+                  activeTab === 'details'
+                    ? 'border-[#08B9E8] text-[#0284c7]'
+                    : 'border-transparent text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                <Layers className="w-4 h-4" />
+                <span>⚙️ Album Details & Settings</span>
+              </button>
+            </div>
+
+            {/* Modal Body & Form */}
+            <form onSubmit={handleSaveGallery} className="flex flex-col flex-1 overflow-hidden">
+              <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-5">
+                {formError && (
+                  <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{formError}</span>
+                  </div>
+                )}
+
+                {isUploadingFiles && (
+                  <div className="p-3.5 rounded-xl bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin text-[#08B9E8] shrink-0" />
+                    <span className="font-semibold">{uploadStatusMessage || 'Uploading photos...'}</span>
+                  </div>
+                )}
+
+                {/* ========================================================
+                    TAB 1: PHOTOS MANAGER WITH YEAR-WISE DISTRIBUTION
+                ======================================================== */}
+                {activeTab === 'photos' && (
+                  <div className="space-y-5">
+                    {/* Year Category Navigation Bar */}
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <Folder className="w-4 h-4 text-[#08B9E8]" />
+                          <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                            Year-Wise Categories
+                          </span>
+                        </div>
+
+                        {/* Add New Year Category Button / Input */}
+                        {showAddYearInput ? (
+                          <div className="flex items-center gap-2 animate-in fade-in">
+                            <input
+                              type="text"
+                              placeholder="e.g. 2025"
+                              value={newYearInputValue}
+                              onChange={(e) => setNewYearInputValue(e.target.value)}
+                              className="px-2.5 py-1 text-xs rounded-lg border border-slate-200 bg-white w-24 focus:outline-none focus:border-[#08B9E8]"
+                            />
+                            <button
+                              type="button"
+                              onClick={handleAddNewYearCategory}
+                              className="px-2.5 py-1 rounded-lg bg-[#08B9E8] text-slate-950 font-bold text-xs hover:bg-[#4DD4F5]"
+                            >
+                              Add
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setShowAddYearInput(false)}
+                              className="text-slate-400 hover:text-slate-600 p-1"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setShowAddYearInput(true)}
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0284c7] hover:underline cursor-pointer"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>+ Add New Year Category</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Year Category Filter Pills */}
+                      <div className="flex flex-wrap items-center gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedYearTab('ALL');
+                            setTargetUploadYear(computedAllYears[0] || new Date().getFullYear().toString());
+                          }}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                            selectedYearTab === 'ALL'
+                              ? 'bg-slate-900 text-white shadow-xs'
+                              : 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-200'
+                          }`}
+                        >
+                          <span>All Years</span>
+                          <span className="w-5 h-5 rounded-full bg-white/20 text-current text-[10px] font-extrabold flex items-center justify-center">
+                            {formData.photos.length}
+                          </span>
+                        </button>
+
+                        {computedAllYears.map((yr) => {
+                          const count = (photoGroups[yr] || []).length;
+                          const isSelected = selectedYearTab === yr;
+                          return (
+                            <button
+                              key={yr}
+                              type="button"
+                              onClick={() => {
+                                setSelectedYearTab(yr);
+                                setTargetUploadYear(yr);
+                              }}
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                                isSelected
+                                  ? 'bg-[#08B9E8] text-slate-950 shadow-xs font-extrabold'
+                                  : 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-200'
+                              }`}
+                            >
+                              <span>{yr}</span>
+                              <span
+                                className={`w-5 h-5 rounded-full text-[10px] font-extrabold flex items-center justify-center ${
+                                  isSelected ? 'bg-slate-950/20 text-slate-950' : 'bg-slate-100 text-slate-600'
+                                }`}
+                              >
+                                {count}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Top Upload Actions Banner (Targeted to Active Year) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      {/* Direct Multi-Upload Button */}
+                      <button
+                        type="button"
+                        disabled={isUploadingFiles}
+                        onClick={() => batchFileInputRef.current?.click()}
+                        className="p-4 rounded-2xl border-2 border-dashed border-[#08B9E8]/40 hover:border-[#08B9E8] bg-[#E0F7FE]/30 hover:bg-[#E0F7FE]/60 text-left transition-all cursor-pointer group flex flex-col justify-between"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="w-8 h-8 rounded-xl bg-[#08B9E8]/20 text-[#0284c7] flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <Upload className="w-4 h-4" />
+                          </div>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#08B9E8] text-slate-950">
+                            → {targetUploadYear}
+                          </span>
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold text-slate-900">
+                            Upload to {targetUploadYear}
+                          </div>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            Select multiple JPG / PNG files from computer
+                          </p>
+                        </div>
+                      </button>
+
+                      {/* Select From Media Library */}
+                      <button
+                        type="button"
+                        onClick={() => handleOpenMediaPicker('add-photo', null, targetUploadYear)}
+                        className="p-4 rounded-2xl border border-slate-200 hover:border-slate-300 bg-slate-50/60 hover:bg-slate-100 text-left transition-all cursor-pointer group flex flex-col justify-between"
+                      >
+                        <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                          <FolderPlus className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold text-slate-900">
+                            Media Library → {targetUploadYear}
+                          </div>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            Pick from previously uploaded photos
+                          </p>
+                        </div>
+                      </button>
+
+                      {/* Add via URL */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setManualPhotoYear(targetUploadYear);
+                          setShowManualUrlInput(!showManualUrlInput);
+                        }}
+                        className="p-4 rounded-2xl border border-slate-200 hover:border-slate-300 bg-slate-50/60 hover:bg-slate-100 text-left transition-all cursor-pointer group flex flex-col justify-between"
+                      >
+                        <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                          <Plus className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold text-slate-900">
+                            Add via Photo URL
+                          </div>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            Paste direct link for {targetUploadYear}
+                          </p>
+                        </div>
+                      </button>
+                    </div>
+
+                    {/* Manual URL Input Box */}
+                    {showManualUrlInput && (
+                      <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-200 text-xs space-y-3 animate-in fade-in">
+                        <div className="flex items-center justify-between font-bold text-blue-900">
+                          <span>+ Add Photo by Web URL</span>
+                          <button
+                            type="button"
+                            onClick={() => setShowManualUrlInput(false)}
+                            className="text-slate-400 hover:text-slate-600"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div className="sm:col-span-2">
+                            <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                              Image URL *
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="/images/... or https://..."
+                              value={manualPhotoUrl}
+                              onChange={(e) => setManualPhotoUrl(e.target.value)}
+                              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs focus:outline-none focus:border-[#08B9E8]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                              Year Category Tag
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="e.g. 2024"
+                              value={manualPhotoYear}
+                              onChange={(e) => setManualPhotoYear(e.target.value)}
+                              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs focus:outline-none focus:border-[#08B9E8]"
+                            />
+                          </div>
+                          <div className="sm:col-span-2">
+                            <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                              Photo Title (Optional)
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="e.g. Keynote Presentation & Awards"
+                              value={manualPhotoTitle}
+                              onChange={(e) => setManualPhotoTitle(e.target.value)}
+                              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs focus:outline-none focus:border-[#08B9E8]"
+                            />
+                          </div>
+                          <div className="flex items-end">
+                            <button
+                              type="button"
+                              onClick={handleAddManualPhoto}
+                              className="w-full py-2 px-4 rounded-xl bg-[#08B9E8] hover:bg-[#4DD4F5] text-slate-950 font-bold text-xs shadow-xs transition-all cursor-pointer"
+                            >
+                              Add to Album
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Photos Count & Clear All */}
+                    <div className="flex items-center justify-between pt-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-900">
+                          {selectedYearTab === 'ALL'
+                            ? `All Photos in Album (${formData.photos.length})`
+                            : `Photos in Year ${selectedYearTab} (${(photoGroups[selectedYearTab] || []).length})`}
+                        </span>
+                        <span className="text-[11px] text-slate-400">
+                          · Grouped by year category, editable inline
+                        </span>
+                      </div>
+
+                      {formData.photos.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, photos: [] }))}
+                          className="text-[11px] text-rose-600 hover:underline font-semibold cursor-pointer"
+                        >
+                          Clear All Photos
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Year Group Sections Rendering */}
+                    {formData.photos.length === 0 ? (
+                      <div className="p-12 text-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50">
+                        <ImageIcon className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+                        <h4 className="text-sm font-bold text-slate-700">No Photos in This Album</h4>
+                        <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                          Upload pictures for year {targetUploadYear} from your computer or pick from the Media Library.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => batchFileInputRef.current?.click()}
+                          className="mt-4 px-4 py-2 rounded-xl bg-[#08B9E8] text-slate-950 font-bold text-xs hover:bg-[#4DD4F5] transition-all cursor-pointer"
+                        >
+                          + Upload Photos to {targetUploadYear}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
+                        {computedAllYears
+                          .filter((yr) => selectedYearTab === 'ALL' || selectedYearTab === yr)
+                          .map((yearGroup) => {
+                            const itemsInGroup = photoGroups[yearGroup] || [];
+                            if (itemsInGroup.length === 0 && selectedYearTab === 'ALL') {
+                              return null; // Skip empty groups in "ALL" view unless explicitly selected
+                            }
+
+                            return (
+                              <div
+                                key={yearGroup}
+                                className="rounded-2xl border border-slate-200 bg-slate-50/40 p-4 space-y-3"
+                              >
+                                {/* Year Category Section Header */}
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200">
+                                  <div className="flex items-center gap-2">
+                                    <span className="px-3 py-1 rounded-xl bg-slate-900 text-white font-extrabold text-xs shadow-xs">
+                                      📅 Year {yearGroup}
+                                    </span>
+                                    <span className="text-xs font-bold text-slate-600">
+                                      ({itemsInGroup.length} {itemsInGroup.length === 1 ? 'Photo' : 'Photos'})
+                                    </span>
+                                  </div>
+
+                                  {/* Quick Action Buttons for this Year Group */}
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={() => triggerUploadForSpecificYear(yearGroup)}
+                                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-slate-200 hover:border-[#08B9E8] text-[#0284c7] text-xs font-bold shadow-2xs transition-colors cursor-pointer"
+                                    >
+                                      <Upload className="w-3.5 h-3.5 text-[#08B9E8]" />
+                                      <span>+ Upload to {yearGroup}</span>
+                                    </button>
+
+                                    <button
+                                      type="button"
+                                      onClick={() => handleOpenMediaPicker('add-photo', null, yearGroup)}
+                                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
+                                    >
+                                      <FolderPlus className="w-3.5 h-3.5 text-purple-600" />
+                                      <span>From Media</span>
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {/* List of photos for this Year */}
+                                {itemsInGroup.length === 0 ? (
+                                  <div className="py-6 text-center text-xs text-slate-400">
+                                    No photos in year category {yearGroup} yet. Click "+ Upload to {yearGroup}" above.
+                                  </div>
+                                ) : (
+                                  <div className="space-y-3">
+                                    {itemsInGroup.map(({ photo, originalIndex }) => {
+                                      const isCover = formData.image === photo.image;
+
+                                      return (
+                                        <div
+                                          key={photo.id || originalIndex}
+                                          className={`p-3.5 rounded-2xl border transition-all ${
+                                            isCover
+                                              ? 'bg-[#E0F7FE]/25 border-[#08B9E8] shadow-xs'
+                                              : 'bg-white border-slate-200 hover:border-slate-300 shadow-2xs'
+                                          }`}
+                                        >
+                                          <div className="flex flex-col md:flex-row md:items-center gap-4">
+                                            {/* Photo Thumbnail & Cover Badge */}
+                                            <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-slate-900 shrink-0 border border-slate-200 group/img">
+                                              <img
+                                                src={photo.image}
+                                                alt={photo.title}
+                                                className="w-full h-full object-cover"
+                                              />
+                                              {isCover && (
+                                                <div className="absolute top-1.5 left-1.5 bg-[#08B9E8] text-slate-950 text-[10px] font-extrabold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1">
+                                                  <Star className="w-3 h-3 fill-slate-950" />
+                                                  <span>Cover</span>
+                                                </div>
+                                              )}
+
+                                              {/* Quick Overlay Action to Replace Photo */}
+                                              <div className="absolute inset-0 bg-slate-950/75 opacity-0 group-hover/img:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 p-1">
+                                                <button
+                                                  type="button"
+                                                  onClick={() => {
+                                                    setPhotoToReplaceWithFileIndex(originalIndex);
+                                                    singlePhotoFileInputRef.current?.click();
+                                                  }}
+                                                  className="px-2 py-1 rounded bg-white text-slate-900 text-[10px] font-bold hover:bg-[#08B9E8] transition-colors w-full"
+                                                >
+                                                  Replace File
+                                                </button>
+                                                <button
+                                                  type="button"
+                                                  onClick={() => handleOpenMediaPicker('photo-replace', originalIndex)}
+                                                  className="px-2 py-1 rounded bg-white/20 text-white text-[10px] font-bold hover:bg-white/40 transition-colors w-full"
+                                                >
+                                                  From Media
+                                                </button>
+                                              </div>
+                                            </div>
+
+                                            {/* Inline Photo Editor Inputs */}
+                                            <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                                              <div className="sm:col-span-2">
+                                                <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                                                  Photo Title
+                                                </label>
+                                                <input
+                                                  type="text"
+                                                  value={photo.title}
+                                                  onChange={(e) =>
+                                                    handleUpdatePhotoField(originalIndex, 'title', e.target.value)
+                                                  }
+                                                  placeholder="e.g. Cake Cutting & Fireworks"
+                                                  className="w-full px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:border-[#08B9E8]"
+                                                />
+                                              </div>
+
+                                              <div>
+                                                <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                                                  Year Category
+                                                </label>
+                                                <div className="flex items-center gap-1">
+                                                  <select
+                                                    value={photo.year || '2024'}
+                                                    onChange={(e) =>
+                                                      handleUpdatePhotoField(originalIndex, 'year', e.target.value)
+                                                    }
+                                                    className="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold bg-slate-50 focus:outline-none focus:border-[#08B9E8]"
+                                                  >
+                                                    {computedAllYears.map((yrOption) => (
+                                                      <option key={yrOption} value={yrOption}>
+                                                        {yrOption}
+                                                      </option>
+                                                    ))}
+                                                  </select>
+                                                </div>
+                                              </div>
+
+                                              <div className="sm:col-span-3">
+                                                <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                                                  Caption / Subtitle (Optional)
+                                                </label>
+                                                <input
+                                                  type="text"
+                                                  value={photo.caption}
+                                                  onChange={(e) =>
+                                                    handleUpdatePhotoField(originalIndex, 'caption', e.target.value)
+                                                  }
+                                                  placeholder="Brief caption describing the moment..."
+                                                  className="w-full px-3 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-600 focus:outline-none focus:border-[#08B9E8]"
+                                                />
+                                              </div>
+                                            </div>
+
+                                            {/* Reorder, Set as Cover, & Delete Actions */}
+                                            <div className="flex md:flex-col items-center justify-end gap-1.5 border-t md:border-t-0 md:border-l border-slate-100 pt-2 md:pt-0 md:pl-3 shrink-0">
+                                              {!isCover && (
+                                                <button
+                                                  type="button"
+                                                  onClick={() => handleSetAsCover(photo.image)}
+                                                  className="p-1.5 rounded-lg text-slate-500 hover:text-[#0284c7] hover:bg-[#E0F7FE] text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+                                                  title="Set this photo as the main album cover"
+                                                >
+                                                  <Star className="w-3.5 h-3.5 text-amber-500" />
+                                                  <span className="md:hidden">Set Cover</span>
+                                                </button>
+                                              )}
+
+                                              <div className="flex items-center gap-1">
+                                                <button
+                                                  type="button"
+                                                  disabled={originalIndex === 0}
+                                                  onClick={() => handleMovePhoto(originalIndex, 'up')}
+                                                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 disabled:opacity-30 transition-colors cursor-pointer"
+                                                  title="Move Photo Earlier"
+                                                >
+                                                  <ArrowUp className="w-4 h-4" />
+                                                </button>
+
+                                                <button
+                                                  type="button"
+                                                  disabled={originalIndex === formData.photos.length - 1}
+                                                  onClick={() => handleMovePhoto(originalIndex, 'down')}
+                                                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 disabled:opacity-30 transition-colors cursor-pointer"
+                                                  title="Move Photo Later"
+                                                >
+                                                  <ArrowDown className="w-4 h-4" />
+                                                </button>
+
+                                                <button
+                                                  type="button"
+                                                  onClick={() => handleRemovePhoto(originalIndex)}
+                                                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                                                  title="Remove from Album"
+                                                >
+                                                  <Trash2 className="w-4 h-4" />
+                                                </button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* ========================================================
+                    TAB 2: ALBUM DETAILS & SETTINGS (TITLE, COVER, CATEGORY, STATUS)
+                ======================================================== */}
+                {activeTab === 'details' && (
+                  <div className="space-y-5">
+                    {/* Title */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        Event Gallery Title *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.title}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        placeholder="e.g. 5th Anniversary Grand Celebration"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:outline-none focus:border-[#08B9E8]"
+                      />
+                    </div>
+
+                    {/* Category Selection & Presets */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs font-bold text-slate-700">
+                          Category Badge *
+                        </label>
+                        <span className="text-[11px] text-slate-400">Click a preset or type custom</span>
+                      </div>
+                      <input
+                        type="text"
+                        required
+                        value={formData.category}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        placeholder="e.g. 5th Anniversary / Office Party / Diwali / Hackathon"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8] mb-2"
+                      />
+                      <div className="flex flex-wrap gap-1.5">
+                        {CATEGORY_PRESETS.map((preset) => (
+                          <button
+                            key={preset}
+                            type="button"
+                            onClick={() => setFormData({ ...formData, category: preset })}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                              formData.category === preset
+                                ? 'bg-[#08B9E8] text-slate-950 shadow-2xs font-bold'
+                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                            }`}
+                          >
+                            {preset}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Main Cover Image Uploader & Preview */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        Main Album Cover Image *
+                      </label>
+                      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center gap-4">
+                        {formData.image ? (
+                          <div className="w-28 h-24 rounded-xl overflow-hidden bg-slate-900 border border-slate-200 shrink-0">
+                            <img
+                              src={formData.image}
+                              alt="Cover Preview"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-28 h-24 rounded-xl bg-slate-200 flex items-center justify-center text-slate-400 shrink-0">
+                            <ImageIcon className="w-6 h-6" />
+                          </div>
+                        )}
+
+                        <div className="flex-1 space-y-2 w-full">
+                          <input
+                            type="text"
+                            value={formData.image}
+                            onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                            placeholder="/images/... or https://..."
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs focus:outline-none focus:border-[#08B9E8]"
+                          />
+
+                          <div className="flex flex-wrap items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => coverFileInputRef.current?.click()}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#08B9E8] hover:bg-[#4DD4F5] text-slate-950 font-bold text-xs transition-all cursor-pointer"
+                            >
+                              <Upload className="w-3.5 h-3.5" />
+                              <span>Upload Cover File</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleOpenMediaPicker('cover')}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-xs transition-all cursor-pointer"
+                            >
+                              <FolderPlus className="w-3.5 h-3.5 text-purple-600" />
+                              <span>Media Library</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Timeline Date & Display Order */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                          Timeline Date / Sub-label
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.date}
+                          onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                          placeholder="e.g. Annual Gala 2024 / Quarterly Showcase"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                          Display Priority Order
+                        </label>
+                        <input
+                          type="number"
+                          min={1}
+                          value={formData.displayOrder}
+                          onChange={(e) => setFormData({ ...formData, displayOrder: Number(e.target.value) })}
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Caption / Description */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        Event Overview / Caption
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={formData.caption}
+                        onChange={(e) => setFormData({ ...formData, caption: e.target.value })}
+                        placeholder="Celebrating half a decade of engineering excellence, team camaraderie, and shared milestones..."
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                      />
+                    </div>
+
+                    {/* Status */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                        Publication Status
+                      </label>
+                      <select
+                        value={formData.status}
+                        onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:outline-none focus:border-[#08B9E8]"
+                      >
+                        <option value="PUBLISHED">PUBLISHED (Visible in live carousel)</option>
+                        <option value="DRAFT">DRAFT (Hidden from website)</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="px-6 py-4 border-t border-slate-100 shrink-0 bg-slate-50 flex items-center justify-between z-10">
+                <div className="text-xs text-slate-500 font-medium">
+                  {activeTab === 'photos' ? (
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('details')}
+                      className="text-[#0284c7] font-bold hover:underline cursor-pointer"
+                    >
+                      Next: Edit Details & Cover →
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('photos')}
+                      className="text-[#0284c7] font-bold hover:underline cursor-pointer"
+                    >
+                      ← Back to Photos ({formData.photos.length})
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-200/70 transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={formSubmitting || isUploadingFiles}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-slate-950 bg-[#08B9E8] hover:bg-[#4DD4F5] transition-all shadow-md shadow-[#08B9E8]/20 disabled:opacity-50 cursor-pointer"
+                  >
+                    {formSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                    <span>{editingGallery ? 'Save Album Changes' : 'Publish Event Album'}</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================
+          MEDIA LIBRARY CHOOSER MODAL
+      ======================================================== */}
+      {isMediaPickerOpen && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-200 text-left overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
+                  <ImageIcon className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-slate-900">Select Image from Media Library</h4>
+                  <p className="text-xs text-slate-500">
+                    {mediaPickerTarget === 'cover'
+                      ? 'Select image for Album Cover'
+                      : `Adding photo to Year Category ${mediaTargetYear}`}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMediaPickerOpen(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Search */}
+            <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+              <div className="relative">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Filter media files by name..."
+                  value={mediaSearchTerm}
+                  onChange={(e) => setMediaSearchTerm(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-[#08B9E8]"
+                />
+              </div>
+            </div>
+
+            {/* Media Grid */}
+            <div className="p-6 overflow-y-auto flex-1">
+              {loadingMedia ? (
+                <div className="py-12 flex flex-col items-center justify-center text-slate-500">
+                  <Loader2 className="w-6 h-6 animate-spin text-[#08B9E8] mb-2" />
+                  <span className="text-xs">Loading media assets...</span>
+                </div>
+              ) : mediaList.length === 0 ? (
+                <div className="py-12 text-center text-slate-400 text-xs">
+                  No images in media library yet. Upload images directly from your computer!
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {mediaList
+                    .filter((m) =>
+                      m.originalName.toLowerCase().includes(mediaSearchTerm.toLowerCase()) ||
+                      m.fileName.toLowerCase().includes(mediaSearchTerm.toLowerCase())
+                    )
+                    .map((item) => (
+                      <div
+                        key={item.id}
+                        onClick={() => handleSelectMediaItem(item)}
+                        className="group relative aspect-square rounded-xl overflow-hidden border border-slate-200 hover:border-[#08B9E8] hover:ring-2 hover:ring-[#08B9E8]/30 cursor-pointer transition-all bg-slate-900"
+                      >
+                        <img
+                          src={item.url}
+                          alt={item.originalName}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2 flex flex-col justify-end">
+                          <span className="text-[10px] font-bold text-white truncate">
+                            {item.originalName}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsMediaPickerOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-200"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-left animate-in zoom-in-95 duration-150">
+            <div className="flex items-center gap-3 text-rose-600 mb-3">
+              <AlertCircle className="w-6 h-6" />
+              <h3 className="text-lg font-bold text-slate-900">Delete Event Gallery Album</h3>
+            </div>
+            <p className="text-sm text-slate-600 leading-relaxed mb-6">
+              Are you sure you want to delete this gallery album and all its photos? It will be permanently removed from the website.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(deleteConfirmId)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 shadow-xs cursor-pointer"
+              >
+                Confirm Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

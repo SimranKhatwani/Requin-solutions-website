@@ -18,6 +18,7 @@ import { AdminDashboard } from './admin/AdminDashboard';
 import { AdminBlogs } from './admin/AdminBlogs';
 import { AdminProjects } from './admin/AdminProjects';
 import { AdminCareers } from './admin/AdminCareers';
+import { AdminLifeAtRequin } from './admin/AdminLifeAtRequin';
 import { AdminStories } from './admin/AdminStories';
 import { AdminTestimonials } from './admin/AdminTestimonials';
 import { AdminMedia } from './admin/AdminMedia';
@@ -62,6 +63,7 @@ export default function App() {
           <Route path="blogs" element={<AdminBlogs />} />
           <Route path="projects" element={<AdminProjects />} />
           <Route path="careers" element={<AdminCareers />} />
+          <Route path="life-at-requin" element={<AdminLifeAtRequin />} />
           <Route path="our-stories" element={<AdminStories />} />
           <Route path="testimonials" element={<AdminTestimonials />} />
           <Route path="media" element={<AdminMedia />} />

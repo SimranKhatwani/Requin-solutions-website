@@ -378,11 +378,12 @@ export const AdminProjects: React.FC = () => {
 
       {/* Add / Edit Project Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 text-left my-8">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/70 backdrop-blur-sm animate-in fade-in duration-150">
+          <div className="bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 text-left overflow-hidden animate-in zoom-in-95 duration-150">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 sm:px-8 sm:py-5 border-b border-slate-100 shrink-0 bg-white z-10">
               <div>
-                <h3 className="text-xl font-bold text-slate-900">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900">
                   {editingProject ? 'Edit Project' : 'Create New Project'}
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -390,194 +391,199 @@ export const AdminProjects: React.FC = () => {
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {formError && (
-              <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{formError}</span>
+            {/* Modal Body & Form */}
+            <form onSubmit={handleSaveProject} className="flex flex-col flex-1 overflow-hidden">
+              <div className="p-6 sm:p-8 overflow-y-auto flex-1 space-y-4">
+                {formError && (
+                  <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{formError}</span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Project Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.projectName}
+                      onChange={(e) => handleNameChange(e.target.value)}
+                      placeholder="e.g. Enterprise Cloud Infrastructure & CI/CD"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Slug
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.slug}
+                      onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                      placeholder="cloud-infrastructure-cicd"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-600 focus:outline-none focus:border-[#08B9E8]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Category
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      placeholder="e.g. Cloud & DevOps"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Client Name
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.clientName}
+                      onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
+                      placeholder="e.g. Global FinTech Corp"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Display Order
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      value={formData.displayOrder}
+                      onChange={(e) => setFormData({ ...formData, displayOrder: Number(e.target.value) })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Featured Image URL
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.featuredImage}
+                      onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
+                      placeholder="/images/modern_software_mockup_1790576657118.jpg"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Gallery Images (Comma Separated URLs)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.galleryImages}
+                      onChange={(e) => setFormData({ ...formData, galleryImages: e.target.value })}
+                      placeholder="/images/cloud_infrastructure_1790576629897.jpg, /images/digital_agency_office_1790576645354.jpg"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Technologies Stack (Comma Separated)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.technologies}
+                      onChange={(e) => setFormData({ ...formData, technologies: e.target.value })}
+                      placeholder="Kubernetes, Docker, AWS, React, TypeScript"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Short Description *
+                    </label>
+                    <textarea
+                      rows={2}
+                      required
+                      value={formData.shortDescription}
+                      onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
+                      placeholder="Short summary for portfolio cards..."
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Full Architecture Description
+                    </label>
+                    <textarea
+                      rows={4}
+                      value={formData.fullDescription}
+                      onChange={(e) => setFormData({ ...formData, fullDescription: e.target.value })}
+                      placeholder="Detailed technical breakdown of the architecture, key outcomes, metrics..."
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Live Demo / External URL
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.projectUrl}
+                      onChange={(e) => setFormData({ ...formData, projectUrl: e.target.value })}
+                      placeholder="https://www.requingroup.com/"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Publish Status
+                    </label>
+                    <select
+                      value={formData.status}
+                      onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:outline-none focus:border-[#08B9E8]"
+                    >
+                      <option value="PUBLISHED">PUBLISHED (Shown on website)</option>
+                      <option value="DRAFT">DRAFT (Hidden from public)</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-            )}
 
-            <form onSubmit={handleSaveProject} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Project Name *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.projectName}
-                    onChange={(e) => handleNameChange(e.target.value)}
-                    placeholder="e.g. Enterprise Cloud Infrastructure & CI/CD"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Slug
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.slug}
-                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                    placeholder="cloud-infrastructure-cicd"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-600 focus:outline-none focus:border-[#08B9E8]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Category
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    placeholder="e.g. Cloud & DevOps"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Client Name
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.clientName}
-                    onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
-                    placeholder="e.g. Global FinTech Corp"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Display Order
-                  </label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={formData.displayOrder}
-                    onChange={(e) => setFormData({ ...formData, displayOrder: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Featured Image URL
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.featuredImage}
-                    onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
-                    placeholder="/images/modern_software_mockup_1790576657118.jpg"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Gallery Images (Comma Separated URLs)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.galleryImages}
-                    onChange={(e) => setFormData({ ...formData, galleryImages: e.target.value })}
-                    placeholder="/images/cloud_infrastructure_1790576629897.jpg, /images/digital_agency_office_1790576645354.jpg"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Technologies Stack (Comma Separated)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.technologies}
-                    onChange={(e) => setFormData({ ...formData, technologies: e.target.value })}
-                    placeholder="Kubernetes, Docker, AWS, React, TypeScript"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Short Description *
-                  </label>
-                  <textarea
-                    rows={2}
-                    required
-                    value={formData.shortDescription}
-                    onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
-                    placeholder="Short summary for portfolio cards..."
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Full Architecture Description
-                  </label>
-                  <textarea
-                    rows={4}
-                    value={formData.fullDescription}
-                    onChange={(e) => setFormData({ ...formData, fullDescription: e.target.value })}
-                    placeholder="Detailed technical breakdown of the architecture, key outcomes, metrics..."
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Live Demo / External URL
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.projectUrl}
-                    onChange={(e) => setFormData({ ...formData, projectUrl: e.target.value })}
-                    placeholder="https://www.requingroup.com/"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Publish Status
-                  </label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:outline-none focus:border-[#08B9E8]"
-                  >
-                    <option value="PUBLISHED">PUBLISHED (Shown on website)</option>
-                    <option value="DRAFT">DRAFT (Hidden from public)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="pt-6 border-t border-slate-100 flex items-center justify-end gap-3">
+              {/* Modal Footer */}
+              <div className="px-6 py-4 sm:px-8 sm:py-4 border-t border-slate-100 shrink-0 bg-slate-50/90 flex items-center justify-end gap-3 rounded-b-2xl sm:rounded-b-3xl z-10">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                  className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-200/70 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={formSubmitting}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-xs text-slate-950 bg-[#08B9E8] hover:bg-[#4DD4F5] transition-all shadow-md shadow-[#08B9E8]/20 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-xs text-slate-950 bg-[#08B9E8] hover:bg-[#4DD4F5] transition-all shadow-md shadow-[#08B9E8]/20 disabled:opacity-50 cursor-pointer"
                 >
                   {formSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   <span>{editingProject ? 'Save Project' : 'Publish Project'}</span>
@@ -590,8 +596,8 @@ export const AdminProjects: React.FC = () => {
 
       {/* Delete Confirmation */}
       {deleteConfirmId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-left">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-left animate-in zoom-in-95 duration-150">
             <div className="flex items-center gap-3 text-rose-600 mb-3">
               <AlertCircle className="w-6 h-6" />
               <h3 className="text-lg font-bold text-slate-900">Delete Project</h3>
@@ -602,13 +608,13 @@ export const AdminProjects: React.FC = () => {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setDeleteConfirmId(null)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleDelete(deleteConfirmId)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 cursor-pointer"
               >
                 Confirm Delete
               </button>
@@ -619,48 +625,53 @@ export const AdminProjects: React.FC = () => {
 
       {/* Preview Modal */}
       {isPreviewOpen && previewProject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs overflow-y-auto">
-          <div className="bg-slate-900 text-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-800 text-left my-8">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-150">
+          <div className="bg-slate-900 text-white rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-800 text-left overflow-hidden animate-in zoom-in-95 duration-150">
+            {/* Preview Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0 bg-slate-900 z-10">
               <span className="text-xs font-bold uppercase tracking-wider text-[#08B9E8]">
                 Project Showcase Preview
               </span>
               <button
                 onClick={() => setIsPreviewOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <img
-              src={previewProject.featuredImage}
-              alt={previewProject.projectName}
-              className="w-full h-56 object-cover rounded-xl border border-slate-800 mb-4"
-            />
+            {/* Preview Content (Scrollable) */}
+            <div className="p-6 sm:p-8 overflow-y-auto flex-1 space-y-4">
+              <img
+                src={previewProject.featuredImage}
+                alt={previewProject.projectName}
+                className="w-full h-56 object-cover rounded-xl border border-slate-800 mb-2"
+              />
 
-            <span className="text-xs font-semibold text-[#08B9E8] uppercase tracking-wider block mb-1">
-              {previewProject.category}
-            </span>
-            <h3 className="text-2xl font-bold text-white mb-2">
-              {previewProject.projectName}
-            </h3>
-            <p className="text-sm text-slate-300 leading-relaxed mb-4">
-              {previewProject.fullDescription || previewProject.shortDescription}
-            </p>
+              <span className="text-xs font-semibold text-[#08B9E8] uppercase tracking-wider block">
+                {previewProject.category}
+              </span>
+              <h3 className="text-2xl font-bold text-white">
+                {previewProject.projectName}
+              </h3>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                {previewProject.fullDescription || previewProject.shortDescription}
+              </p>
 
-            <div className="flex flex-wrap gap-2 pt-2">
-              {previewProject.technologies.map((t, i) => (
-                <span key={i} className="px-3 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-300">
-                  {t}
-                </span>
-              ))}
+              <div className="flex flex-wrap gap-2 pt-2">
+                {previewProject.technologies.map((t, i) => (
+                  <span key={i} className="px-3 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-300">
+                    {t}
+                  </span>
+                ))}
+              </div>
             </div>
 
-            <div className="pt-6 mt-6 border-t border-slate-800 flex justify-end">
+            {/* Preview Footer */}
+            <div className="px-6 py-4 border-t border-slate-800 shrink-0 bg-slate-950 flex justify-end">
               <button
                 onClick={() => setIsPreviewOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-white text-xs font-semibold hover:bg-slate-700"
+                className="px-4 py-2 rounded-xl bg-slate-800 text-white text-xs font-semibold hover:bg-slate-700 cursor-pointer"
               >
                 Close Preview
               </button>

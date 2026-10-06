@@ -5,6 +5,7 @@ import {
   FolderGit2,
   BookOpen,
   Briefcase,
+  Sparkles,
   Image as ImageIcon,
   Plus,
   ArrowRight,
@@ -95,6 +96,14 @@ export const AdminDashboard: React.FC = () => {
       color: 'bg-cyan-500',
     },
     {
+      title: 'Life at Requin',
+      count: stats.totalLifeAtRequin ?? 4,
+      subtext: `${stats.publishedLifeAtRequin ?? 4} gallery events published`,
+      icon: Sparkles,
+      path: '/admin/life-at-requin',
+      color: 'bg-pink-500',
+    },
+    {
       title: 'Our Stories & Milestones',
       count: stats.totalStories,
       subtext: `${stats.publishedStories} milestones published`,
@@ -143,6 +152,14 @@ export const AdminDashboard: React.FC = () => {
             >
               <Plus className="w-4 h-4" />
               <span>Add Project</span>
+            </button>
+
+            <button
+              onClick={() => navigate('/admin/life-at-requin?action=new')}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 text-[#08B9E8]" />
+              <span>Add Life at Requin</span>
             </button>
 
             <button
@@ -289,15 +306,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-emerald-50 rounded-2xl border border-emerald-200/60 p-5 text-emerald-900">
-            <div className="flex items-center gap-2 mb-2 font-bold text-xs uppercase tracking-wider text-emerald-800">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>Full-Stack Architecture</span>
-            </div>
-            <p className="text-xs text-emerald-800/90 leading-relaxed font-normal">
-              Node.js + Express backend with Mongoose/MongoDB support, JWT admin authentication, and static media hosting active.
-            </p>
-          </div>
+
         </div>
       </div>
     </div>

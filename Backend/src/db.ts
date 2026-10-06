@@ -13,6 +13,7 @@ import {
   CareerDoc,
   JobApplicationDoc,
   SubscriberDoc,
+  LifeAtRequinDoc,
 } from './types';
 
 const DATA_DIR = path.resolve(process.cwd(), 'data');
@@ -29,6 +30,7 @@ interface CMSDatabase {
   stories: StoryDoc[];
   testimonials: TestimonialDoc[];
   careers: CareerDoc[];
+  lifeAtRequin?: LifeAtRequinDoc[];
   jobApplications?: JobApplicationDoc[];
   subscribers?: SubscriberDoc[];
   media: MediaDoc[];
@@ -469,7 +471,179 @@ const getInitialSeed = (): CMSDatabase => {
   const careers: CareerDoc[] = [];
   const jobApplications: JobApplicationDoc[] = [];
 
-  return { adminUsers, blogs, projects, stories, testimonials, careers, jobApplications, media, activities };
+  const lifeAtRequin: LifeAtRequinDoc[] = [
+    {
+      id: 'g-1',
+      title: '5th Anniversary Grand Celebration',
+      category: '5th Anniversary',
+      image: '/images/requin_software_team_1790576614688.jpg',
+      caption: 'Celebrating half a decade of engineering excellence, team camaraderie, and shared milestones.',
+      date: 'Annual Gala 2024',
+      photoCount: 18,
+      years: ['2024'],
+      photos: [
+        {
+          id: 'anniv5-1',
+          image: '/images/requin_software_team_1790576614688.jpg',
+          year: '2024',
+          title: '5th Anniversary Grand Gala 2024',
+          caption: 'Celebrating half a decade of engineering excellence, customer partnerships, and high-velocity team growth.'
+        },
+        {
+          id: 'anniv5-2',
+          image: '/images/digital_agency_office_1790576645354.jpg',
+          year: '2024',
+          title: 'Founders Keynote & Excellence Awards 2024',
+          caption: 'Honoring long-standing team members and leaders who shaped Requin Solutions from early beginnings.'
+        },
+        {
+          id: 'anniv5-3',
+          image: '/images/experience-team-collaboration.jpg',
+          year: '2024',
+          title: 'Future Horizons & Vision 2024',
+          caption: 'Unveiling our next generation AI, enterprise cloud engineering, and global product roadmap.'
+        }
+      ],
+      displayOrder: 1,
+      status: 'PUBLISHED',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z'
+    },
+    {
+      id: 'g-2',
+      title: 'An Evening to Unwind & Celebrate',
+      category: 'Office Party',
+      image: '/images/digital_agency_office_1790576645354.jpg',
+      caption: 'Our quarterly demo day showcasing newly engineered features and cross-team design innovations.',
+      date: 'Quarterly Showcase & Events',
+      photoCount: 12,
+      years: ['2024', '2023', '2022'],
+      photos: [
+        {
+          id: 'op-2024-1',
+          image: '/images/digital_agency_office_1790576645354.jpg',
+          year: '2024',
+          title: 'Office Party 2024 - Annual Success Celebration',
+          caption: 'Teams across engineering, product, and operations coming together for an unforgettable celebration evening.'
+        },
+        {
+          id: 'op-2024-2',
+          image: '/images/experience-team-collaboration.jpg',
+          year: '2024',
+          title: 'Office Party 2024 - Mid-Year Team Mixer',
+          caption: 'Cross-functional engineering and design team collaboration session followed by games, pizza, and live music.'
+        },
+        {
+          id: 'op-2023-1',
+          image: '/images/cloud_infrastructure_1790576629897.jpg',
+          year: '2023',
+          title: 'Office Party 2023 - Annual Gala Dinner',
+          caption: 'Recognizing outstanding developers and contributors at the annual 2023 office party in Jaipur.'
+        },
+        {
+          id: 'op-2023-2',
+          image: '/images/requin_software_team_1790576614688.jpg',
+          year: '2023',
+          title: 'Office Party 2023 - Q4 Milestone Celebration',
+          caption: 'Celebrating year-end milestones, team wins, and record client project deliveries.'
+        },
+        {
+          id: 'op-2022-1',
+          image: '/images/hero-developer-desk.jpg',
+          year: '2022',
+          title: 'Office Party 2022 - Winter Social Gathering',
+          caption: 'Cozy winter celebration with team awards, live performances, and fun interactive activities.'
+        }
+      ],
+      displayOrder: 2,
+      status: 'PUBLISHED',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z'
+    },
+    {
+      id: 'g-3',
+      title: 'Diwali Festive Evening at Requin',
+      category: 'Diwali Party',
+      image: '/images/modern_software_mockup_1790576657118.jpg',
+      caption: 'Tradition meets innovation: lighting up our Jaipur workspace with cultural warmth, sweets, and celebration.',
+      date: 'Festive Season Celebrations',
+      photoCount: 24,
+      years: ['2024', '2023', '2022'],
+      photos: [
+        {
+          id: 'dp-2024-1',
+          image: '/images/modern_software_mockup_1790576657118.jpg',
+          year: '2024',
+          title: 'Diwali Party 2024 - Traditional Puja & Diyas',
+          caption: 'Lighting up our Jaipur workspace with handcrafted diyas, floral rangoli designs, and auspicious prayers.'
+        },
+        {
+          id: 'dp-2024-2',
+          image: '/images/requin_software_team_1790576614688.jpg',
+          year: '2024',
+          title: 'Diwali Party 2024 - Ethnic Wear Day & Sweets Distribution',
+          caption: 'Celebrating unity and festive joy with traditional ethnic attire, gourmet sweets, and team gift hampers.'
+        },
+        {
+          id: 'dp-2023-1',
+          image: '/images/digital_agency_office_1790576645354.jpg',
+          year: '2023',
+          title: 'Diwali Party 2023 - Office Lighting & Rangoli Competition',
+          caption: 'Creative design teams competing in vibrant floral rangolis and workspace illumination.'
+        },
+        {
+          id: 'dp-2022-1',
+          image: '/images/experience-team-collaboration.jpg',
+          year: '2022',
+          title: 'Diwali Party 2022 - Family Feast & Games Night',
+          caption: 'Welcoming families and teammates for dinner, cultural games, and milestone recognitions.'
+        }
+      ],
+      displayOrder: 3,
+      status: 'PUBLISHED',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z'
+    },
+    {
+      id: 'g-4',
+      title: 'Work Hard, Play Hard: Sports & Tournaments',
+      category: 'Sports & Games',
+      image: '/images/experience-team-collaboration.jpg',
+      caption: 'Annual indoor cricket leagues, table tennis tournaments, and outdoor trekking expeditions.',
+      date: 'Sports & Outdoor Activities',
+      photoCount: 16,
+      years: ['2024', '2023'],
+      photos: [
+        {
+          id: 'sp-2024-1',
+          image: '/images/experience-team-collaboration.jpg',
+          year: '2024',
+          title: 'Requin Premier Cricket Cup 2024',
+          caption: 'Weekend corporate cricket tournament with high-energy matches and trophy ceremony.'
+        },
+        {
+          id: 'sp-2024-2',
+          image: '/images/digital_agency_office_1790576645354.jpg',
+          year: '2024',
+          title: 'Table Tennis Championship 2024',
+          caption: 'Intense lunchtime table tennis showdowns and friendly rivalries.'
+        },
+        {
+          id: 'sp-2023-1',
+          image: '/images/requin_software_team_1790576614688.jpg',
+          year: '2023',
+          title: 'Aravalli Hills Team Trekking Expedition',
+          caption: 'Nature trekking and team bonding amidst the hills surrounding Jaipur.'
+        }
+      ],
+      displayOrder: 4,
+      status: 'PUBLISHED',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z'
+    }
+  ];
+
+  return { adminUsers, blogs, projects, stories, testimonials, careers, lifeAtRequin, jobApplications, media, activities };
 };
 
 // Safe File-backed store operations
@@ -490,6 +664,10 @@ export class CMSStore {
         }
         if (this.data && !this.data.careers) {
           this.data.careers = [];
+          modified = true;
+        }
+        if (this.data && !this.data.lifeAtRequin) {
+          this.data.lifeAtRequin = getInitialSeed().lifeAtRequin;
           modified = true;
         }
         if (this.data && !this.data.jobApplications) {

@@ -9,19 +9,38 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { LIFE_AT_REQUIN_GALLERY, GalleryImage, GalleryPhotoItem } from '../data/requinData';
+import { lifeAtRequinService } from '../services/lifeAtRequinService';
 
 export const LifeAtRequinSection: React.FC = () => {
+  const [galleries, setGalleries] = useState<GalleryImage[]>(LIFE_AT_REQUIN_GALLERY);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalActiveIndex, setModalActiveIndex] = useState<number>(0);
   const [modalSelectedYear, setModalSelectedYear] = useState<string>('All');
   const [modalPhotoIndex, setModalPhotoIndex] = useState<number>(0);
 
+  // Fetch dynamic CMS data
+  useEffect(() => {
+    let isMounted = true;
+    lifeAtRequinService.getPublishedGalleries()
+      .then((res) => {
+        if (isMounted && res.success && res.data && res.data.length > 0) {
+          setGalleries(res.data);
+        }
+      })
+      .catch(() => {
+        // Silently fallback to default data
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   // Touch swipe support
   const touchStartXRef = useRef<number | null>(null);
   const touchEndXRef = useRef<number | null>(null);
 
-  const filteredList: GalleryImage[] = LIFE_AT_REQUIN_GALLERY;
+  const filteredList: GalleryImage[] = galleries.length > 0 ? galleries : LIFE_AT_REQUIN_GALLERY;
 
   // Safe carousel navigation
   const handlePrev = useCallback(() => {
