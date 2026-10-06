@@ -1,13 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { CMSStore } from './db';
-import { AdminUser } from './types';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_jwt_key_requin_cms_2026';
-
-export interface AuthenticatedRequest extends Request {
-  adminUser?: AdminUser;
-}
+import { ENV } from '../config/env';
+import { CMSStore } from '../config/db';
+import { AdminUser, AuthenticatedRequest } from '../types';
 
 export function generateToken(user: AdminUser): string {
   return jwt.sign(
@@ -17,7 +12,7 @@ export function generateToken(user: AdminUser): string {
       username: user.username,
       role: user.role,
     },
-    JWT_SECRET,
+    ENV.JWT_SECRET,
     { expiresIn: '7d' }
   );
 }
@@ -31,7 +26,7 @@ export function requireAdminAuth(req: AuthenticatedRequest, res: Response, next:
 
   const token = authHeader.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: string; email: string };
+    const decoded = jwt.verify(token, ENV.JWT_SECRET) as { id: string; email: string };
     const db = CMSStore.get();
     const user = db.adminUsers.find((u) => u.id === decoded.id || u.email === decoded.email);
 

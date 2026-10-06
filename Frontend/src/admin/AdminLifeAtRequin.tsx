@@ -27,6 +27,7 @@ import {
   RefreshCw,
   Folder,
   Tag,
+  Camera,
 } from 'lucide-react';
 import { lifeAtRequinService, LifeAtRequinItem } from '../services/lifeAtRequinService';
 import { mediaService, MediaItem } from '../services/mediaService';
@@ -67,16 +68,21 @@ export const AdminLifeAtRequin: React.FC = () => {
   const [showAddYearInput, setShowAddYearInput] = useState<boolean>(false);
   const [newYearInputValue, setNewYearInputValue] = useState<string>('');
 
+  // Quick Cover Photo Change Modal (Accessible directly from main cards)
+  const [quickCoverModalGallery, setQuickCoverModalGallery] = useState<LifeAtRequinItem | null>(null);
+  const [quickCoverUrl, setQuickCoverUrl] = useState<string>('');
+  const [quickCoverSaving, setQuickCoverSaving] = useState<boolean>(false);
+
   // Media picker modal
   const [isMediaPickerOpen, setIsMediaPickerOpen] = useState<boolean>(false);
   const [mediaList, setMediaList] = useState<MediaItem[]>([]);
   const [loadingMedia, setLoadingMedia] = useState<boolean>(false);
   const [mediaSearchTerm, setMediaSearchTerm] = useState<string>('');
-  const [mediaPickerTarget, setMediaPickerTarget] = useState<'cover' | 'photo-replace' | 'add-photo'>('cover');
+  const [mediaPickerTarget, setMediaPickerTarget] = useState<'cover' | 'quick-cover' | 'photo-replace' | 'add-photo'>('cover');
   const [mediaReplacePhotoIndex, setMediaReplacePhotoIndex] = useState<number | null>(null);
   const [mediaTargetYear, setMediaTargetYear] = useState<string>(new Date().getFullYear().toString());
 
-  // Uploading state for batch uploads
+  // Uploading state for batch & cover uploads
   const [isUploadingFiles, setIsUploadingFiles] = useState<boolean>(false);
   const [uploadStatusMessage, setUploadStatusMessage] = useState<string>('');
 
@@ -111,6 +117,7 @@ export const AdminLifeAtRequin: React.FC = () => {
   // File input refs
   const batchFileInputRef = useRef<HTMLInputElement>(null);
   const coverFileInputRef = useRef<HTMLInputElement>(null);
+  const quickCoverFileInputRef = useRef<HTMLInputElement>(null);
   const singlePhotoFileInputRef = useRef<HTMLInputElement>(null);
   const [photoToReplaceWithFileIndex, setPhotoToReplaceWithFileIndex] = useState<number | null>(null);
 
@@ -219,6 +226,49 @@ export const AdminLifeAtRequin: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  // Open Quick Cover Modal from card
+  const handleOpenQuickCoverModal = (gallery: LifeAtRequinItem) => {
+    setQuickCoverModalGallery(gallery);
+    setQuickCoverUrl(gallery.image);
+  };
+
+  const handleSaveQuickCover = async () => {
+    if (!quickCoverModalGallery || !quickCoverUrl.trim()) return;
+    try {
+      setQuickCoverSaving(true);
+      await lifeAtRequinService.updateGallery(quickCoverModalGallery.id, {
+        image: quickCoverUrl.trim(),
+      });
+      setQuickCoverModalGallery(null);
+      fetchGalleries();
+    } catch (err: any) {
+      alert(err.message || 'Failed to update cover photo.');
+    } finally {
+      setQuickCoverSaving(false);
+    }
+  };
+
+  // Quick cover file upload
+  const handleQuickCoverFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploadingFiles(true);
+      setUploadStatusMessage('Uploading new cover image...');
+      const res = await mediaService.uploadMedia(file);
+      if (res.success && res.data) {
+        setQuickCoverUrl(res.data.url);
+      }
+    } catch (err: any) {
+      alert(err.message || 'Failed to upload cover image.');
+    } finally {
+      setIsUploadingFiles(false);
+      setUploadStatusMessage('');
+      if (quickCoverFileInputRef.current) quickCoverFileInputRef.current.value = '';
+    }
+  };
+
   // Compute all unique years from photos + custom years
   const computedAllYears = Array.from(
     new Set([
@@ -227,14 +277,14 @@ export const AdminLifeAtRequin: React.FC = () => {
     ])
   ).sort().reverse();
 
-  // Cover image direct upload
+  // Cover image direct upload inside edit modal
   const handleCoverFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     try {
       setIsUploadingFiles(true);
-      setUploadStatusMessage('Uploading cover image...');
+      setUploadStatusMessage('Uploading new cover photo...');
       const res = await mediaService.uploadMedia(file);
       if (res.success && res.data) {
         setFormData((prev) => ({ ...prev, image: res.data.url }));
@@ -416,7 +466,7 @@ export const AdminLifeAtRequin: React.FC = () => {
 
   // Media Library Chooser handling
   const handleOpenMediaPicker = (
-    target: 'cover' | 'photo-replace' | 'add-photo',
+    target: 'cover' | 'quick-cover' | 'photo-replace' | 'add-photo',
     photoIndex: number | null = null,
     yearForAdd: string = targetUploadYear
   ) => {
@@ -430,6 +480,8 @@ export const AdminLifeAtRequin: React.FC = () => {
   const handleSelectMediaItem = (item: MediaItem) => {
     if (mediaPickerTarget === 'cover') {
       setFormData((prev) => ({ ...prev, image: item.url }));
+    } else if (mediaPickerTarget === 'quick-cover') {
+      setQuickCoverUrl(item.url);
     } else if (mediaPickerTarget === 'photo-replace' && mediaReplacePhotoIndex !== null) {
       setFormData((prev) => {
         const updated = [...prev.photos];
@@ -574,7 +626,6 @@ export const AdminLifeAtRequin: React.FC = () => {
   const getPhotosGroupedByYear = () => {
     const groups: { [year: string]: { photo: GalleryPhotoItem; originalIndex: number }[] } = {};
 
-    // Ensure all computed years exist in order
     computedAllYears.forEach((yr) => {
       groups[yr] = [];
     });
@@ -609,6 +660,13 @@ export const AdminLifeAtRequin: React.FC = () => {
         className="hidden"
       />
       <input
+        ref={quickCoverFileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleQuickCoverFileUpload}
+        className="hidden"
+      />
+      <input
         ref={singlePhotoFileInputRef}
         type="file"
         accept="image/*"
@@ -628,7 +686,7 @@ export const AdminLifeAtRequin: React.FC = () => {
             </h2>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Manage year-wise photo collections, office celebrations, annual galas, and festive moments.
+            Manage year-wise photo collections, change album cover photos, and edit celebration events.
           </p>
         </div>
 
@@ -741,7 +799,6 @@ export const AdminLifeAtRequin: React.FC = () => {
         /* Albums Grid */
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredGalleries.map((gallery) => {
-            // Count photos per year for this album
             const yearCounts: { [yr: string]: number } = {};
             (gallery.photos || []).forEach((p) => {
               const y = p.year || '2024';
@@ -754,8 +811,8 @@ export const AdminLifeAtRequin: React.FC = () => {
                 className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between group"
               >
                 <div>
-                  {/* Cover Image Header */}
-                  <div className="relative h-56 sm:h-64 w-full overflow-hidden bg-slate-900">
+                  {/* Cover Image Header with Direct Change Cover Button */}
+                  <div className="relative h-56 sm:h-64 w-full overflow-hidden bg-slate-900 group/cover">
                     <img
                       src={gallery.image}
                       alt={gallery.title}
@@ -781,10 +838,22 @@ export const AdminLifeAtRequin: React.FC = () => {
                       </button>
                     </div>
 
-                    {/* Photo Count Badge */}
-                    <div className="absolute top-4 right-4 bg-slate-950/80 backdrop-blur-md text-white px-3 py-1 rounded-xl text-xs font-bold flex items-center gap-1.5 border border-white/10">
-                      <ImageIcon className="w-3.5 h-3.5 text-[#08B9E8]" />
-                      <span>{gallery.photos?.length || gallery.photoCount || 1} Photos</span>
+                    {/* Top Right: Photo Count & Quick Change Cover */}
+                    <div className="absolute top-4 right-4 flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenQuickCoverModal(gallery)}
+                        className="bg-white/90 hover:bg-white text-slate-900 px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md backdrop-blur-md transition-all cursor-pointer"
+                        title="Change album cover photo"
+                      >
+                        <Camera className="w-3.5 h-3.5 text-[#08B9E8]" />
+                        <span>Change Cover</span>
+                      </button>
+
+                      <div className="bg-slate-950/80 backdrop-blur-md text-white px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1.5 border border-white/10">
+                        <ImageIcon className="w-3.5 h-3.5 text-[#08B9E8]" />
+                        <span>{gallery.photos?.length || gallery.photoCount || 1}</span>
+                      </div>
                     </div>
 
                     {/* Bottom title overlay on cover */}
@@ -832,7 +901,7 @@ export const AdminLifeAtRequin: React.FC = () => {
                       </div>
                     )}
 
-                    {/* Visual Sub-Photos Ribbon */}
+                    {/* Visual Sub-Photos Ribbon with Cover indicator */}
                     {gallery.photos && gallery.photos.length > 0 && (
                       <div className="pt-3 border-t border-slate-100">
                         <div className="flex items-center justify-between mb-2">
@@ -848,23 +917,33 @@ export const AdminLifeAtRequin: React.FC = () => {
                         </div>
 
                         <div className="flex items-center gap-2 overflow-x-auto pb-1">
-                          {gallery.photos.slice(0, 6).map((p, pIdx) => (
-                            <div
-                              key={pIdx}
-                              onClick={() => handleOpenEditModal(gallery, 'photos', p.year || 'ALL')}
-                              className="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 relative cursor-pointer group/thumb"
-                              title={`${p.title} (${p.year})`}
-                            >
-                              <img
-                                src={p.image}
-                                alt={p.title}
-                                className="w-full h-full object-cover group-hover/thumb:scale-110 transition-transform"
-                              />
-                              <div className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[9px] font-bold text-center py-0.5 truncate">
-                                {p.year}
+                          {gallery.photos.slice(0, 6).map((p, pIdx) => {
+                            const isThisCover = gallery.image === p.image;
+                            return (
+                              <div
+                                key={pIdx}
+                                onClick={() => handleOpenEditModal(gallery, 'photos', p.year || 'ALL')}
+                                className={`w-14 h-14 rounded-xl overflow-hidden bg-slate-100 shrink-0 relative cursor-pointer group/thumb border-2 ${
+                                  isThisCover ? 'border-[#08B9E8] ring-2 ring-[#08B9E8]/30' : 'border-slate-200'
+                                }`}
+                                title={`${p.title} (${p.year}) ${isThisCover ? '· [Cover Photo]' : ''}`}
+                              >
+                                <img
+                                  src={p.image}
+                                  alt={p.title}
+                                  className="w-full h-full object-cover group-hover/thumb:scale-110 transition-transform"
+                                />
+                                {isThisCover && (
+                                  <div className="absolute top-0.5 right-0.5 bg-[#08B9E8] text-slate-950 p-0.5 rounded-full">
+                                    <Star className="w-2.5 h-2.5 fill-slate-950" />
+                                  </div>
+                                )}
+                                <div className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[9px] font-bold text-center py-0.5 truncate">
+                                  {p.year}
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                           {gallery.photos.length > 6 && (
                             <button
                               onClick={() => handleOpenEditModal(gallery, 'photos')}
@@ -932,7 +1011,7 @@ export const AdminLifeAtRequin: React.FC = () => {
                     {editingGallery ? 'Edit Event Gallery Album' : 'Create New Event Gallery Album'}
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Organize photos into year categories (e.g. 2024, 2023, 2022) with direct multi-upload.
+                    Manage cover photos, year categories, and high-resolution picture albums.
                   </p>
                 </div>
               </div>
@@ -991,6 +1070,115 @@ export const AdminLifeAtRequin: React.FC = () => {
                     <span className="font-semibold">{uploadStatusMessage || 'Uploading photos...'}</span>
                   </div>
                 )}
+
+                {/* ========================================================
+                    FEATURED COVER PHOTO SELECTOR BAR (ALWAYS VISIBLE & PROMINENT)
+                ======================================================== */}
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 text-white shadow-sm space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                      <span className="text-xs font-bold uppercase tracking-wider text-amber-300">
+                        Album Cover Photo
+                      </span>
+                      <span className="text-[11px] text-slate-400">
+                        (Featured on Website Carousel & Card)
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => coverFileInputRef.current?.click()}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#08B9E8] hover:bg-[#4DD4F5] text-slate-950 font-bold text-xs transition-all cursor-pointer"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Upload Cover</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleOpenMediaPicker('cover')}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/15 hover:bg-white/25 text-white font-semibold text-xs transition-all cursor-pointer"
+                      >
+                        <FolderPlus className="w-3.5 h-3.5 text-[#08B9E8]" />
+                        <span>From Media</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-950/60 p-3 rounded-xl border border-white/10">
+                    {/* Active Cover Preview */}
+                    <div className="relative w-28 h-20 sm:w-32 sm:h-22 rounded-xl overflow-hidden bg-slate-800 shrink-0 border border-white/20">
+                      {formData.image ? (
+                        <img
+                          src={formData.image}
+                          alt="Album Cover"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-500">
+                          <ImageIcon className="w-6 h-6" />
+                        </div>
+                      )}
+                      <div className="absolute top-1 left-1 bg-amber-400 text-slate-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded shadow-xs flex items-center gap-0.5">
+                        <Star className="w-2.5 h-2.5 fill-slate-950" />
+                        <span>Active Cover</span>
+                      </div>
+                    </div>
+
+                    {/* Cover Photo URL Input & Visual Album Photos Picker Strip */}
+                    <div className="flex-1 space-y-2 w-full">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={formData.image}
+                          onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                          placeholder="Cover image URL (e.g. /images/... or https://...)"
+                          className="w-full px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900 text-white text-xs focus:outline-none focus:border-[#08B9E8]"
+                        />
+                      </div>
+
+                      {/* Pick Cover directly from Album Photos */}
+                      {formData.photos.length > 0 && (
+                        <div>
+                          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                            Or click any album photo below to set as cover:
+                          </div>
+                          <div className="flex items-center gap-2 overflow-x-auto pb-1 max-h-16">
+                            {formData.photos.map((p, pIdx) => {
+                              const isSelectedCover = formData.image === p.image;
+                              return (
+                                <button
+                                  key={pIdx}
+                                  type="button"
+                                  onClick={() => handleSetAsCover(p.image)}
+                                  className={`relative w-12 h-12 rounded-lg overflow-hidden shrink-0 border-2 transition-all cursor-pointer group ${
+                                    isSelectedCover
+                                      ? 'border-amber-400 ring-2 ring-amber-400/50 scale-105'
+                                      : 'border-slate-700 hover:border-slate-400 opacity-70 hover:opacity-100'
+                                  }`}
+                                  title={`Click to set "${p.title || 'Photo'}" as album cover`}
+                                >
+                                  <img
+                                    src={p.image}
+                                    alt=""
+                                    className="w-full h-full object-cover"
+                                  />
+                                  {isSelectedCover && (
+                                    <div className="absolute inset-0 bg-amber-400/20 flex items-center justify-center">
+                                      <Star className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
+                                    </div>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
                 {/* ========================================================
                     TAB 1: PHOTOS MANAGER WITH YEAR-WISE DISTRIBUTION
@@ -1275,7 +1463,7 @@ export const AdminLifeAtRequin: React.FC = () => {
                           .map((yearGroup) => {
                             const itemsInGroup = photoGroups[yearGroup] || [];
                             if (itemsInGroup.length === 0 && selectedYearTab === 'ALL') {
-                              return null; // Skip empty groups in "ALL" view unless explicitly selected
+                              return null;
                             }
 
                             return (
@@ -1344,7 +1532,7 @@ export const AdminLifeAtRequin: React.FC = () => {
                                                 className="w-full h-full object-cover"
                                               />
                                               {isCover && (
-                                                <div className="absolute top-1.5 left-1.5 bg-[#08B9E8] text-slate-950 text-[10px] font-extrabold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1">
+                                                <div className="absolute top-1.5 left-1.5 bg-amber-400 text-slate-950 text-[10px] font-extrabold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1">
                                                   <Star className="w-3 h-3 fill-slate-950" />
                                                   <span>Cover</span>
                                                 </div>
@@ -1428,17 +1616,19 @@ export const AdminLifeAtRequin: React.FC = () => {
 
                                             {/* Reorder, Set as Cover, & Delete Actions */}
                                             <div className="flex md:flex-col items-center justify-end gap-1.5 border-t md:border-t-0 md:border-l border-slate-100 pt-2 md:pt-0 md:pl-3 shrink-0">
-                                              {!isCover && (
-                                                <button
-                                                  type="button"
-                                                  onClick={() => handleSetAsCover(photo.image)}
-                                                  className="p-1.5 rounded-lg text-slate-500 hover:text-[#0284c7] hover:bg-[#E0F7FE] text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
-                                                  title="Set this photo as the main album cover"
-                                                >
-                                                  <Star className="w-3.5 h-3.5 text-amber-500" />
-                                                  <span className="md:hidden">Set Cover</span>
-                                                </button>
-                                              )}
+                                              <button
+                                                type="button"
+                                                onClick={() => handleSetAsCover(photo.image)}
+                                                className={`p-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer ${
+                                                  isCover
+                                                    ? 'bg-amber-100 text-amber-800'
+                                                    : 'text-slate-500 hover:text-amber-600 hover:bg-amber-50'
+                                                }`}
+                                                title={isCover ? 'Current Cover Photo' : 'Set as Album Cover'}
+                                              >
+                                                <Star className={`w-3.5 h-3.5 ${isCover ? 'text-amber-500 fill-amber-500' : 'text-slate-400'}`} />
+                                                <span>{isCover ? 'Cover Photo' : 'Set Cover'}</span>
+                                              </button>
 
                                               <div className="flex items-center gap-1">
                                                 <button
@@ -1539,58 +1729,6 @@ export const AdminLifeAtRequin: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Main Cover Image Uploader & Preview */}
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Main Album Cover Image *
-                      </label>
-                      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center gap-4">
-                        {formData.image ? (
-                          <div className="w-28 h-24 rounded-xl overflow-hidden bg-slate-900 border border-slate-200 shrink-0">
-                            <img
-                              src={formData.image}
-                              alt="Cover Preview"
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        ) : (
-                          <div className="w-28 h-24 rounded-xl bg-slate-200 flex items-center justify-center text-slate-400 shrink-0">
-                            <ImageIcon className="w-6 h-6" />
-                          </div>
-                        )}
-
-                        <div className="flex-1 space-y-2 w-full">
-                          <input
-                            type="text"
-                            value={formData.image}
-                            onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                            placeholder="/images/... or https://..."
-                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs focus:outline-none focus:border-[#08B9E8]"
-                          />
-
-                          <div className="flex flex-wrap items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => coverFileInputRef.current?.click()}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#08B9E8] hover:bg-[#4DD4F5] text-slate-950 font-bold text-xs transition-all cursor-pointer"
-                            >
-                              <Upload className="w-3.5 h-3.5" />
-                              <span>Upload Cover File</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => handleOpenMediaPicker('cover')}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-xs transition-all cursor-pointer"
-                            >
-                              <FolderPlus className="w-3.5 h-3.5 text-purple-600" />
-                              <span>Media Library</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
                     {/* Timeline Date & Display Order */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -1661,7 +1799,7 @@ export const AdminLifeAtRequin: React.FC = () => {
                       onClick={() => setActiveTab('details')}
                       className="text-[#0284c7] font-bold hover:underline cursor-pointer"
                     >
-                      Next: Edit Details & Cover →
+                      Next: Edit Details & Settings →
                     </button>
                   ) : (
                     <button
@@ -1698,6 +1836,146 @@ export const AdminLifeAtRequin: React.FC = () => {
       )}
 
       {/* ========================================================
+          QUICK CHANGE COVER PHOTO MODAL (FROM CARD)
+      ======================================================== */}
+      {quickCoverModalGallery && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 text-left animate-in zoom-in-95 duration-150 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                  <Camera className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900">Change Album Cover Photo</h3>
+                  <p className="text-xs text-slate-500">{quickCoverModalGallery.title}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setQuickCoverModalGallery(null)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Current Cover Preview */}
+            <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 shadow-xs">
+              {quickCoverUrl ? (
+                <img
+                  src={quickCoverUrl}
+                  alt="Cover Preview"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-slate-500">
+                  <ImageIcon className="w-8 h-8" />
+                </div>
+              )}
+              <div className="absolute top-2 left-2 bg-amber-400 text-slate-950 text-xs font-extrabold px-2 py-0.5 rounded-md shadow-xs flex items-center gap-1">
+                <Star className="w-3 h-3 fill-slate-950" />
+                <span>Active Cover Preview</span>
+              </div>
+            </div>
+
+            {/* Upload or Choose from Media */}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => quickCoverFileInputRef.current?.click()}
+                className="p-3 rounded-xl border border-slate-200 hover:border-[#08B9E8] bg-slate-50 hover:bg-[#E0F7FE]/40 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                <Upload className="w-4 h-4 text-[#08B9E8]" />
+                <span>Upload From PC</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleOpenMediaPicker('quick-cover')}
+                className="p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                <FolderPlus className="w-4 h-4 text-purple-600" />
+                <span>Media Library</span>
+              </button>
+            </div>
+
+            {/* Custom URL Input */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                Image URL / Web Link
+              </label>
+              <input
+                type="text"
+                value={quickCoverUrl}
+                onChange={(e) => setQuickCoverUrl(e.target.value)}
+                placeholder="/images/... or https://..."
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-[#08B9E8]"
+              />
+            </div>
+
+            {/* Choose from Album's Existing Photos */}
+            {quickCoverModalGallery.photos && quickCoverModalGallery.photos.length > 0 && (
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 mb-1.5">
+                  Or select from this album's photos ({quickCoverModalGallery.photos.length}):
+                </label>
+                <div className="flex items-center gap-2 overflow-x-auto pb-2">
+                  {quickCoverModalGallery.photos.map((p, idx) => {
+                    const isSelected = quickCoverUrl === p.image;
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setQuickCoverUrl(p.image)}
+                        className={`relative w-14 h-14 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
+                          isSelected
+                            ? 'border-amber-400 ring-2 ring-amber-400/50 scale-105'
+                            : 'border-slate-200 opacity-70 hover:opacity-100'
+                        }`}
+                        title={p.title || `Photo ${idx + 1}`}
+                      >
+                        <img
+                          src={p.image}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                        {isSelected && (
+                          <div className="absolute inset-0 bg-amber-400/25 flex items-center justify-center">
+                            <Star className="w-4 h-4 text-amber-300 fill-amber-300" />
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Footer Buttons */}
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setQuickCoverModalGallery(null)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={quickCoverSaving || !quickCoverUrl.trim()}
+                onClick={handleSaveQuickCover}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-slate-950 bg-[#08B9E8] hover:bg-[#4DD4F5] shadow-xs disabled:opacity-50 cursor-pointer"
+              >
+                {quickCoverSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                <span>Save New Cover</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================
           MEDIA LIBRARY CHOOSER MODAL
       ======================================================== */}
       {isMediaPickerOpen && (
@@ -1711,7 +1989,7 @@ export const AdminLifeAtRequin: React.FC = () => {
                 <div>
                   <h4 className="text-base font-bold text-slate-900">Select Image from Media Library</h4>
                   <p className="text-xs text-slate-500">
-                    {mediaPickerTarget === 'cover'
+                    {mediaPickerTarget === 'cover' || mediaPickerTarget === 'quick-cover'
                       ? 'Select image for Album Cover'
                       : `Adding photo to Year Category ${mediaTargetYear}`}
                   </p>

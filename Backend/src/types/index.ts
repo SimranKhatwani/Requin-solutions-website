@@ -1,3 +1,5 @@
+import { Request } from 'express';
+
 export interface AdminUser {
   id: string;
   email: string;
@@ -7,6 +9,10 @@ export interface AdminUser {
   role: 'superadmin' | 'editor';
   createdAt: string;
   updatedAt: string;
+}
+
+export interface AuthenticatedRequest extends Request {
+  adminUser?: AdminUser;
 }
 
 export interface BlogDoc {
@@ -166,4 +172,19 @@ export interface LifeAtRequinDoc {
   status: 'DRAFT' | 'PUBLISHED';
   createdAt: string;
   updatedAt: string;
+}
+
+export interface CMSDatabase {
+  adminUsers: AdminUser[];
+  blogs: BlogDoc[];
+  projects: ProjectDoc[];
+  stories: StoryDoc[];
+  testimonials: TestimonialDoc[];
+  careers: CareerDoc[];
+  lifeAtRequin?: LifeAtRequinDoc[];
+  jobApplications?: JobApplicationDoc[];
+  subscribers?: SubscriberDoc[];
+  media: MediaDoc[];
+  activities: ActivityDoc[];
+  supportInquiries?: SupportInquiryDoc[];
 }

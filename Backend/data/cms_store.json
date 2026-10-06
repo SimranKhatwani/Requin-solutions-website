@@ -390,6 +390,30 @@
   ],
   "activities": [
     {
+      "id": "act-1791269371053-tw7w",
+      "action": "Updated Life at Requin gallery \"An Evening to Unwind & Celebrate\"",
+      "entityType": "media",
+      "entityTitle": "An Evening to Unwind & Celebrate",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T06:49:31.054Z"
+    },
+    {
+      "id": "act-1791269193138-1mka",
+      "action": "Updated Life at Requin gallery \"5th Anniversary Grand Celebration\"",
+      "entityType": "media",
+      "entityTitle": "5th Anniversary Grand Celebration",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T06:46:33.147Z"
+    },
+    {
+      "id": "act-1791268775784-zc8v",
+      "action": "Updated Life at Requin gallery \"5th Anniversary Grand Celebration\"",
+      "entityType": "media",
+      "entityTitle": "5th Anniversary Grand Celebration",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T06:39:35.784Z"
+    },
+    {
       "id": "act-1791263601801-stt9",
       "action": "Admin logged in",
       "entityType": "auth",
@@ -559,27 +583,27 @@
       "id": "g-1",
       "title": "5th Anniversary Grand Celebration",
       "category": "5th Anniversary",
-      "image": "/images/requin_software_team_1790576614688.jpg",
+      "image": "/images/digital_agency_office_1790576645354.jpg",
       "caption": "Celebrating half a decade of engineering excellence, team camaraderie, and shared milestones.",
       "date": "Annual Gala 2024",
-      "photoCount": 18,
+      "photoCount": 3,
       "years": [
         "2024"
       ],
       "photos": [
-        {
-          "id": "anniv5-1",
-          "image": "/images/requin_software_team_1790576614688.jpg",
-          "year": "2024",
-          "title": "5th Anniversary Grand Gala 2024",
-          "caption": "Celebrating half a decade of engineering excellence, customer partnerships, and high-velocity team growth."
-        },
         {
           "id": "anniv5-2",
           "image": "/images/digital_agency_office_1790576645354.jpg",
           "year": "2024",
           "title": "Founders Keynote & Excellence Awards 2024",
           "caption": "Honoring long-standing team members and leaders who shaped Requin Solutions from early beginnings."
+        },
+        {
+          "id": "anniv5-1",
+          "image": "/images/requin_software_team_1790576614688.jpg",
+          "year": "2024",
+          "title": "5th Anniversary Grand Gala 2024",
+          "caption": "Celebrating half a decade of engineering excellence, customer partnerships, and high-velocity team growth."
         },
         {
           "id": "anniv5-3",
@@ -592,16 +616,16 @@
       "displayOrder": 1,
       "status": "PUBLISHED",
       "createdAt": "2026-01-01T00:00:00.000Z",
-      "updatedAt": "2026-01-01T00:00:00.000Z"
+      "updatedAt": "2026-10-06T06:46:33.135Z"
     },
     {
       "id": "g-2",
       "title": "An Evening to Unwind & Celebrate",
       "category": "Office Party",
-      "image": "/images/digital_agency_office_1790576645354.jpg",
+      "image": "/images/experience-team-collaboration.jpg",
       "caption": "Our quarterly demo day showcasing newly engineered features and cross-team design innovations.",
       "date": "Quarterly Showcase & Events",
-      "photoCount": 12,
+      "photoCount": 5,
       "years": [
         "2024",
         "2023",
@@ -647,7 +671,7 @@
       "displayOrder": 2,
       "status": "PUBLISHED",
       "createdAt": "2026-01-01T00:00:00.000Z",
-      "updatedAt": "2026-01-01T00:00:00.000Z"
+      "updatedAt": "2026-10-06T06:49:31.051Z"
     },
     {
       "id": "g-3",
