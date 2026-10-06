@@ -5,12 +5,12 @@ import { generateToken } from '../middleware/auth.middleware';
 import { AdminUser } from '../types';
 
 export const AuthService = {
-  login(identifier: string, passwordPlain: string): { token: string; user: Partial<AdminUser> } | { error: string; status: number } {
+  async login(identifier: string, passwordPlain: string): Promise<{ token: string; user: Partial<AdminUser> } | { error: string; status: number }> {
     if (!identifier || !passwordPlain) {
       return { error: 'Please provide both email and password.', status: 400 };
     }
 
-    const user = UserModel.findByEmailOrUsername(identifier);
+    const user = await UserModel.findByEmailOrUsername(identifier);
     if (!user) {
       return { error: 'Invalid credentials. User does not exist.', status: 401 };
     }
@@ -41,11 +41,11 @@ export const AuthService = {
     }
   },
 
-  changePassword(
+  async changePassword(
     adminUser: AdminUser,
     currentPassword: string,
     newPassword: string
-  ): { success: true; message: string } | { success: false; error: string; status: number } {
+  ): Promise<{ success: true; message: string } | { success: false; error: string; status: number }> {
     if (!currentPassword || !newPassword) {
       return { success: false, error: 'Please provide both current and new password.', status: 400 };
     }
@@ -54,7 +54,7 @@ export const AuthService = {
       return { success: false, error: 'New password must be at least 8 characters long.', status: 400 };
     }
 
-    const user = UserModel.findById(adminUser.id);
+    const user = await UserModel.findById(adminUser.id);
     if (!user) {
       return { success: false, error: 'Admin user not found.', status: 404 };
     }
@@ -66,7 +66,7 @@ export const AuthService = {
 
     const salt = bcrypt.genSaltSync(10);
     const newHash = bcrypt.hashSync(newPassword, salt);
-    UserModel.updatePassword(user.id, newHash);
+    await UserModel.updatePassword(user.id, newHash);
 
     ActivityModel.add('Admin password changed', 'auth', 'Security credential update', user.email);
     return { success: true, message: 'Password updated successfully.' };

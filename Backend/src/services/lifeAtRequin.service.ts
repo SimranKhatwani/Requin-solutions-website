@@ -3,22 +3,22 @@ import { ActivityModel } from '../models/activity.model';
 import { LifeAtRequinDoc } from '../types';
 
 export const LifeAtRequinService = {
-  getPublished(): LifeAtRequinDoc[] {
-    return LifeAtRequinModel.findPublished();
+  async getPublished(): Promise<LifeAtRequinDoc[]> {
+    return await LifeAtRequinModel.findPublished();
   },
 
-  getAll(): LifeAtRequinDoc[] {
-    return LifeAtRequinModel.findAll();
+  async getAll(): Promise<LifeAtRequinDoc[]> {
+    return await LifeAtRequinModel.findAll();
   },
 
-  create(data: Partial<LifeAtRequinDoc>, adminEmail: string): LifeAtRequinDoc | { error: string; status: number } {
+  async create(data: Partial<LifeAtRequinDoc>, adminEmail: string): Promise<LifeAtRequinDoc | { error: string; status: number }> {
     const { title, category, image, caption, date, photoCount, years, photos, displayOrder, status } = data;
 
     if (!title || !category || !image) {
       return { error: 'Title, category, and cover image are required.', status: 400 };
     }
 
-    const allGalleries = LifeAtRequinModel.findAll();
+    const allGalleries = await LifeAtRequinModel.findAll();
     const safePhotos = Array.isArray(photos) ? photos : [];
     const safeYears = Array.isArray(years) && years.length > 0
       ? years
@@ -26,8 +26,8 @@ export const LifeAtRequinService = {
 
     const newGallery: LifeAtRequinDoc = {
       id: `g-${Date.now()}`,
-      title,
-      category,
+      title: title.trim(),
+      category: category.trim(),
       image,
       caption: caption || '',
       date: date || 'Annual Showcase',
@@ -46,13 +46,13 @@ export const LifeAtRequinService = {
       updatedAt: new Date().toISOString(),
     };
 
-    LifeAtRequinModel.create(newGallery);
+    const created = await LifeAtRequinModel.create(newGallery);
     ActivityModel.add(`Created Life at Requin gallery "${newGallery.title}"`, 'lifeAtRequin', newGallery.title, adminEmail);
-    return newGallery;
+    return created;
   },
 
-  update(id: string, data: Partial<LifeAtRequinDoc>, adminEmail: string): LifeAtRequinDoc | { error: string; status: number } {
-    const prev = LifeAtRequinModel.findById(id);
+  async update(id: string, data: Partial<LifeAtRequinDoc>, adminEmail: string): Promise<LifeAtRequinDoc | { error: string; status: number }> {
+    const prev = await LifeAtRequinModel.findById(id);
     if (!prev) {
       return { error: 'Life at Requin gallery not found.', status: 404 };
     }
@@ -63,7 +63,7 @@ export const LifeAtRequinService = {
       ? years
       : Array.from(new Set(safePhotos.map((p: any) => p.year).filter(Boolean)));
 
-    const updated = LifeAtRequinModel.update(id, {
+    const updated = await LifeAtRequinModel.update(id, {
       title: title ?? prev.title,
       category: category ?? prev.category,
       image: image ?? prev.image,
@@ -90,14 +90,14 @@ export const LifeAtRequinService = {
     return { error: 'Failed to update gallery.', status: 500 };
   },
 
-  togglePublish(id: string, adminEmail: string): LifeAtRequinDoc | { error: string; status: number } {
-    const prev = LifeAtRequinModel.findById(id);
+  async togglePublish(id: string, adminEmail: string): Promise<LifeAtRequinDoc | { error: string; status: number }> {
+    const prev = await LifeAtRequinModel.findById(id);
     if (!prev) {
       return { error: 'Gallery not found.', status: 404 };
     }
 
     const nextStatus = prev.status === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED';
-    const updated = LifeAtRequinModel.update(id, { status: nextStatus });
+    const updated = await LifeAtRequinModel.update(id, { status: nextStatus });
     if (updated) {
       ActivityModel.add(`Changed Life at Requin "${prev.title}" status to ${nextStatus}`, 'lifeAtRequin', prev.title, adminEmail);
       return updated;
@@ -105,8 +105,8 @@ export const LifeAtRequinService = {
     return { error: 'Failed to toggle status.', status: 500 };
   },
 
-  delete(id: string, adminEmail: string): LifeAtRequinDoc | { error: string; status: number } {
-    const deleted = LifeAtRequinModel.delete(id);
+  async delete(id: string, adminEmail: string): Promise<LifeAtRequinDoc | { error: string; status: number }> {
+    const deleted = await LifeAtRequinModel.delete(id);
     if (!deleted) {
       return { error: 'Gallery not found.', status: 404 };
     }

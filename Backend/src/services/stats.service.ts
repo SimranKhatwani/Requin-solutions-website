@@ -1,28 +1,44 @@
 import { CMSStore } from '../config/db';
 import { ActivityModel } from '../models/activity.model';
+import { BlogMongoose } from '../models/blog.model';
+import { ProjectMongoose } from '../models/project.model';
+import { StoryMongoose } from '../models/story.model';
+import { MediaMongoose } from '../models/media.model';
+import { LifeAtRequinMongoose } from '../models/lifeAtRequin.model';
 
 export const StatsService = {
-  getStats() {
-    const db = CMSStore.get();
-    const totalBlogs = db.blogs.length;
-    const publishedBlogs = db.blogs.filter((b) => b.status === 'PUBLISHED').length;
+  async getStats() {
+    // 1. Migrated MongoDB modules
+    const [
+      totalBlogs,
+      publishedBlogs,
+      totalProjects,
+      publishedProjects,
+      totalStories,
+      publishedStories,
+      totalMedia,
+      totalLifeAtRequin,
+      publishedLifeAtRequin,
+    ] = await Promise.all([
+      BlogMongoose.countDocuments(),
+      BlogMongoose.countDocuments({ status: 'PUBLISHED' }),
+      ProjectMongoose.countDocuments(),
+      ProjectMongoose.countDocuments({ status: 'PUBLISHED' }),
+      StoryMongoose.countDocuments(),
+      StoryMongoose.countDocuments({ status: 'PUBLISHED' }),
+      MediaMongoose.countDocuments(),
+      LifeAtRequinMongoose.countDocuments(),
+      LifeAtRequinMongoose.countDocuments({ status: 'PUBLISHED' }),
+    ]);
+
     const draftBlogs = totalBlogs - publishedBlogs;
 
-    const totalProjects = db.projects.length;
-    const publishedProjects = db.projects.filter((p) => p.status === 'PUBLISHED').length;
-
-    const totalStories = db.stories.length;
-    const publishedStories = db.stories.filter((s) => s.status === 'PUBLISHED').length;
-
-    const totalMedia = db.media.length;
-
+    // 2. Non-migrated CMSStore modules
+    const db = CMSStore.get();
     const totalCareers = (db.careers || []).length;
     const publishedCareers = (db.careers || []).filter((c) => c.status === 'PUBLISHED').length;
     const draftCareers = totalCareers - publishedCareers;
     const totalApplications = (db.jobApplications || []).length;
-
-    const totalLifeAtRequin = (db.lifeAtRequin || []).length;
-    const publishedLifeAtRequin = (db.lifeAtRequin || []).filter((g) => g.status === 'PUBLISHED').length;
 
     const recentActivity = ActivityModel.getRecent(10);
 

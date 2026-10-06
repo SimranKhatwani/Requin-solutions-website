@@ -1,33 +1,89 @@
-import { CMSStore } from '../config/db';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 import { MediaDoc } from '../types';
 
+export interface IMediaDocument extends Omit<MediaDoc, 'id'>, Document {
+  id: string;
+}
+
+export const MediaSchema = new Schema<IMediaDocument>(
+  {
+    id: {
+      type: String,
+      required: [true, 'Media ID is required'],
+      unique: true,
+      index: true,
+    },
+    fileName: {
+      type: String,
+      required: [true, 'File name is required'],
+      trim: true,
+      index: true,
+    },
+    originalName: {
+      type: String,
+      required: [true, 'Original name is required'],
+      trim: true,
+    },
+    url: {
+      type: String,
+      required: [true, 'Media URL is required'],
+      trim: true,
+    },
+    mimeType: {
+      type: String,
+      required: [true, 'MIME type is required'],
+      index: true,
+    },
+    size: {
+      type: Number,
+      required: [true, 'File size is required'],
+    },
+    dimensions: {
+      width: { type: Number },
+      height: { type: Number },
+    },
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+      transform: (_doc, ret: any) => {
+        delete ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+  }
+);
+
+// Indexes
+MediaSchema.index({ createdAt: -1 });
+
+export const MediaMongoose: Model<IMediaDocument> =
+  (mongoose.models.Media as Model<IMediaDocument>) ||
+  mongoose.model<IMediaDocument>('Media', MediaSchema);
+
+// Data Access Object using MediaMongoose (MongoDB Atlas)
 export const MediaModel = {
-  findAll(): MediaDoc[] {
-    const db = CMSStore.get();
-    return [...db.media].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+  async findAll(): Promise<MediaDoc[]> {
+    const media = await MediaMongoose.find().sort({ createdAt: -1 }).lean();
+    return media as unknown as MediaDoc[];
   },
 
-  findById(id: string): MediaDoc | undefined {
-    const db = CMSStore.get();
-    return db.media.find((m) => m.id === id);
+  async findById(id: string): Promise<MediaDoc | null> {
+    const media = await MediaMongoose.findOne({ id }).lean();
+    return media ? (media as unknown as MediaDoc) : null;
   },
 
-  create(media: MediaDoc): MediaDoc {
-    const db = CMSStore.get();
-    db.media.unshift(media);
-    CMSStore.save(db);
-    return media;
+  async create(media: MediaDoc): Promise<MediaDoc> {
+    const created = await MediaMongoose.create(media);
+    return created.toObject() as unknown as MediaDoc;
   },
 
-  delete(id: string): MediaDoc | null {
-    const db = CMSStore.get();
-    const idx = db.media.findIndex((m) => m.id === id);
-    if (idx === -1) return null;
-
-    const deleted = db.media.splice(idx, 1)[0];
-    CMSStore.save(db);
-    return deleted;
+  async delete(id: string): Promise<MediaDoc | null> {
+    const deleted = await MediaMongoose.findOneAndDelete({ id }).lean();
+    return deleted ? (deleted as unknown as MediaDoc) : null;
   },
 };
+
+export default MediaMongoose;

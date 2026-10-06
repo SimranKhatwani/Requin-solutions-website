@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "tsx src/server.ts"
+    "start": "tsx src/server.ts",
+    "migrate:cms": "tsx src/scripts/migrateCmsStoreToMongo.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

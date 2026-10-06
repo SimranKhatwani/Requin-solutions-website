@@ -6,11 +6,11 @@ import { MediaDoc } from '../types';
 import { ENV } from '../config/env';
 
 export const MediaService = {
-  getAll(): MediaDoc[] {
-    return MediaModel.findAll();
+  async getAll(): Promise<MediaDoc[]> {
+    return await MediaModel.findAll();
   },
 
-  upload(file: Express.Multer.File, adminEmail: string): MediaDoc {
+  async upload(file: Express.Multer.File, adminEmail: string): Promise<MediaDoc> {
     const mediaUrl = `/uploads/${file.filename}`;
 
     const newMedia: MediaDoc = {
@@ -24,13 +24,13 @@ export const MediaService = {
       updatedAt: new Date().toISOString(),
     };
 
-    MediaModel.create(newMedia);
+    const created = await MediaModel.create(newMedia);
     ActivityModel.add(`Uploaded media file ${file.originalname}`, 'media', file.originalname, adminEmail);
-    return newMedia;
+    return created;
   },
 
-  delete(id: string, adminEmail: string): MediaDoc | { error: string; status: number } {
-    const target = MediaModel.findById(id);
+  async delete(id: string, adminEmail: string): Promise<MediaDoc | { error: string; status: number }> {
+    const target = await MediaModel.findById(id);
     if (!target) {
       return { error: 'Media file not found.', status: 404 };
     }
@@ -47,7 +47,7 @@ export const MediaService = {
       }
     }
 
-    const deleted = MediaModel.delete(id);
+    const deleted = await MediaModel.delete(id);
     if (deleted) {
       ActivityModel.add(`Deleted media file ${deleted.originalName}`, 'media', deleted.originalName, adminEmail);
       return deleted;

@@ -3,23 +3,23 @@ import { ActivityModel } from '../models/activity.model';
 import { ProjectDoc } from '../types';
 
 export const ProjectService = {
-  getPublished(filters?: { category?: string }): ProjectDoc[] {
-    return ProjectModel.findPublished(filters);
+  async getPublished(filters?: { category?: string }): Promise<ProjectDoc[]> {
+    return await ProjectModel.findPublished(filters);
   },
 
-  getBySlug(slug: string): ProjectDoc | undefined {
-    const project = ProjectModel.findBySlug(slug);
+  async getBySlug(slug: string): Promise<ProjectDoc | null> {
+    const project = await ProjectModel.findBySlug(slug);
     if (project && project.status === 'PUBLISHED') {
       return project;
     }
-    return undefined;
+    return null;
   },
 
-  getAll(): ProjectDoc[] {
-    return ProjectModel.findAll();
+  async getAll(): Promise<ProjectDoc[]> {
+    return await ProjectModel.findAll();
   },
 
-  create(data: Partial<ProjectDoc>, adminEmail: string): ProjectDoc | { error: string; status: number } {
+  async create(data: Partial<ProjectDoc>, adminEmail: string): Promise<ProjectDoc | { error: string; status: number }> {
     const {
       projectName,
       slug,
@@ -43,17 +43,17 @@ export const ProjectService = {
       ? slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
       : projectName.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
-    const existingSlug = ProjectModel.findBySlug(autoSlug);
+    const existingSlug = await ProjectModel.findBySlug(autoSlug);
     if (existingSlug) {
       return { error: `A project with slug "${autoSlug}" already exists.`, status: 400 };
     }
 
-    const allProjects = ProjectModel.findAll();
+    const allProjects = await ProjectModel.findAll();
     const newProject: ProjectDoc = {
       id: `proj-${Date.now()}`,
-      projectName,
+      projectName: projectName.trim(),
       slug: autoSlug,
-      shortDescription,
+      shortDescription: shortDescription.trim(),
       fullDescription: fullDescription || shortDescription,
       featuredImage: featuredImage || '/images/products/vastra-erp-overview.png',
       galleryImages: Array.isArray(galleryImages) ? galleryImages : [],
@@ -69,13 +69,13 @@ export const ProjectService = {
       updatedAt: new Date().toISOString(),
     };
 
-    ProjectModel.create(newProject);
+    const created = await ProjectModel.create(newProject);
     ActivityModel.add(`Added project showcase "${newProject.projectName}"`, 'project', newProject.projectName, adminEmail);
-    return newProject;
+    return created;
   },
 
-  update(id: string, data: Partial<ProjectDoc>, adminEmail: string): ProjectDoc | { error: string; status: number } {
-    const prev = ProjectModel.findById(id);
+  async update(id: string, data: Partial<ProjectDoc>, adminEmail: string): Promise<ProjectDoc | { error: string; status: number }> {
+    const prev = await ProjectModel.findById(id);
     if (!prev) {
       return { error: 'Project not found.', status: 404 };
     }
@@ -98,14 +98,14 @@ export const ProjectService = {
     let finalSlug = prev.slug;
     if (slug && slug !== prev.slug) {
       const cleanSlug = slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-      const existing = ProjectModel.findBySlug(cleanSlug);
+      const existing = await ProjectModel.findBySlug(cleanSlug);
       if (existing && existing.id !== id) {
         return { error: `Slug "${cleanSlug}" is already taken by another project.`, status: 400 };
       }
       finalSlug = cleanSlug;
     }
 
-    const updated = ProjectModel.update(id, {
+    const updated = await ProjectModel.update(id, {
       projectName: projectName ?? prev.projectName,
       slug: finalSlug,
       shortDescription: shortDescription ?? prev.shortDescription,
@@ -130,14 +130,14 @@ export const ProjectService = {
     return { error: 'Failed to update project.', status: 500 };
   },
 
-  togglePublish(id: string, adminEmail: string): ProjectDoc | { error: string; status: number } {
-    const prev = ProjectModel.findById(id);
+  async togglePublish(id: string, adminEmail: string): Promise<ProjectDoc | { error: string; status: number }> {
+    const prev = await ProjectModel.findById(id);
     if (!prev) {
       return { error: 'Project not found.', status: 404 };
     }
 
     const nextStatus = prev.status === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED';
-    const updated = ProjectModel.update(id, { status: nextStatus });
+    const updated = await ProjectModel.update(id, { status: nextStatus });
     if (updated) {
       ActivityModel.add(`Changed project "${prev.projectName}" status to ${nextStatus}`, 'project', prev.projectName, adminEmail);
       return updated;
@@ -145,8 +145,8 @@ export const ProjectService = {
     return { error: 'Failed to toggle status.', status: 500 };
   },
 
-  delete(id: string, adminEmail: string): ProjectDoc | { error: string; status: number } {
-    const deleted = ProjectModel.delete(id);
+  async delete(id: string, adminEmail: string): Promise<ProjectDoc | { error: string; status: number }> {
+    const deleted = await ProjectModel.delete(id);
     if (!deleted) {
       return { error: 'Project not found.', status: 404 };
     }

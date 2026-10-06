@@ -3,9 +3,9 @@ import { AuthService } from '../services/auth.service';
 import { AuthenticatedRequest } from '../types';
 
 export const AuthController = {
-  login(req: Request, res: Response): void {
+  async login(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
-    const result = AuthService.login(email, password);
+    const result = await AuthService.login(email, password);
 
     if ('error' in result) {
       res.status(result.status).json({ error: result.error });
@@ -38,9 +38,9 @@ export const AuthController = {
     });
   },
 
-  changePassword(req: AuthenticatedRequest, res: Response): void {
+  async changePassword(req: AuthenticatedRequest, res: Response): Promise<void> {
     const { currentPassword, newPassword } = req.body;
-    const result = AuthService.changePassword(req.adminUser!, currentPassword, newPassword);
+    const result = await AuthService.changePassword(req.adminUser!, currentPassword, newPassword);
 
     if ('error' in result) {
       res.status(result.status || 400).json({ error: result.error });

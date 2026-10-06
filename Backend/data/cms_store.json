@@ -390,6 +390,166 @@
   ],
   "activities": [
     {
+      "id": "act-1791289096042-cmrc",
+      "action": "Deleted blog post \"Architecting Scalable Microservices with Node and MongoDB\"",
+      "entityType": "blog",
+      "entityTitle": "Architecting Scalable Microservices with Node and MongoDB",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:18:16.042Z"
+    },
+    {
+      "id": "act-1791289095975-4xro",
+      "action": "Created blog post \"Architecting Scalable Microservices with Node and MongoDB\"",
+      "entityType": "blog",
+      "entityTitle": "Architecting Scalable Microservices with Node and MongoDB",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:18:15.975Z"
+    },
+    {
+      "id": "act-1791289095862-qy6s",
+      "action": "Deleted Life at Requin gallery \"Hackathon 2026 Test\"",
+      "entityType": "lifeAtRequin",
+      "entityTitle": "Hackathon 2026 Test",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:18:15.862Z"
+    },
+    {
+      "id": "act-1791289095794-hap0",
+      "action": "Created Life at Requin gallery \"Hackathon 2026 Test\"",
+      "entityType": "lifeAtRequin",
+      "entityTitle": "Hackathon 2026 Test",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:18:15.794Z"
+    },
+    {
+      "id": "act-1791289095692-gjkb",
+      "action": "Deleted milestone story \"Test Story Milestone\"",
+      "entityType": "story",
+      "entityTitle": "Test Story Milestone",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:18:15.692Z"
+    },
+    {
+      "id": "act-1791289095618-70aj",
+      "action": "Created company milestone story \"Test Story Milestone\"",
+      "entityType": "story",
+      "entityTitle": "Test Story Milestone",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:18:15.618Z"
+    },
+    {
+      "id": "act-1791289095512-zkew",
+      "action": "Deleted project \"Test Mongo Project\"",
+      "entityType": "project",
+      "entityTitle": "Test Mongo Project",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:18:15.512Z"
+    },
+    {
+      "id": "act-1791289095443-1xip",
+      "action": "Updated project \"Test Mongo Project\"",
+      "entityType": "project",
+      "entityTitle": "Test Mongo Project",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:18:15.443Z"
+    },
+    {
+      "id": "act-1791289095334-iimd",
+      "action": "Added project showcase \"Test Mongo Project\"",
+      "entityType": "project",
+      "entityTitle": "Test Mongo Project",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:18:15.334Z"
+    },
+    {
+      "id": "act-1791289095079-5f00",
+      "action": "Admin logged in",
+      "entityType": "auth",
+      "entityTitle": "Successful authentication",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:18:15.079Z"
+    },
+    {
+      "id": "act-1791289068644-io7a",
+      "action": "Deleted blog post \"Architecting Scalable Microservices with Node and MongoDB\"",
+      "entityType": "blog",
+      "entityTitle": "Architecting Scalable Microservices with Node and MongoDB",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:17:48.644Z"
+    },
+    {
+      "id": "act-1791289068567-vk13",
+      "action": "Created blog post \"Architecting Scalable Microservices with Node and MongoDB\"",
+      "entityType": "blog",
+      "entityTitle": "Architecting Scalable Microservices with Node and MongoDB",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:17:48.567Z"
+    },
+    {
+      "id": "act-1791289068453-2r7y",
+      "action": "Deleted Life at Requin gallery \"Hackathon 2026 Test\"",
+      "entityType": "lifeAtRequin",
+      "entityTitle": "Hackathon 2026 Test",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:17:48.453Z"
+    },
+    {
+      "id": "act-1791289068371-7vbg",
+      "action": "Created Life at Requin gallery \"Hackathon 2026 Test\"",
+      "entityType": "lifeAtRequin",
+      "entityTitle": "Hackathon 2026 Test",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:17:48.371Z"
+    },
+    {
+      "id": "act-1791289068248-73n6",
+      "action": "Deleted milestone story \"Test Story Milestone\"",
+      "entityType": "story",
+      "entityTitle": "Test Story Milestone",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:17:48.248Z"
+    },
+    {
+      "id": "act-1791289068173-2ilz",
+      "action": "Created company milestone story \"Test Story Milestone\"",
+      "entityType": "story",
+      "entityTitle": "Test Story Milestone",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:17:48.173Z"
+    },
+    {
+      "id": "act-1791289068065-crzp",
+      "action": "Deleted project \"Test Mongo Project\"",
+      "entityType": "project",
+      "entityTitle": "Test Mongo Project",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:17:48.065Z"
+    },
+    {
+      "id": "act-1791289067995-uzcj",
+      "action": "Updated project \"Test Mongo Project\"",
+      "entityType": "project",
+      "entityTitle": "Test Mongo Project",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:17:47.995Z"
+    },
+    {
+      "id": "act-1791289067876-25hy",
+      "action": "Added project showcase \"Test Mongo Project\"",
+      "entityType": "project",
+      "entityTitle": "Test Mongo Project",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:17:47.876Z"
+    },
+    {
+      "id": "act-1791289067586-l8j7",
+      "action": "Admin logged in",
+      "entityType": "auth",
+      "entityTitle": "Successful authentication",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-06T12:17:47.586Z"
+    },
+    {
       "id": "act-1791269371053-tw7w",
       "action": "Updated Life at Requin gallery \"An Evening to Unwind & Celebrate\"",
       "entityType": "media",

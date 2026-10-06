@@ -1,77 +1,150 @@
-import { CMSStore } from '../config/db';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 import { BlogDoc } from '../types';
 
+export interface IBlogDocument extends Omit<BlogDoc, 'id'>, Document {
+  id: string;
+}
+
+export const BlogSchema = new Schema<IBlogDocument>(
+  {
+    id: {
+      type: String,
+      required: [true, 'Blog ID is required'],
+      unique: true,
+      index: true,
+    },
+    title: {
+      type: String,
+      required: [true, 'Blog title is required'],
+      trim: true,
+    },
+    slug: {
+      type: String,
+      required: [true, 'Blog slug is required'],
+      unique: true,
+      trim: true,
+      lowercase: true,
+      index: true,
+    },
+    shortDescription: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    content: {
+      type: String,
+      default: '',
+    },
+    featuredImage: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    author: {
+      type: String,
+      default: 'Requin Team',
+      trim: true,
+    },
+    category: {
+      type: String,
+      default: 'General',
+      trim: true,
+      index: true,
+    },
+    tags: {
+      type: [String],
+      default: [],
+      index: true,
+    },
+    publishedDate: {
+      type: String,
+      default: () => new Date().toISOString(),
+      index: true,
+    },
+    status: {
+      type: String,
+      enum: ['DRAFT', 'PUBLISHED'],
+      default: 'DRAFT',
+      index: true,
+    },
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+      transform: (_doc, ret: any) => {
+        delete ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+  }
+);
+
+// Indexes
+BlogSchema.index({ status: 1, category: 1 });
+BlogSchema.index({ status: 1, publishedDate: -1 });
+BlogSchema.index({ title: 'text', shortDescription: 'text', tags: 'text' });
+
+export const BlogMongoose: Model<IBlogDocument> =
+  (mongoose.models.Blog as Model<IBlogDocument>) ||
+  mongoose.model<IBlogDocument>('Blog', BlogSchema);
+
+// Data Access Object using BlogMongoose (MongoDB Atlas)
 export const BlogModel = {
-  findPublished(filters?: { category?: string; search?: string }): BlogDoc[] {
-    const db = CMSStore.get();
-    let blogs = db.blogs.filter((b) => b.status === 'PUBLISHED');
+  async findPublished(filters?: { category?: string; search?: string }): Promise<BlogDoc[]> {
+    const query: any = { status: 'PUBLISHED' };
 
     if (filters?.category && filters.category !== 'All') {
-      blogs = blogs.filter((b) => b.category.toLowerCase() === filters.category!.toLowerCase());
+      query.category = { $regex: new RegExp(`^${filters.category}$`, 'i') };
     }
 
     if (filters?.search) {
-      const q = filters.search.toLowerCase();
-      blogs = blogs.filter(
-        (b) =>
-          b.title.toLowerCase().includes(q) ||
-          b.shortDescription.toLowerCase().includes(q) ||
-          b.tags.some((t) => t.toLowerCase().includes(q))
-      );
+      const q = filters.search.trim();
+      query.$or = [
+        { title: { $regex: q, $options: 'i' } },
+        { shortDescription: { $regex: q, $options: 'i' } },
+        { tags: { $in: [new RegExp(q, 'i')] } },
+      ];
     }
 
-    return blogs.sort(
-      (a, b) =>
-        new Date(b.publishedDate || b.createdAt).getTime() -
-        new Date(a.publishedDate || a.createdAt).getTime()
-    );
+    const blogs = await BlogMongoose.find(query).sort({ publishedDate: -1, createdAt: -1 }).lean();
+    return blogs as unknown as BlogDoc[];
   },
 
-  findBySlug(slug: string): BlogDoc | undefined {
-    const db = CMSStore.get();
-    return db.blogs.find((b) => b.slug === slug);
+  async findBySlug(slug: string): Promise<BlogDoc | null> {
+    const blog = await BlogMongoose.findOne({ slug: slug.toLowerCase().trim() }).lean();
+    return blog ? (blog as unknown as BlogDoc) : null;
   },
 
-  findById(id: string): BlogDoc | undefined {
-    const db = CMSStore.get();
-    return db.blogs.find((b) => b.id === id);
+  async findById(id: string): Promise<BlogDoc | null> {
+    const blog = await BlogMongoose.findOne({ id }).lean();
+    return blog ? (blog as unknown as BlogDoc) : null;
   },
 
-  findAll(): BlogDoc[] {
-    const db = CMSStore.get();
-    return [...db.blogs].sort(
-      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-    );
+  async findAll(): Promise<BlogDoc[]> {
+    const blogs = await BlogMongoose.find().sort({ updatedAt: -1, createdAt: -1 }).lean();
+    return blogs as unknown as BlogDoc[];
   },
 
-  create(blog: BlogDoc): BlogDoc {
-    const db = CMSStore.get();
-    db.blogs.unshift(blog);
-    CMSStore.save(db);
-    return blog;
+  async create(blog: BlogDoc): Promise<BlogDoc> {
+    const created = await BlogMongoose.create(blog);
+    return created.toObject() as unknown as BlogDoc;
   },
 
-  update(id: string, updates: Partial<BlogDoc>): BlogDoc | null {
-    const db = CMSStore.get();
-    const idx = db.blogs.findIndex((b) => b.id === id);
-    if (idx === -1) return null;
-
-    db.blogs[idx] = {
-      ...db.blogs[idx],
-      ...updates,
-      updatedAt: new Date().toISOString(),
-    };
-    CMSStore.save(db);
-    return db.blogs[idx];
+  async update(id: string, updates: Partial<BlogDoc>): Promise<BlogDoc | null> {
+    const updated = await BlogMongoose.findOneAndUpdate(
+      { id },
+      { $set: { ...updates, updatedAt: new Date().toISOString() } },
+      { new: true }
+    ).lean();
+    return updated ? (updated as unknown as BlogDoc) : null;
   },
 
-  delete(id: string): BlogDoc | null {
-    const db = CMSStore.get();
-    const idx = db.blogs.findIndex((b) => b.id === id);
-    if (idx === -1) return null;
-
-    const deleted = db.blogs.splice(idx, 1)[0];
-    CMSStore.save(db);
-    return deleted;
+  async delete(id: string): Promise<BlogDoc | null> {
+    const deleted = await BlogMongoose.findOneAndDelete({ id }).lean();
+    return deleted ? (deleted as unknown as BlogDoc) : null;
   },
 };
+
+export default BlogMongoose;

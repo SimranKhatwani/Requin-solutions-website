@@ -3,27 +3,27 @@ import { ActivityModel } from '../models/activity.model';
 import { StoryDoc } from '../types';
 
 export const StoryService = {
-  getPublished(): StoryDoc[] {
-    return StoryModel.findPublished();
+  async getPublished(): Promise<StoryDoc[]> {
+    return await StoryModel.findPublished();
   },
 
-  getAll(): StoryDoc[] {
-    return StoryModel.findAll();
+  async getAll(): Promise<StoryDoc[]> {
+    return await StoryModel.findAll();
   },
 
-  create(data: Partial<StoryDoc>, adminEmail: string): StoryDoc | { error: string; status: number } {
+  async create(data: Partial<StoryDoc>, adminEmail: string): Promise<StoryDoc | { error: string; status: number }> {
     const { title, description, year, image, galleryImages, storyContent, displayOrder, status } = data;
 
     if (!title || !description || !year) {
       return { error: 'Title, description, and year are required.', status: 400 };
     }
 
-    const allStories = StoryModel.findAll();
+    const allStories = await StoryModel.findAll();
     const newStory: StoryDoc = {
       id: `story-${Date.now()}`,
-      title,
-      description,
-      year: String(year),
+      title: title.trim(),
+      description: description.trim(),
+      year: String(year).trim(),
       image: image || '/images/requin_software_team_1790576614688.jpg',
       galleryImages: Array.isArray(galleryImages) ? galleryImages : [],
       storyContent: storyContent || description,
@@ -33,20 +33,20 @@ export const StoryService = {
       updatedAt: new Date().toISOString(),
     };
 
-    StoryModel.create(newStory);
+    const created = await StoryModel.create(newStory);
     ActivityModel.add(`Created company milestone story "${newStory.title}"`, 'story', newStory.title, adminEmail);
-    return newStory;
+    return created;
   },
 
-  update(id: string, data: Partial<StoryDoc>, adminEmail: string): StoryDoc | { error: string; status: number } {
-    const prev = StoryModel.findById(id);
+  async update(id: string, data: Partial<StoryDoc>, adminEmail: string): Promise<StoryDoc | { error: string; status: number }> {
+    const prev = await StoryModel.findById(id);
     if (!prev) {
       return { error: 'Story milestone not found.', status: 404 };
     }
 
     const { title, description, year, image, galleryImages, storyContent, displayOrder, status } = data;
 
-    const updated = StoryModel.update(id, {
+    const updated = await StoryModel.update(id, {
       title: title ?? prev.title,
       description: description ?? prev.description,
       year: year ? String(year) : prev.year,
@@ -65,14 +65,14 @@ export const StoryService = {
     return { error: 'Failed to update story.', status: 500 };
   },
 
-  togglePublish(id: string, adminEmail: string): StoryDoc | { error: string; status: number } {
-    const prev = StoryModel.findById(id);
+  async togglePublish(id: string, adminEmail: string): Promise<StoryDoc | { error: string; status: number }> {
+    const prev = await StoryModel.findById(id);
     if (!prev) {
       return { error: 'Story not found.', status: 404 };
     }
 
     const nextStatus = prev.status === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED';
-    const updated = StoryModel.update(id, { status: nextStatus });
+    const updated = await StoryModel.update(id, { status: nextStatus });
     if (updated) {
       ActivityModel.add(`Changed story "${prev.title}" status to ${nextStatus}`, 'story', prev.title, adminEmail);
       return updated;
@@ -80,8 +80,8 @@ export const StoryService = {
     return { error: 'Failed to toggle status.', status: 500 };
   },
 
-  delete(id: string, adminEmail: string): StoryDoc | { error: string; status: number } {
-    const deleted = StoryModel.delete(id);
+  async delete(id: string, adminEmail: string): Promise<StoryDoc | { error: string; status: number }> {
+    const deleted = await StoryModel.delete(id);
     if (!deleted) {
       return { error: 'Story milestone not found.', status: 404 };
     }

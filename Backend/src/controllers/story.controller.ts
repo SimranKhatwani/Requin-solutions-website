@@ -3,18 +3,18 @@ import { StoryService } from '../services/story.service';
 import { AuthenticatedRequest } from '../types';
 
 export const StoryController = {
-  getPublishedStories(_req: Request, res: Response): void {
-    const stories = StoryService.getPublished();
+  async getPublishedStories(_req: Request, res: Response): Promise<void> {
+    const stories = await StoryService.getPublished();
     res.json({ success: true, count: stories.length, data: stories });
   },
 
-  getAllAdminStories(_req: AuthenticatedRequest, res: Response): void {
-    const stories = StoryService.getAll();
+  async getAllAdminStories(_req: AuthenticatedRequest, res: Response): Promise<void> {
+    const stories = await StoryService.getAll();
     res.json({ success: true, count: stories.length, data: stories });
   },
 
-  createStory(req: AuthenticatedRequest, res: Response): void {
-    const result = StoryService.create(req.body, req.adminUser!.email);
+  async createStory(req: AuthenticatedRequest, res: Response): Promise<void> {
+    const result = await StoryService.create(req.body, req.adminUser!.email);
     if ('error' in result) {
       res.status(result.status).json({ error: result.error });
       return;
@@ -22,8 +22,8 @@ export const StoryController = {
     res.status(201).json({ success: true, data: result });
   },
 
-  updateStory(req: AuthenticatedRequest, res: Response): void {
-    const result = StoryService.update(req.params.id, req.body, req.adminUser!.email);
+  async updateStory(req: AuthenticatedRequest, res: Response): Promise<void> {
+    const result = await StoryService.update(req.params.id, req.body, req.adminUser!.email);
     if ('error' in result) {
       res.status(result.status).json({ error: result.error });
       return;
@@ -31,8 +31,8 @@ export const StoryController = {
     res.json({ success: true, data: result });
   },
 
-  togglePublishStory(req: AuthenticatedRequest, res: Response): void {
-    const result = StoryService.togglePublish(req.params.id, req.adminUser!.email);
+  async togglePublishStory(req: AuthenticatedRequest, res: Response): Promise<void> {
+    const result = await StoryService.togglePublish(req.params.id, req.adminUser!.email);
     if ('error' in result) {
       res.status(result.status).json({ error: result.error });
       return;
@@ -40,8 +40,8 @@ export const StoryController = {
     res.json({ success: true, data: result });
   },
 
-  deleteStory(req: AuthenticatedRequest, res: Response): void {
-    const result = StoryService.delete(req.params.id, req.adminUser!.email);
+  async deleteStory(req: AuthenticatedRequest, res: Response): Promise<void> {
+    const result = await StoryService.delete(req.params.id, req.adminUser!.email);
     if ('error' in result) {
       res.status(result.status).json({ error: result.error });
       return;

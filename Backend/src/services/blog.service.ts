@@ -3,23 +3,23 @@ import { ActivityModel } from '../models/activity.model';
 import { BlogDoc } from '../types';
 
 export const BlogService = {
-  getPublished(filters?: { category?: string; search?: string }): BlogDoc[] {
-    return BlogModel.findPublished(filters);
+  async getPublished(filters?: { category?: string; search?: string }): Promise<BlogDoc[]> {
+    return await BlogModel.findPublished(filters);
   },
 
-  getBySlug(slug: string): BlogDoc | undefined {
-    const blog = BlogModel.findBySlug(slug);
+  async getBySlug(slug: string): Promise<BlogDoc | null> {
+    const blog = await BlogModel.findBySlug(slug);
     if (blog && blog.status === 'PUBLISHED') {
       return blog;
     }
-    return undefined;
+    return null;
   },
 
-  getAll(): BlogDoc[] {
-    return BlogModel.findAll();
+  async getAll(): Promise<BlogDoc[]> {
+    return await BlogModel.findAll();
   },
 
-  create(data: Partial<BlogDoc>, adminEmail: string): BlogDoc | { error: string; status: number } {
+  async create(data: Partial<BlogDoc>, adminEmail: string): Promise<BlogDoc | { error: string; status: number }> {
     const { title, slug, shortDescription, content, featuredImage, author, category, tags, publishedDate, status } = data;
 
     if (!title || !shortDescription || !content) {
@@ -30,16 +30,16 @@ export const BlogService = {
       ? slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
       : title.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
-    const existingSlug = BlogModel.findBySlug(autoSlug);
+    const existingSlug = await BlogModel.findBySlug(autoSlug);
     if (existingSlug) {
       return { error: `A blog with slug "${autoSlug}" already exists. Please pick a unique slug.`, status: 400 };
     }
 
     const newBlog: BlogDoc = {
       id: `blog-${Date.now()}`,
-      title,
+      title: title.trim(),
       slug: autoSlug,
-      shortDescription,
+      shortDescription: shortDescription.trim(),
       content,
       featuredImage: featuredImage || '/images/cloud-architecture.jpg',
       author: author || 'Requin Engineering Team',
@@ -51,13 +51,13 @@ export const BlogService = {
       updatedAt: new Date().toISOString(),
     };
 
-    BlogModel.create(newBlog);
+    const created = await BlogModel.create(newBlog);
     ActivityModel.add(`Created blog post "${newBlog.title}"`, 'blog', newBlog.title, adminEmail);
-    return newBlog;
+    return created;
   },
 
-  update(id: string, data: Partial<BlogDoc>, adminEmail: string): BlogDoc | { error: string; status: number } {
-    const prev = BlogModel.findById(id);
+  async update(id: string, data: Partial<BlogDoc>, adminEmail: string): Promise<BlogDoc | { error: string; status: number }> {
+    const prev = await BlogModel.findById(id);
     if (!prev) {
       return { error: 'Blog not found.', status: 404 };
     }
@@ -67,14 +67,14 @@ export const BlogService = {
     let finalSlug = prev.slug;
     if (slug && slug !== prev.slug) {
       const cleanSlug = slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-      const existing = BlogModel.findBySlug(cleanSlug);
+      const existing = await BlogModel.findBySlug(cleanSlug);
       if (existing && existing.id !== id) {
         return { error: `Slug "${cleanSlug}" is already taken by another blog.`, status: 400 };
       }
       finalSlug = cleanSlug;
     }
 
-    const updated = BlogModel.update(id, {
+    const updated = await BlogModel.update(id, {
       title: title ?? prev.title,
       slug: finalSlug,
       shortDescription: shortDescription ?? prev.shortDescription,
@@ -95,14 +95,14 @@ export const BlogService = {
     return { error: 'Failed to update blog.', status: 500 };
   },
 
-  togglePublish(id: string, adminEmail: string): BlogDoc | { error: string; status: number } {
-    const prev = BlogModel.findById(id);
+  async togglePublish(id: string, adminEmail: string): Promise<BlogDoc | { error: string; status: number }> {
+    const prev = await BlogModel.findById(id);
     if (!prev) {
       return { error: 'Blog not found.', status: 404 };
     }
 
     const nextStatus = prev.status === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED';
-    const updated = BlogModel.update(id, { status: nextStatus });
+    const updated = await BlogModel.update(id, { status: nextStatus });
     if (updated) {
       ActivityModel.add(`Changed blog "${prev.title}" status to ${nextStatus}`, 'blog', prev.title, adminEmail);
       return updated;
@@ -110,8 +110,8 @@ export const BlogService = {
     return { error: 'Failed to toggle status.', status: 500 };
   },
 
-  delete(id: string, adminEmail: string): BlogDoc | { error: string; status: number } {
-    const deleted = BlogModel.delete(id);
+  async delete(id: string, adminEmail: string): Promise<BlogDoc | { error: string; status: number }> {
+    const deleted = await BlogModel.delete(id);
     if (!deleted) {
       return { error: 'Blog not found.', status: 404 };
     }

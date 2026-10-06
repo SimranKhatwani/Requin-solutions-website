@@ -3,16 +3,16 @@ import { ProjectService } from '../services/project.service';
 import { AuthenticatedRequest } from '../types';
 
 export const ProjectController = {
-  getPublishedProjects(req: Request, res: Response): void {
+  async getPublishedProjects(req: Request, res: Response): Promise<void> {
     const { category } = req.query;
-    const projects = ProjectService.getPublished({
+    const projects = await ProjectService.getPublished({
       category: typeof category === 'string' ? category : undefined,
     });
     res.json({ success: true, count: projects.length, data: projects });
   },
 
-  getProjectBySlug(req: Request, res: Response): void {
-    const project = ProjectService.getBySlug(req.params.slug);
+  async getProjectBySlug(req: Request, res: Response): Promise<void> {
+    const project = await ProjectService.getBySlug(req.params.slug);
     if (!project) {
       res.status(404).json({ success: false, error: 'Project not found or not published.' });
       return;
@@ -20,13 +20,13 @@ export const ProjectController = {
     res.json({ success: true, data: project });
   },
 
-  getAllAdminProjects(_req: AuthenticatedRequest, res: Response): void {
-    const projects = ProjectService.getAll();
+  async getAllAdminProjects(_req: AuthenticatedRequest, res: Response): Promise<void> {
+    const projects = await ProjectService.getAll();
     res.json({ success: true, count: projects.length, data: projects });
   },
 
-  createProject(req: AuthenticatedRequest, res: Response): void {
-    const result = ProjectService.create(req.body, req.adminUser!.email);
+  async createProject(req: AuthenticatedRequest, res: Response): Promise<void> {
+    const result = await ProjectService.create(req.body, req.adminUser!.email);
     if ('error' in result) {
       res.status(result.status).json({ error: result.error });
       return;
@@ -34,8 +34,8 @@ export const ProjectController = {
     res.status(201).json({ success: true, data: result });
   },
 
-  updateProject(req: AuthenticatedRequest, res: Response): void {
-    const result = ProjectService.update(req.params.id, req.body, req.adminUser!.email);
+  async updateProject(req: AuthenticatedRequest, res: Response): Promise<void> {
+    const result = await ProjectService.update(req.params.id, req.body, req.adminUser!.email);
     if ('error' in result) {
       res.status(result.status).json({ error: result.error });
       return;
@@ -43,8 +43,8 @@ export const ProjectController = {
     res.json({ success: true, data: result });
   },
 
-  togglePublishProject(req: AuthenticatedRequest, res: Response): void {
-    const result = ProjectService.togglePublish(req.params.id, req.adminUser!.email);
+  async togglePublishProject(req: AuthenticatedRequest, res: Response): Promise<void> {
+    const result = await ProjectService.togglePublish(req.params.id, req.adminUser!.email);
     if ('error' in result) {
       res.status(result.status).json({ error: result.error });
       return;
@@ -52,8 +52,8 @@ export const ProjectController = {
     res.json({ success: true, data: result });
   },
 
-  deleteProject(req: AuthenticatedRequest, res: Response): void {
-    const result = ProjectService.delete(req.params.id, req.adminUser!.email);
+  async deleteProject(req: AuthenticatedRequest, res: Response): Promise<void> {
+    const result = await ProjectService.delete(req.params.id, req.adminUser!.email);
     if ('error' in result) {
       res.status(result.status).json({ error: result.error });
       return;
