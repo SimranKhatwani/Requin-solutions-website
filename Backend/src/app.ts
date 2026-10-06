@@ -1,8 +1,9 @@
-import express, { Express } from 'express';
+import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import { ENV } from './config/env';
 import { apiRouter } from './routes';
 import { errorHandler } from './middleware/error.middleware';
+import { getMongoConnectionState } from './config/mongodb';
 
 export function createApp(): Express {
   const app = express();
@@ -21,13 +22,22 @@ export function createApp(): Express {
   app.use('/uploads', express.static(ENV.UPLOADS_DIR));
 
   // Health Check Endpoint
-  app.get('/health', (_req, res) => {
+  const healthHandler = (_req: Request, res: Response): void => {
+    const mongoState = getMongoConnectionState();
     res.json({
       status: 'ok',
       service: 'Requin Solutions Backend API',
+      database: {
+        mongodb: mongoState.isConnected ? 'connected' : 'disconnected',
+        readyState: mongoState.readyState,
+        databaseName: mongoState.name,
+      },
       timestamp: new Date().toISOString(),
     });
-  });
+  };
+
+  app.get('/health', healthHandler);
+  app.get('/api/health', healthHandler);
 
   // API Routes
   app.use('/api', apiRouter);

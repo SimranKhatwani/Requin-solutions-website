@@ -1,25 +1,34 @@
 import { createApp } from './app';
 import { ENV } from './config/env';
+import { connectMongoDB } from './config/mongodb';
 import { CMSStore } from './config/db';
 
-const app = createApp();
-
 async function startServer(): Promise<void> {
-  // Ensure persistent store is loaded & seeded if needed
-  CMSStore.get();
+  try {
+    // 1. Establish MongoDB connection first
+    await connectMongoDB();
 
-  app.listen(ENV.PORT, '0.0.0.0', () => {
-    console.log(`=========================================`);
-    console.log(`🚀 Requin Solutions Backend API Server`);
-    console.log(`📡 URL: http://localhost:${ENV.PORT}`);
-    console.log(`📑 API Base: http://localhost:${ENV.PORT}/api`);
-    console.log(`🩺 Health: http://localhost:${ENV.PORT}/health`);
-    console.log(`💾 Database: Persistent Store (JSON Store Ready for MongoDB Migration)`);
-    console.log(`=========================================`);
-  });
+    // 2. Ensure legacy CMS store is initialized
+    CMSStore.get();
+
+    // 3. Create Express app instance
+    const app = createApp();
+
+    // 4. Start HTTP server
+    app.listen(ENV.PORT, '0.0.0.0', () => {
+      console.log(`=========================================`);
+      console.log(`🚀 Requin Solutions Backend API Server`);
+      console.log(`📡 URL: http://localhost:${ENV.PORT}`);
+      console.log(`📑 API Base: http://localhost:${ENV.PORT}/api`);
+      console.log(`🩺 Health: http://localhost:${ENV.PORT}/health`);
+      console.log(`🍃 Database: MongoDB Atlas Connected`);
+      console.log(`💾 JSON CMS Store: cms_store.json Active`);
+      console.log(`=========================================`);
+    });
+  } catch (error) {
+    console.error('❌ Fatal error during server startup. Aborting:', error);
+    process.exit(1);
+  }
 }
 
-startServer().catch((err) => {
-  console.error('Fatal error starting server:', err);
-  process.exit(1);
-});
+startServer();
