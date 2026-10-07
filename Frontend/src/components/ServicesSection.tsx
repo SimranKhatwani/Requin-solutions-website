@@ -52,6 +52,9 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
     return () => observer.disconnect();
   }, []);
 
+  const isNavigatingRef = useRef(false);
+  const navTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // Continuous Seamless Infinite Auto-Scroll with Gapless Wrapping
   useEffect(() => {
     const container = scrollContainerRef.current;
@@ -68,7 +71,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
 
     let animId: number;
     const autoScroll = () => {
-      if (!isHoveredRef.current && container) {
+      if (!isHoveredRef.current && !isNavigatingRef.current && container) {
         container.scrollLeft += 0.75;
         const setWidth = container.scrollWidth / 4;
         if (setWidth > 0 && container.scrollLeft >= setWidth * 2) {
@@ -79,13 +82,20 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
     };
 
     animId = requestAnimationFrame(autoScroll);
-    return () => cancelAnimationFrame(animId);
+    return () => {
+      cancelAnimationFrame(animId);
+      if (navTimeoutRef.current) {
+        clearTimeout(navTimeoutRef.current);
+      }
+    };
   }, []);
 
-  // Interval to update active pagination indicator dot
+  // Interval to update active pagination indicator dot when auto-scrolling
   useEffect(() => {
     const dotInterval = setInterval(() => {
-      setActiveDot((prev) => (prev + 1) % 4);
+      if (!isNavigatingRef.current) {
+        setActiveDot((prev) => (prev + 1) % 4);
+      }
     }, 4500);
     return () => clearInterval(dotInterval);
   }, []);
@@ -100,25 +110,74 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
   const handleNudge = (direction: 'left' | 'right') => {
     const container = scrollContainerRef.current;
     if (!container) return;
-    const cardStep = 414;
+
+    // Pause auto-scroll during manual arrow navigation so smooth animation executes without interruption
+    isNavigatingRef.current = true;
+    if (navTimeoutRef.current) {
+      clearTimeout(navTimeoutRef.current);
+    }
+
+    const firstCard = container.querySelector('.group') as HTMLElement | null;
+    const cardStep = firstCard ? firstCard.offsetWidth + 32 : 420;
     const amount = direction === 'left' ? -cardStep : cardStep;
-    
+
+    const setWidth = container.scrollWidth / 4;
+    if (setWidth > 0) {
+      if (direction === 'left' && container.scrollLeft <= setWidth * 0.5) {
+        container.scrollLeft += setWidth;
+      } else if (direction === 'right' && container.scrollLeft >= setWidth * 2.5) {
+        container.scrollLeft -= setWidth;
+      }
+    }
+
     container.scrollBy({ left: amount, behavior: 'smooth' });
     setActiveDot((prev) => (direction === 'left' ? (prev <= 0 ? 3 : prev - 1) : (prev + 1) % 4));
 
-    // Seamless loop check after manual scroll completes
-    setTimeout(() => {
+    // Resume continuous auto-scroll after smooth transition finishes
+    navTimeoutRef.current = setTimeout(() => {
       if (container) {
-        const setWidth = container.scrollWidth / 4;
-        if (setWidth > 0) {
-          if (container.scrollLeft >= setWidth * 2.5) {
-            container.scrollLeft -= setWidth;
-          } else if (container.scrollLeft <= 50) {
-            container.scrollLeft += setWidth;
+        const sw = container.scrollWidth / 4;
+        if (sw > 0) {
+          if (container.scrollLeft >= sw * 2) {
+            container.scrollLeft -= sw;
+          } else if (container.scrollLeft < sw * 0.5) {
+            container.scrollLeft += sw;
           }
         }
       }
-    }, 450);
+      isNavigatingRef.current = false;
+    }, 1800);
+  };
+
+  const handleDotClick = (dotIndex: number) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    isNavigatingRef.current = true;
+    if (navTimeoutRef.current) {
+      clearTimeout(navTimeoutRef.current);
+    }
+
+    const firstCard = container.querySelector('.group') as HTMLElement | null;
+    const cardStep = firstCard ? firstCard.offsetWidth + 32 : 420;
+    const diff = dotIndex - activeDot;
+    const amount = (diff !== 0 ? diff : 1) * cardStep;
+
+    const setWidth = container.scrollWidth / 4;
+    if (setWidth > 0) {
+      if (diff < 0 && container.scrollLeft <= setWidth * 0.5) {
+        container.scrollLeft += setWidth;
+      } else if (diff > 0 && container.scrollLeft >= setWidth * 2.5) {
+        container.scrollLeft -= setWidth;
+      }
+    }
+
+    container.scrollBy({ left: amount, behavior: 'smooth' });
+    setActiveDot(dotIndex);
+
+    navTimeoutRef.current = setTimeout(() => {
+      isNavigatingRef.current = false;
+    }, 1800);
   };
 
   // Helper renderer for a single service card
@@ -431,10 +490,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         {[0, 1, 2, 3].map((dotIndex) => (
           <button
             key={dotIndex}
-            onClick={() => {
-              setActiveDot(dotIndex);
-              handleNudge(dotIndex > activeDot ? 'right' : 'left');
-            }}
+            onClick={() => handleDotClick(dotIndex)}
             aria-label={`Go to slide page ${dotIndex + 1}`}
             className={`h-2 rounded-full transition-all duration-300 cursor-pointer focus:outline-none ${
               activeDot === dotIndex
