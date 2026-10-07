@@ -123,7 +123,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <img
                 src="/images/logo.png"
                 alt="Requin Solutions Pvt Ltd"
-                className="h-14 sm:h-16 md:h-18 w-auto object-contain block transition-opacity duration-200 hover:opacity-90"
+                className="h-14 sm:h-16 md:h-19 w-auto object-contain block transition-opacity duration-200 hover:opacity-90"
               />
             </div>
 

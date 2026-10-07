@@ -52,7 +52,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <img
               src="/images/logo.png"
               alt="Requin Solutions"
-              className="h-12 sm:h-14 md:h-18 w-auto object-contain block transition-opacity duration-200 hover:opacity-90"
+              className="h-12 sm:h-14 md:h-19 w-auto object-contain block transition-opacity duration-200 hover:opacity-90"
             />
           </button>
 
