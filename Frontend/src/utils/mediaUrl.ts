@@ -1,4 +1,21 @@
-const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+const DEFAULT_PROD_BACKEND_URL = 'https://requin-solutions-website.onrender.com';
+
+function resolveApiBaseUrl(): string {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
+    return envUrl.trim().replace(/\/+$/, '');
+  }
+  // In production browser environments (Vercel, custom domains), automatically default to Render backend
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
+      return DEFAULT_PROD_BACKEND_URL;
+    }
+  }
+  return DEFAULT_PROD_BACKEND_URL;
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 /**
  * Resolves an image path, MongoDB GridFS media ID, or URL into a fully-qualified browser URL.

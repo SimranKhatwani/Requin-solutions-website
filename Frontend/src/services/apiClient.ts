@@ -1,5 +1,20 @@
-// Centralized Fetch Client with Bearer Auth Handling
-const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+const DEFAULT_PROD_BACKEND_URL = 'https://requin-solutions-website.onrender.com';
+
+function resolveApiBaseUrl(): string {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
+    return envUrl.trim().replace(/\/+$/, '');
+  }
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
+      return DEFAULT_PROD_BACKEND_URL;
+    }
+  }
+  return DEFAULT_PROD_BACKEND_URL;
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 export const TOKEN_KEY = 'requin_admin_jwt_token';
 
