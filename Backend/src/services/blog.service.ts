@@ -41,7 +41,7 @@ export const BlogService = {
       slug: autoSlug,
       shortDescription: shortDescription.trim(),
       content,
-      featuredImage: featuredImage || '/images/cloud-architecture.jpg',
+      featuredImage: featuredImage || '/images/cloud_infrastructure_1790576629897.jpg',
       author: author || 'Requin Engineering Team',
       category: category || 'Engineering',
       tags: Array.isArray(tags) ? tags : (tags ? (tags as any).split(',').map((t: string) => t.trim()).filter(Boolean) : ['Technology']),

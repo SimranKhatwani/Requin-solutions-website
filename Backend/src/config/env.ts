@@ -5,7 +5,8 @@ dotenv.config();
 
 export const ENV = {
   PORT: Number(process.env.PORT) || 5000,
-  CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  FRONTEND_URL: process.env.FRONTEND_URL || 'https://requin-solutions-website.vercel.app',
+  CORS_ORIGIN: process.env.CORS_ORIGIN || '',
   JWT_SECRET: process.env.JWT_SECRET || 'super_secret_jwt_key_requin_cms_2026',
   MONGODB_URI: process.env.MONGODB_URI || '',
   ADMIN_DEFAULT_EMAIL: process.env.ADMIN_DEFAULT_EMAIL || 'admin@requinsolutions.com',

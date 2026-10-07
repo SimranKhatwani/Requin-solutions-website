@@ -102,11 +102,12 @@ export const getInitialSeed = (): CMSDatabase => {
         'Ultra-fast desktop and touch POS retail billing system with barcode scanning, GST breakdown, digital thermal invoice printing, and live stock sync.',
       fullDescription:
         'Designed for high-throughput retail stores, supermarkets, and electronics distributors. Features instant barcode scanning, multi-tier discount calculation, offline billing cache with background sync, and GST compliance.',
-      featuredImage: '/images/products/nexusbill-pos-demo.png',
+      featuredImage: '/images/products/nexusbill-demo.jpg',
       galleryImages: [
-        '/images/products/nexusbill-pos-demo.png',
-        '/images/products/nexusbill-pos-dashboard.png',
-        '/images/products/nexusbill-pos-invoice.png',
+        '/images/products/nexusbill-dashboard.png',
+        '/images/products/nexusbill-sales.png',
+        '/images/products/nexusbill-inventory.png',
+        '/images/products/nexusbill-purchases.png',
       ],
       category: 'POS & Retail Billing',
       technologies: ['Electron', 'React', 'SQLite', 'Thermal Printer ESC/POS', 'GST Engine'],
@@ -125,11 +126,12 @@ export const getInitialSeed = (): CMSDatabase => {
         'Modern hospitality POS integrating floor table mapping, wireless captain ordering, kitchen display systems (KDS), and inventory depletion.',
       fullDescription:
         'A comprehensive cloud and local restaurant management solution powering fine-dining establishments, multi-floor cafes, and QSR chains. Supports live table status visualizers, split-bill checkouts, recipe inventory deduction, and delivery aggregator integration.',
-      featuredImage: '/images/products/dine-dusk-dashboard.png',
+      featuredImage: '/images/products/dine-dusk-demo.jpg',
       galleryImages: [
+        '/images/products/dine-dusk-pos.png',
         '/images/products/dine-dusk-dashboard.png',
-        '/images/products/dine-dusk-kot.png',
         '/images/products/dine-dusk-tables.png',
+        '/images/products/dine-dusk-kds.png',
       ],
       category: 'Hospitality & F&B',
       technologies: ['React Native', 'Node.js', 'MongoDB', 'Socket.io', 'Thermal KOT'],

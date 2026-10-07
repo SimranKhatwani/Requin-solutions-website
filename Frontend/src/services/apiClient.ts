@@ -1,5 +1,5 @@
 // Centralized Fetch Client with Bearer Auth Handling
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 
 export const TOKEN_KEY = 'requin_admin_jwt_token';
 
@@ -31,7 +31,8 @@ export async function apiClient<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+  const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const url = `${API_BASE_URL}${normalizedEndpoint}`;
   const token = getStoredToken();
 
   const headers: Record<string, string> = {
@@ -49,6 +50,7 @@ export async function apiClient<T>(
   }
 
   const response = await fetch(url, {
+    credentials: 'include',
     ...options,
     headers,
   });

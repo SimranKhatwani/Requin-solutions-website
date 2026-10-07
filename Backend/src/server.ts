@@ -2,6 +2,7 @@ import { createApp } from './app';
 import { ENV } from './config/env';
 import { connectMongoDB } from './config/mongodb';
 import { CMSStore } from './config/db';
+import { getAllowedOrigins } from './config/cors';
 
 async function startServer(): Promise<void> {
   try {
@@ -21,6 +22,7 @@ async function startServer(): Promise<void> {
       console.log(`📡 URL: http://localhost:${ENV.PORT}`);
       console.log(`📑 API Base: http://localhost:${ENV.PORT}/api`);
       console.log(`🩺 Health: http://localhost:${ENV.PORT}/health`);
+      console.log(`🔒 Allowed CORS Origins: ${getAllowedOrigins().join(', ')}`);
       console.log(`🍃 Database: MongoDB Atlas Connected`);
       console.log(`💾 JSON CMS Store: cms_store.json Active`);
       console.log(`=========================================`);

@@ -390,6 +390,22 @@
   ],
   "activities": [
     {
+      "id": "act-1791348941625-0rir",
+      "action": "Admin logged in",
+      "entityType": "auth",
+      "entityTitle": "Successful authentication",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-07T04:55:41.625Z"
+    },
+    {
+      "id": "act-1791347913129-8am6",
+      "action": "Admin logged in",
+      "entityType": "auth",
+      "entityTitle": "Successful authentication",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-07T04:38:33.129Z"
+    },
+    {
       "id": "act-1791289096042-cmrc",
       "action": "Deleted blog post \"Architecting Scalable Microservices with Node and MongoDB\"",
       "entityType": "blog",

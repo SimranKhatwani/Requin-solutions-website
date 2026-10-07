@@ -103,6 +103,9 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
             alt=""
             className="w-full h-full object-contain object-top-right opacity-30 group-hover:opacity-75 transition-all duration-500 ease-out transform group-hover:scale-105 group-hover:-translate-y-1 group-hover:translate-x-1 select-none"
             loading="lazy"
+            onError={(e) => {
+              (e.currentTarget as HTMLElement).style.display = 'none';
+            }}
           />
         </div>
 

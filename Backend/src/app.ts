@@ -1,20 +1,21 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import { ENV } from './config/env';
+import { corsOptions } from './config/cors';
 import { apiRouter } from './routes';
-import { errorHandler } from './middleware/error.middleware';
+import { errorHandler, notFoundHandler } from './middleware/error.middleware';
 import { getMongoConnectionState } from './config/mongodb';
 
 export function createApp(): Express {
   const app = express();
 
-  // Middleware
-  app.use(
-    cors({
-      origin: ENV.CORS_ORIGIN,
-      credentials: true,
-    })
-  );
+  // Trust proxy for Render / Vercel reverse proxy environments
+  app.set('trust proxy', 1);
+
+  // Global CORS Middleware & Explicit Preflight handling
+  app.use(cors(corsOptions));
+  app.options('*', cors(corsOptions));
+
   app.use(express.json({ limit: '20mb' }));
   app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
@@ -36,11 +37,15 @@ export function createApp(): Express {
     });
   };
 
+  app.get('/', healthHandler);
   app.get('/health', healthHandler);
   app.get('/api/health', healthHandler);
 
   // API Routes
   app.use('/api', apiRouter);
+
+  // 404 Handler for undefined routes
+  app.use(notFoundHandler);
 
   // Global Error Handler
   app.use(errorHandler);
