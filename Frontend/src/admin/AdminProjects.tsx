@@ -98,18 +98,26 @@ export const AdminProjects: React.FC = () => {
   const handleOpenEdit = (project: ProjectItem) => {
     setEditingProject(project);
     setFormData({
-      projectName: project.projectName,
-      slug: project.slug,
-      shortDescription: project.shortDescription,
-      fullDescription: project.fullDescription,
-      featuredImage: project.featuredImage,
-      galleryImages: project.galleryImages ? project.galleryImages.join(', ') : '',
-      category: project.category,
-      technologies: project.technologies.join(', '),
+      projectName: project.projectName || '',
+      slug: project.slug || '',
+      shortDescription: project.shortDescription || '',
+      fullDescription: project.fullDescription || '',
+      featuredImage: project.featuredImage || '',
+      galleryImages: Array.isArray(project.galleryImages)
+        ? project.galleryImages.join(', ')
+        : typeof project.galleryImages === 'string'
+        ? project.galleryImages
+        : '',
+      category: project.category || 'Custom Software',
+      technologies: Array.isArray(project.technologies)
+        ? project.technologies.join(', ')
+        : typeof project.technologies === 'string'
+        ? project.technologies
+        : '',
       projectUrl: project.projectUrl || '',
       clientName: project.clientName || '',
-      status: project.status,
-      displayOrder: project.displayOrder,
+      status: project.status || 'PUBLISHED',
+      displayOrder: project.displayOrder || 1,
     });
     setFormError(null);
     setIsModalOpen(true);
@@ -180,10 +188,16 @@ export const AdminProjects: React.FC = () => {
   };
 
   const filteredProjects = projects.filter((p) => {
+    const techList = Array.isArray(p.technologies)
+      ? p.technologies
+      : typeof p.technologies === 'string'
+      ? (p.technologies as string).split(',').map((t) => t.trim())
+      : [];
+
     const matchesSearch =
-      p.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.shortDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.technologies.some((t) => t.toLowerCase().includes(searchTerm.toLowerCase()));
+      (p.projectName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (p.shortDescription || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      techList.some((t) => t.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesStatus =
       statusFilter === 'ALL' ? true : p.status === statusFilter;
@@ -301,14 +315,19 @@ export const AdminProjects: React.FC = () => {
 
                     <td className="py-4 px-4 max-w-xs">
                       <div className="flex flex-wrap gap-1">
-                        {proj.technologies.slice(0, 3).map((tech, i) => (
+                        {(Array.isArray(proj.technologies)
+                          ? proj.technologies
+                          : typeof proj.technologies === 'string'
+                          ? (proj.technologies as string).split(',').map((t) => t.trim()).filter(Boolean)
+                          : []
+                        ).slice(0, 3).map((tech, i) => (
                           <span key={i} className="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono">
                             {tech}
                           </span>
                         ))}
-                        {proj.technologies.length > 3 && (
+                        {(Array.isArray(proj.technologies) ? proj.technologies.length : 0) > 3 && (
                           <span className="text-[10px] text-slate-400 font-mono self-center">
-                            +{proj.technologies.length - 3}
+                            +{(proj.technologies as string[]).length - 3}
                           </span>
                         )}
                       </div>
@@ -659,7 +678,12 @@ export const AdminProjects: React.FC = () => {
               </p>
 
               <div className="flex flex-wrap gap-2 pt-2">
-                {previewProject.technologies.map((t, i) => (
+                {(Array.isArray(previewProject.technologies)
+                  ? previewProject.technologies
+                  : typeof previewProject.technologies === 'string'
+                  ? (previewProject.technologies as string).split(',').map((t) => t.trim()).filter(Boolean)
+                  : []
+                ).map((t, i) => (
                   <span key={i} className="px-3 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-300">
                     {t}
                   </span>

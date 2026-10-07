@@ -32,6 +32,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
   const [activeDot, setActiveDot] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isHoveredRef = useRef(false);
   const navigate = useNavigate();
 
   // Intersection observer for section entrance
@@ -51,6 +52,36 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
     return () => observer.disconnect();
   }, []);
 
+  // Continuous Seamless Infinite Auto-Scroll with Gapless Wrapping
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    // Start with 1 set offset so backward scroll has immediate content
+    const initOffset = () => {
+      const setWidth = container.scrollWidth / 4;
+      if (container.scrollLeft === 0 && setWidth > 0) {
+        container.scrollLeft = setWidth;
+      }
+    };
+    initOffset();
+
+    let animId: number;
+    const autoScroll = () => {
+      if (!isHoveredRef.current && container) {
+        container.scrollLeft += 0.75;
+        const setWidth = container.scrollWidth / 4;
+        if (setWidth > 0 && container.scrollLeft >= setWidth * 2) {
+          container.scrollLeft -= setWidth;
+        }
+      }
+      animId = requestAnimationFrame(autoScroll);
+    };
+
+    animId = requestAnimationFrame(autoScroll);
+    return () => cancelAnimationFrame(animId);
+  }, []);
+
   // Interval to update active pagination indicator dot
   useEffect(() => {
     const dotInterval = setInterval(() => {
@@ -67,11 +98,27 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
   };
 
   const handleNudge = (direction: 'left' | 'right') => {
-    if (scrollContainerRef.current) {
-      const amount = direction === 'left' ? -380 : 380;
-      scrollContainerRef.current.scrollBy({ left: amount, behavior: 'smooth' });
-      setActiveDot((prev) => (direction === 'left' ? (prev <= 0 ? 3 : prev - 1) : (prev + 1) % 4));
-    }
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const cardStep = 414;
+    const amount = direction === 'left' ? -cardStep : cardStep;
+    
+    container.scrollBy({ left: amount, behavior: 'smooth' });
+    setActiveDot((prev) => (direction === 'left' ? (prev <= 0 ? 3 : prev - 1) : (prev + 1) % 4));
+
+    // Seamless loop check after manual scroll completes
+    setTimeout(() => {
+      if (container) {
+        const setWidth = container.scrollWidth / 4;
+        if (setWidth > 0) {
+          if (container.scrollLeft >= setWidth * 2.5) {
+            container.scrollLeft -= setWidth;
+          } else if (container.scrollLeft <= 50) {
+            container.scrollLeft += setWidth;
+          }
+        }
+      }
+    }, 450);
   };
 
   // Helper renderer for a single service card
@@ -92,22 +139,8 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         }}
         className="group w-[320px] sm:w-[360px] lg:w-[390px] h-[380px] flex-shrink-0 bg-gradient-to-br from-white via-[#FCFDFE] to-[#F0F9FF]/85 rounded-3xl border border-slate-200/80 hover:border-[#00c2ff]/60 p-7 sm:p-8 flex flex-col justify-between text-left shadow-[0_4px_20px_-4px_rgba(8,185,232,0.06),0_2px_8px_-2px_rgba(11,23,38,0.04)] hover:shadow-[0_20px_45px_-10px_rgba(0,194,255,0.25),0_8px_16px_-4px_rgba(11,23,38,0.06)] transition-all duration-300 ease-out hover:-translate-y-2 relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#08B9E8]/50 cursor-pointer select-none"
       >
-        {/* Subtle Upper-Right Service-Specific Visual Illustration & Ambient Glow */}
-        <div className="absolute -top-1 -right-1 w-44 h-44 sm:w-48 sm:h-48 pointer-events-none overflow-hidden select-none">
-          {/* Soft ambient cyan glow behind the visual */}
-          <div className="absolute top-4 right-4 w-32 h-32 bg-[#00c2ff]/15 rounded-full blur-2xl pointer-events-none transition-opacity duration-300 group-hover:opacity-100 opacity-60" />
-          
-          {/* Transparent 3D Tech Service Illustration */}
-          <img
-            src={`/images/services/${service.id}.png`}
-            alt=""
-            className="w-full h-full object-contain object-top-right opacity-30 group-hover:opacity-75 transition-all duration-500 ease-out transform group-hover:scale-105 group-hover:-translate-y-1 group-hover:translate-x-1 select-none"
-            loading="lazy"
-            onError={(e) => {
-              (e.currentTarget as HTMLElement).style.display = 'none';
-            }}
-          />
-        </div>
+        {/* Soft subtle ambient cyan glow in upper-right corner */}
+        <div className="absolute -top-6 -right-6 w-36 h-36 bg-[#00c2ff]/10 rounded-full blur-2xl pointer-events-none transition-opacity duration-300 group-hover:opacity-100 opacity-60" />
 
         {/* Card Content Top */}
         <div className="relative z-10">
@@ -124,7 +157,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
           </h3>
 
           {/* Description */}
-          <p className="mt-3 text-slate-600 text-sm sm:text-base leading-relaxed line-clamp-3">
+          <p className="mt-3 text-slate-600 text-sm sm:text-base leading-relaxed line-clamp-3 font-normal">
             {service.description}
           </p>
         </div>
@@ -151,16 +184,8 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
       ref={sectionRef}
       className="pt-12 sm:pt-16 md:pt-20 pb-24 sm:pb-28 md:pb-32 bg-[#F5FAFD] text-[#0B1726] relative overflow-hidden selection:bg-[#08B9E8]/20 selection:text-[#08B9E8]"
     >
-      {/* Background Technology-Inspired Ambience & Conveyor Keyframes */}
+      {/* Dynamic Ambience Keyframes */}
       <style>{`
-        @keyframes conveyorInfinite {
-          0% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
         @keyframes ambientFloat {
           0%, 100% {
             transform: translate(0, 0) scale(1);
@@ -185,14 +210,6 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
             transform: translateX(25px);
           }
         }
-        .conveyor-track {
-          display: flex;
-          width: max-content;
-          animation: conveyorInfinite 28s linear infinite;
-        }
-        .conveyor-track:hover {
-          animation-play-state: paused;
-        }
         .animate-ambient-float {
           animation: ambientFloat 16s ease-in-out infinite;
         }
@@ -201,14 +218,6 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         }
         .animate-wave-float {
           animation: waveFloat 20s ease-in-out infinite;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .conveyor-track,
-          .animate-ambient-float,
-          .animate-network-pulse,
-          .animate-wave-float {
-            animation: none !important;
-          }
         }
       `}</style>
 
@@ -233,7 +242,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
       </div>
 
       {/* ========================================================
-          BACKGROUND LAYER 2: Subtle Digital Network & Flowing Lines Pattern
+          BACKGROUND LAYER 2: Subtle Digital Network Pattern
       ======================================================== */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none z-0 animate-network-pulse"
@@ -301,7 +310,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
           <circle cx="98%" cy="25%" r="2" fillOpacity="0.3" />
         </g>
 
-        {/* BOTTOM-LEFT & BOTTOM-RIGHT CORNER NODES */}
+        {/* BOTTOM CORNER NODES */}
         <g stroke="url(#netGrad)" strokeWidth="1" fill="none">
           <line x1="3%" y1="78%" x2="9%" y2="88%" />
           <line x1="9%" y1="88%" x2="16%" y2="82%" />
@@ -319,7 +328,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
       </svg>
 
       {/* ========================================================
-          BACKGROUND LAYER 3: Subtle Flowing Wave Curves (Near Bottom)
+          BACKGROUND LAYER 3: Flowing Wave Curves
       ======================================================== */}
       <div className="absolute inset-x-0 bottom-0 h-44 pointer-events-none z-0 overflow-hidden opacity-60 animate-wave-float">
         <svg
@@ -393,23 +402,31 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-28 md:w-40 bg-gradient-to-r from-[#F5FAFD] via-[#F5FAFD]/80 to-transparent z-20" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-28 md:w-40 bg-gradient-to-l from-[#F5FAFD] via-[#F5FAFD]/80 to-transparent z-20" />
 
-        {/* Continuous Seamless Infinite Moving Track */}
-        <div ref={scrollContainerRef} className="overflow-hidden">
-          <div className="conveyor-track">
-            {/* First Set of 6 Services */}
-            <div className="flex shrink-0 gap-6 sm:gap-8 pr-6 sm:pr-8">
-              {REQUIN_SERVICES.map((service) => renderServiceCard(service, 'set1'))}
-            </div>
-
-            {/* Second Set of 6 Services (Exact clone for mathematically seamless infinite loop) */}
-            <div className="flex shrink-0 gap-6 sm:gap-8 pr-6 sm:pr-8">
-              {REQUIN_SERVICES.map((service) => renderServiceCard(service, 'set2'))}
-            </div>
+        {/* Continuous Seamless Infinite Moving Track with 4 Sets (No Empty Space) */}
+        <div
+          ref={scrollContainerRef}
+          onMouseEnter={() => { isHoveredRef.current = true; }}
+          onMouseLeave={() => { isHoveredRef.current = false; }}
+          onTouchStart={() => { isHoveredRef.current = true; }}
+          onTouchEnd={() => { isHoveredRef.current = false; }}
+          className="overflow-x-auto scrollbar-none select-none flex scroll-smooth"
+        >
+          <div className="flex shrink-0 gap-6 sm:gap-8 pr-6 sm:pr-8">
+            {REQUIN_SERVICES.map((service) => renderServiceCard(service, 'set1'))}
+          </div>
+          <div className="flex shrink-0 gap-6 sm:gap-8 pr-6 sm:pr-8">
+            {REQUIN_SERVICES.map((service) => renderServiceCard(service, 'set2'))}
+          </div>
+          <div className="flex shrink-0 gap-6 sm:gap-8 pr-6 sm:pr-8">
+            {REQUIN_SERVICES.map((service) => renderServiceCard(service, 'set3'))}
+          </div>
+          <div className="flex shrink-0 gap-6 sm:gap-8 pr-6 sm:pr-8">
+            {REQUIN_SERVICES.map((service) => renderServiceCard(service, 'set4'))}
           </div>
         </div>
       </div>
 
-      {/* Bottom Pagination Indicator Pills (matching reference) */}
+      {/* Bottom Pagination Indicator Pills */}
       <div className="flex items-center justify-center gap-2 mt-8 z-10 relative">
         {[0, 1, 2, 3].map((dotIndex) => (
           <button

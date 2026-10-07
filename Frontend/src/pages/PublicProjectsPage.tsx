@@ -334,13 +334,14 @@ const getProjectShowcaseData = (slug: string, defaultName: string, defaultDesc: 
         bottomBadge: '📍 Student Telemetry & Batch Performance',
       };
     default: {
-      const parts = defaultName.split(',');
+      const safeName = defaultName || 'Enterprise System, High-Velocity, Architecture';
+      const parts = safeName.split(',');
       return {
         line1: parts[0] ? `${parts[0].trim()},` : 'Enterprise System,',
         line2: parts[1] ? parts[1].trim() : 'High-Velocity',
         line3: parts[2] ? parts[2].trim() : 'Architecture',
-        subtitle: defaultDesc,
-        urlPill: `requingroup.com / ${slug}`,
+        subtitle: defaultDesc || safeName || 'Engineered software platform and enterprise system.',
+        urlPill: `requingroup.com / ${slug || 'project'}`,
         topBadge: '⚡ Enterprise Engineering & Cloud Architecture',
         bottomBadge: '📍 Production Deployed • High Availability',
       };
@@ -381,10 +382,12 @@ export const PublicProjectsPage: React.FC = () => {
     fetchProjects();
   }, []);
 
-  const categories = ['All', ...Array.from(new Set(projects.map((p) => p.category)))];
+  const categories = ['All', ...Array.from(new Set(projects.map((p) => p.category).filter(Boolean)))];
 
   const filteredProjects = projects.filter((p) =>
-    selectedCategory === 'All' ? true : p.category.toLowerCase() === selectedCategory.toLowerCase()
+    selectedCategory === 'All'
+      ? true
+      : (p.category || '').toLowerCase() === selectedCategory.toLowerCase()
   );
 
   const openGallery = (project: ProjectItem) => {
@@ -536,7 +539,12 @@ export const PublicProjectsPage: React.FC = () => {
                               Architecture & Tech Stack:
                             </span>
                             <div className="flex flex-wrap gap-2">
-                              {project.technologies.map((tech, i) => (
+                              {(Array.isArray(project.technologies)
+                                ? project.technologies
+                                : typeof project.technologies === 'string'
+                                ? (project.technologies as string).split(',').map((t) => t.trim()).filter(Boolean)
+                                : []
+                              ).map((tech, i) => (
                                 <span
                                   key={i}
                                   className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-200"
@@ -559,7 +567,7 @@ export const PublicProjectsPage: React.FC = () => {
                               <ArrowRight className="w-4 h-4 transition-transform group-hover/link:translate-x-1" />
                             </a>
 
-                            {project.galleryImages && project.galleryImages.length > 1 && (
+                            {project.galleryImages && Array.isArray(project.galleryImages) && project.galleryImages.length > 1 && (
                               <button
                                 onClick={() => openGallery(project)}
                                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer"
@@ -640,7 +648,7 @@ export const PublicProjectsPage: React.FC = () => {
               <div className="flex items-center gap-3 shrink-0">
                 <span className="text-xs text-slate-400 hidden sm:inline">
                   Screen <span className="text-[#00c2ff] font-bold">{galleryPhotoIndex + 1}</span> of{' '}
-                  {activeGalleryProject.galleryImages.length}
+                  {Array.isArray(activeGalleryProject.galleryImages) ? activeGalleryProject.galleryImages.length : 1}
                 </span>
                 <button
                   onClick={closeGallery}
@@ -655,7 +663,8 @@ export const PublicProjectsPage: React.FC = () => {
             <div className="relative flex-1 overflow-auto bg-slate-950 flex items-center justify-center min-h-[300px] sm:min-h-[450px]">
               <img
                 src={
-                  activeGalleryProject.galleryImages[galleryPhotoIndex] ||
+                  (Array.isArray(activeGalleryProject.galleryImages) &&
+                    activeGalleryProject.galleryImages[galleryPhotoIndex]) ||
                   activeGalleryProject.featuredImage
                 }
                 alt={`Screen ${galleryPhotoIndex + 1}`}
@@ -663,7 +672,7 @@ export const PublicProjectsPage: React.FC = () => {
               />
 
               {/* Prev / Next Floating Arrows */}
-              {activeGalleryProject.galleryImages.length > 1 && (
+              {Array.isArray(activeGalleryProject.galleryImages) && activeGalleryProject.galleryImages.length > 1 && (
                 <>
                   <button
                     onClick={() =>
@@ -690,7 +699,7 @@ export const PublicProjectsPage: React.FC = () => {
             </div>
 
             {/* Modal Thumbnails Strip */}
-            {activeGalleryProject.galleryImages.length > 1 && (
+            {Array.isArray(activeGalleryProject.galleryImages) && activeGalleryProject.galleryImages.length > 1 && (
               <div className="p-4 bg-[#06111E] border-t border-slate-800 flex items-center gap-3 overflow-x-auto shrink-0 scrollbar-thin">
                 {activeGalleryProject.galleryImages.map((img, idx) => (
                   <button
