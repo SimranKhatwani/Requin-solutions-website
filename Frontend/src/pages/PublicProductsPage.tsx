@@ -14,14 +14,40 @@ import {
   Loader2,
 } from 'lucide-react';
 
-// Helper to convert MongoDB ProjectItem to rich ProductItem for More Products page
-const mapProjectDocToProductItem = (proj: CMSProjectItem): ProductItem => {
-  const normalizedSlug = (proj.slug || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-  const matched = ALL_PRODUCTS.find((p) => {
-    const pSlug = p.id.toLowerCase().replace(/[^a-z0-9]/g, '');
-    return pSlug === normalizedSlug || normalizedSlug.includes(pSlug) || pSlug.includes(normalizedSlug);
-  });
+// Built-in fixed product ID/slug map to prevent overriding original titles & content
+const KNOWN_BASE_IDS = new Set([
+  'vastra-erp',
+  'proj-vastra',
+  'dine-and-dusk',
+  'dine-dusk',
+  'dine-dusk-restaurant-os',
+  'proj-dine-dusk',
+  'rkb-enterprises',
+  'rkb-enterprises-commerce',
+  'proj-rkb-enterprises',
+  'india-motor',
+  'india-motor-driving-school',
+  'india-motor-training',
+  'proj-india-motor',
+  'nexusbill',
+  'nexusbill-pos-inventory',
+  'proj-nexusbill',
+  'requin-ops',
+  'requin-ops-crm',
+  'proj-ops-crm',
+  'requin-ams',
+  'requin-ams-workforce',
+  'proj-requin-ams',
+  'requin-hrms',
+  'requin-hrms-suite',
+  'proj-requin-hrms',
+  'cloud-infra',
+  'cloud-infrastructure-cicd-automation',
+  'proj-cloud-infra',
+]);
 
+// Helper to convert new MongoDB ProjectItem to rich ProductItem
+const mapNewCMSProjectToProduct = (proj: CMSProjectItem): ProductItem => {
   const techList = Array.isArray(proj.technologies)
     ? proj.technologies
     : typeof proj.technologies === 'string'
@@ -34,25 +60,15 @@ const mapProjectDocToProductItem = (proj: CMSProjectItem): ProductItem => {
     ? (proj.galleryImages as string).split(',').map((g) => g.trim()).filter(Boolean)
     : [];
 
-  const featuredImage = proj.featuredImage || matched?.image || '/images/modern_software_mockup_1790576657118.jpg';
+  const featuredImage = proj.featuredImage || '/images/modern_software_mockup_1790576657118.jpg';
 
-  // Construct bullets
   const bullets =
     techList.length > 0
       ? techList
-      : matched?.bullets && matched.bullets.length > 0
-      ? matched.bullets
       : proj.shortDescription
       ? [proj.shortDescription]
       : ['High-Velocity Software Architecture', 'Enterprise Deployment'];
 
-  // Construct features
-  const features =
-    matched?.features && matched.features.length > 0
-      ? matched.features
-      : bullets;
-
-  // Construct gallery
   let gallery: ProductGalleryItem[] = [];
   if (galleryImages.length > 0) {
     gallery = galleryImages.map((img, i) => ({
@@ -60,8 +76,6 @@ const mapProjectDocToProductItem = (proj: CMSProjectItem): ProductItem => {
       caption: proj.shortDescription || proj.projectName,
       image: img,
     }));
-  } else if (matched?.gallery && matched.gallery.length > 0) {
-    gallery = matched.gallery;
   } else {
     gallery = [
       {
@@ -72,28 +86,22 @@ const mapProjectDocToProductItem = (proj: CMSProjectItem): ProductItem => {
     ];
   }
 
-  // Construct metrics
-  const metrics =
-    matched?.metrics && matched.metrics.length > 0
-      ? matched.metrics
-      : [
-          { label: 'System Uptime', value: '99.9%' },
-          { label: 'Architecture', value: `${techList.length || 4}+ Tech Stack` },
-        ];
-
   return {
     id: proj.slug || proj.id,
-    title: matched ? matched.title : proj.projectName,
-    tagline: matched ? matched.tagline : (proj.shortDescription || proj.projectName),
-    description: proj.fullDescription || proj.shortDescription || (matched ? matched.description : ''),
-    category: proj.category || (matched ? matched.category : 'Enterprise Platform'),
-    features,
+    title: proj.projectName,
+    tagline: proj.shortDescription || proj.projectName,
+    description: proj.fullDescription || proj.shortDescription || proj.projectName,
+    category: proj.category || 'Custom Enterprise Development',
+    features: bullets,
     bullets,
     gallery,
     visualSide: 'right',
-    metrics,
+    metrics: [
+      { label: 'System Uptime', value: '99.9%' },
+      { label: 'Architecture', value: `${techList.length || 4}+ Tech Stack` },
+    ],
     image: featuredImage,
-    architectureDetails: techList.length > 0 ? techList : (matched?.architectureDetails || ['React', 'Node.js']),
+    architectureDetails: techList.length > 0 ? techList : ['React', 'TypeScript', 'Node.js'],
   };
 };
 
@@ -114,9 +122,13 @@ export const PublicProductsPage: React.FC = () => {
         setLoading(true);
         const res = await projectService.getPublishedProjects();
         if (res.data && res.data.length > 0) {
-          const sorted = [...res.data].sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
-          const mapped = sorted.map(mapProjectDocToProductItem);
-          setProducts(mapped);
+          // Filter newly created projects from MongoDB that are not in the fixed base set
+          const newCustomProjects = res.data
+            .filter((p) => !KNOWN_BASE_IDS.has(p.slug) && !KNOWN_BASE_IDS.has(p.id))
+            .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
+            .map(mapNewCMSProjectToProduct);
+
+          setProducts([...EXPLORE_MORE_PRODUCTS, ...newCustomProjects]);
         }
       } catch (err) {
         console.warn('Using default More Products showcase dataset:', err);
