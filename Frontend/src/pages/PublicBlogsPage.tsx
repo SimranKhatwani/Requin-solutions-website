@@ -5,6 +5,7 @@ import { Footer } from '../components/Footer';
 import { LoginModal } from '../components/LoginModal';
 import { QuizModal } from '../components/QuizModal';
 import { blogService, BlogItem } from '../services/blogService';
+import { getMediaUrl } from '../utils/mediaUrl';
 import {
   Calendar,
   User,
@@ -350,9 +351,12 @@ export const PublicBlogsPage: React.FC = () => {
                 >
                   <div className="relative h-52 overflow-hidden bg-slate-100">
                     <img
-                      src={blog.featuredImage}
+                      src={getMediaUrl(blog.featuredImage)}
                       alt={blog.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                      }}
                     />
                     <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md border border-slate-200 text-[11px] font-bold text-[#08B9E8] shadow-xs">
                       {blog.category}

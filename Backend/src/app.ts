@@ -41,8 +41,9 @@ export function createApp(): Express {
   app.get('/health', healthHandler);
   app.get('/api/health', healthHandler);
 
-  // API Routes
+  // API Routes (mounted at both /api and root for total compatibility)
   app.use('/api', apiRouter);
+  app.use('/', apiRouter);
 
   // 404 Handler for undefined routes
   app.use(notFoundHandler);

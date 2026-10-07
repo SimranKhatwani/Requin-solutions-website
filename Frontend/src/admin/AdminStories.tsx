@@ -15,6 +15,8 @@ import {
   Image as ImageIcon,
 } from 'lucide-react';
 import { storyService, StoryItem } from '../services/storyService';
+import { AdminImageUploader } from './AdminImageUploader';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 export const AdminStories: React.FC = () => {
   const [stories, setStories] = useState<StoryItem[]>([]);
@@ -191,9 +193,12 @@ export const AdminStories: React.FC = () => {
                 <div className="flex items-start gap-4 flex-1">
                   <div className="relative shrink-0">
                     <img
-                      src={story.image}
+                      src={getMediaUrl(story.image)}
                       alt={story.title}
                       className="w-20 h-20 rounded-2xl object-cover border border-slate-200 shadow-xs"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                      }}
                     />
                     <span className="absolute -top-2 -left-2 px-2 py-0.5 rounded-full bg-slate-900 text-white text-[10px] font-bold font-mono">
                       {story.year}
@@ -330,16 +335,13 @@ export const AdminStories: React.FC = () => {
                   </div>
 
                   <div className="md:col-span-3">
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      Featured Image URL *
-                    </label>
-                    <input
-                      type="text"
-                      required
+                    <AdminImageUploader
+                      label="Featured Image"
                       value={formData.image}
-                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                      placeholder="/images/digital_agency_office_1790576645354.jpg"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                      onChange={(url) => setFormData({ ...formData, image: url })}
+                      module="story"
+                      required
+                      helpText="File size must be less than 5 MB."
                     />
                   </div>
 

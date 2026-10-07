@@ -14,6 +14,7 @@ import {
   List,
 } from 'lucide-react';
 import { mediaService, MediaItem } from '../services/mediaService';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 export const AdminMedia: React.FC = () => {
   const [mediaList, setMediaList] = useState<MediaItem[]>([]);
@@ -106,7 +107,7 @@ export const AdminMedia: React.FC = () => {
             type="file"
             ref={fileInputRef}
             onChange={handleFileSelect}
-            accept="image/jpeg,image/png,image/webp,image/svg+xml,image/gif"
+            accept="image/jpeg,image/png,image/webp,image/svg+xml,image/gif,image/avif,.avif,image/*"
             className="hidden"
           />
           <button
@@ -148,7 +149,7 @@ export const AdminMedia: React.FC = () => {
           Click to upload or drag & drop files here
         </p>
         <p className="text-xs text-slate-400 mt-1">
-          Supports PNG, JPG, JPEG, WEBP, SVG (Max 10MB per image)
+          File size must be less than 5 MB. Supports JPG, PNG, WEBP, GIF, SVG, AVIF.
         </p>
       </div>
 
@@ -207,9 +208,12 @@ export const AdminMedia: React.FC = () => {
             >
               <div className="h-36 bg-slate-900 relative overflow-hidden flex items-center justify-center">
                 <img
-                  src={m.url}
+                  src={getMediaUrl(m.url)}
                   alt={m.originalName}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                  }}
                 />
                 <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-slate-900/80 text-white text-[10px] font-mono">
                   {formatFileSize(m.size)}
@@ -274,9 +278,12 @@ export const AdminMedia: React.FC = () => {
                   <tr key={m.id} className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3 px-6">
                       <img
-                        src={m.url}
+                        src={getMediaUrl(m.url)}
                         alt={m.originalName}
                         className="w-12 h-12 rounded-xl object-cover border border-slate-200"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                        }}
                       />
                     </td>
                     <td className="py-3 px-4 font-semibold text-slate-900">

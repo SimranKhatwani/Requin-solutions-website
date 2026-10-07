@@ -32,6 +32,7 @@ import {
 import { lifeAtRequinService, LifeAtRequinItem } from '../services/lifeAtRequinService';
 import { mediaService, MediaItem } from '../services/mediaService';
 import { GalleryPhotoItem } from '../data/requinData';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 const CATEGORY_PRESETS = [
   '5th Anniversary',
@@ -120,6 +121,13 @@ export const AdminLifeAtRequin: React.FC = () => {
   const quickCoverFileInputRef = useRef<HTMLInputElement>(null);
   const singlePhotoFileInputRef = useRef<HTMLInputElement>(null);
   const [photoToReplaceWithFileIndex, setPhotoToReplaceWithFileIndex] = useState<number | null>(null);
+
+  // Inline upload error and warning states (so errors appear right at the upload point)
+  const [coverUploadError, setCoverUploadError] = useState<string | null>(null);
+  const [coverUploadSuccess, setCoverUploadSuccess] = useState<string | null>(null);
+  const [batchUploadError, setBatchUploadError] = useState<string | null>(null);
+  const [batchUploadSuccess, setBatchUploadSuccess] = useState<string | null>(null);
+  const [quickCoverUploadError, setQuickCoverUploadError] = useState<string | null>(null);
 
   const fetchGalleries = async () => {
     try {
@@ -230,6 +238,7 @@ export const AdminLifeAtRequin: React.FC = () => {
   const handleOpenQuickCoverModal = (gallery: LifeAtRequinItem) => {
     setQuickCoverModalGallery(gallery);
     setQuickCoverUrl(gallery.image);
+    setQuickCoverUploadError(null);
   };
 
   const handleSaveQuickCover = async () => {
@@ -242,7 +251,7 @@ export const AdminLifeAtRequin: React.FC = () => {
       setQuickCoverModalGallery(null);
       fetchGalleries();
     } catch (err: any) {
-      alert(err.message || 'Failed to update cover photo.');
+      setQuickCoverUploadError(err.message || 'Failed to update cover photo.');
     } finally {
       setQuickCoverSaving(false);
     }
@@ -253,15 +262,24 @@ export const AdminLifeAtRequin: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setQuickCoverUploadError(null);
+
+    // Client-side 5MB check
+    if (file.size > 5 * 1024 * 1024) {
+      setQuickCoverUploadError('File size must be less than 5 MB.');
+      if (quickCoverFileInputRef.current) quickCoverFileInputRef.current.value = '';
+      return;
+    }
+
     try {
       setIsUploadingFiles(true);
       setUploadStatusMessage('Uploading new cover image...');
-      const res = await mediaService.uploadMedia(file);
+      const res = await mediaService.uploadMedia(file, 'lifeAtRequin');
       if (res.success && res.data) {
         setQuickCoverUrl(res.data.url);
       }
     } catch (err: any) {
-      alert(err.message || 'Failed to upload cover image.');
+      setQuickCoverUploadError(err.message || 'Failed to upload cover image.');
     } finally {
       setIsUploadingFiles(false);
       setUploadStatusMessage('');
@@ -282,15 +300,27 @@ export const AdminLifeAtRequin: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setCoverUploadError(null);
+    setCoverUploadSuccess(null);
+
+    // Client-side 5MB check
+    if (file.size > 5 * 1024 * 1024) {
+      setCoverUploadError('File size must be less than 5 MB.');
+      if (coverFileInputRef.current) coverFileInputRef.current.value = '';
+      return;
+    }
+
     try {
       setIsUploadingFiles(true);
       setUploadStatusMessage('Uploading new cover photo...');
-      const res = await mediaService.uploadMedia(file);
+      const res = await mediaService.uploadMedia(file, 'lifeAtRequin');
       if (res.success && res.data) {
         setFormData((prev) => ({ ...prev, image: res.data.url }));
+        setCoverUploadSuccess('Cover photo uploaded successfully.');
+        setTimeout(() => setCoverUploadSuccess(null), 3500);
       }
     } catch (err: any) {
-      setFormError(err.message || 'Failed to upload cover image.');
+      setCoverUploadError(err.message || 'Failed to upload cover image.');
     } finally {
       setIsUploadingFiles(false);
       setUploadStatusMessage('');
@@ -303,10 +333,21 @@ export const AdminLifeAtRequin: React.FC = () => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    setIsUploadingFiles(true);
-    setFormError(null);
+    setBatchUploadError(null);
+    setBatchUploadSuccess(null);
 
     const fileArray = Array.from(files);
+
+    // Validate size for all files
+    for (const f of fileArray) {
+      if (f.size > 5 * 1024 * 1024) {
+        setBatchUploadError(`"${f.name}" exceeds 5 MB. File size must be less than 5 MB.`);
+        if (batchFileInputRef.current) batchFileInputRef.current.value = '';
+        return;
+      }
+    }
+
+    setIsUploadingFiles(true);
     const newPhotosToAdd: GalleryPhotoItem[] = [];
     const yearForUpload = targetUploadYear || new Date().getFullYear().toString();
 
@@ -314,7 +355,7 @@ export const AdminLifeAtRequin: React.FC = () => {
       for (let i = 0; i < fileArray.length; i++) {
         const file = fileArray[i];
         setUploadStatusMessage(`Uploading photo ${i + 1} of ${fileArray.length} to ${yearForUpload}...`);
-        const res = await mediaService.uploadMedia(file);
+        const res = await mediaService.uploadMedia(file, 'lifeAtRequin');
         if (res.success && res.data) {
           const cleanName = file.name
             .replace(/\.[^/.]+$/, '')
@@ -343,8 +384,11 @@ export const AdminLifeAtRequin: React.FC = () => {
           photos: updatedPhotos,
         };
       });
+
+      setBatchUploadSuccess(`Successfully uploaded ${newPhotosToAdd.length} photo(s) to ${yearForUpload}.`);
+      setTimeout(() => setBatchUploadSuccess(null), 4000);
     } catch (err: any) {
-      setFormError(err.message || 'Error uploading photos. Please check your network.');
+      setBatchUploadError(err.message || 'Error uploading photos. Please check your network.');
     } finally {
       setIsUploadingFiles(false);
       setUploadStatusMessage('');
@@ -357,10 +401,17 @@ export const AdminLifeAtRequin: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file || photoToReplaceWithFileIndex === null) return;
 
+    // Client-side 5MB check
+    if (file.size > 5 * 1024 * 1024) {
+      setBatchUploadError('File size must be less than 5 MB.');
+      if (singlePhotoFileInputRef.current) singlePhotoFileInputRef.current.value = '';
+      return;
+    }
+
     try {
       setIsUploadingFiles(true);
       setUploadStatusMessage('Uploading replacement photo...');
-      const res = await mediaService.uploadMedia(file);
+      const res = await mediaService.uploadMedia(file, 'lifeAtRequin');
       if (res.success && res.data) {
         setFormData((prev) => {
           const updated = [...prev.photos];
@@ -374,7 +425,7 @@ export const AdminLifeAtRequin: React.FC = () => {
         });
       }
     } catch (err: any) {
-      setFormError(err.message || 'Failed to upload photo replacement.');
+      setBatchUploadError(err.message || 'Failed to upload photo replacement.');
     } finally {
       setIsUploadingFiles(false);
       setUploadStatusMessage('');
@@ -648,28 +699,28 @@ export const AdminLifeAtRequin: React.FC = () => {
         ref={batchFileInputRef}
         type="file"
         multiple
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/avif,.avif,image/*"
         onChange={handleBatchPhotoUpload}
         className="hidden"
       />
       <input
         ref={coverFileInputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/avif,.avif,image/*"
         onChange={handleCoverFileUpload}
         className="hidden"
       />
       <input
         ref={quickCoverFileInputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/avif,.avif,image/*"
         onChange={handleQuickCoverFileUpload}
         className="hidden"
       />
       <input
         ref={singlePhotoFileInputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/avif,.avif,image/*"
         onChange={handleSinglePhotoReplaceUpload}
         className="hidden"
       />
@@ -814,9 +865,12 @@ export const AdminLifeAtRequin: React.FC = () => {
                   {/* Cover Image Header with Direct Change Cover Button */}
                   <div className="relative h-56 sm:h-64 w-full overflow-hidden bg-slate-900 group/cover">
                     <img
-                      src={gallery.image}
+                      src={getMediaUrl(gallery.image)}
                       alt={gallery.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/30" />
 
@@ -929,9 +983,12 @@ export const AdminLifeAtRequin: React.FC = () => {
                                 title={`${p.title} (${p.year}) ${isThisCover ? '· [Cover Photo]' : ''}`}
                               >
                                 <img
-                                  src={p.image}
+                                  src={getMediaUrl(p.image)}
                                   alt={p.title}
                                   className="w-full h-full object-cover group-hover/thumb:scale-110 transition-transform"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                                  }}
                                 />
                                 {isThisCover && (
                                   <div className="absolute top-0.5 right-0.5 bg-[#08B9E8] text-slate-950 p-0.5 rounded-full">
@@ -1076,21 +1133,23 @@ export const AdminLifeAtRequin: React.FC = () => {
                 ======================================================== */}
                 <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 text-white shadow-sm space-y-3">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                      <span className="text-xs font-bold uppercase tracking-wider text-amber-300">
-                        Album Cover Photo
-                      </span>
-                      <span className="text-[11px] text-slate-400">
-                        (Featured on Website Carousel & Card)
-                      </span>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-amber-300">
+                          Album Cover Photo
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 mt-0.5">
+                        File size must be less than 5 MB. (Featured on Website Carousel & Card)
+                      </p>
                     </div>
 
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
                         onClick={() => coverFileInputRef.current?.click()}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#08B9E8] hover:bg-[#4DD4F5] text-slate-950 font-bold text-xs transition-all cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#08B9E8] hover:bg-[#4DD4F5] text-slate-950 font-bold text-xs transition-all cursor-pointer shadow-xs"
                       >
                         <Upload className="w-3.5 h-3.5" />
                         <span>Upload Cover</span>
@@ -1099,7 +1158,7 @@ export const AdminLifeAtRequin: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleOpenMediaPicker('cover')}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/15 hover:bg-white/25 text-white font-semibold text-xs transition-all cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-semibold text-xs transition-all cursor-pointer"
                       >
                         <FolderPlus className="w-3.5 h-3.5 text-[#08B9E8]" />
                         <span>From Media</span>
@@ -1107,14 +1166,31 @@ export const AdminLifeAtRequin: React.FC = () => {
                     </div>
                   </div>
 
+                  {coverUploadError && (
+                    <div className="p-2.5 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-200 text-xs flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+                      <span>{coverUploadError}</span>
+                    </div>
+                  )}
+
+                  {coverUploadSuccess && (
+                    <div className="p-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 text-xs flex items-center gap-2">
+                      <Check className="w-4 h-4 shrink-0 text-emerald-400" />
+                      <span>{coverUploadSuccess}</span>
+                    </div>
+                  )}
+
                   <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-950/60 p-3 rounded-xl border border-white/10">
                     {/* Active Cover Preview */}
                     <div className="relative w-28 h-20 sm:w-32 sm:h-22 rounded-xl overflow-hidden bg-slate-800 shrink-0 border border-white/20">
                       {formData.image ? (
                         <img
-                          src={formData.image}
+                          src={getMediaUrl(formData.image)}
                           alt="Album Cover"
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                          }}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-slate-500">
@@ -1161,9 +1237,12 @@ export const AdminLifeAtRequin: React.FC = () => {
                                   title={`Click to set "${p.title || 'Photo'}" as album cover`}
                                 >
                                   <img
-                                    src={p.image}
+                                    src={getMediaUrl(p.image)}
                                     alt=""
                                     className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                                    }}
                                   />
                                   {isSelectedCover && (
                                     <div className="absolute inset-0 bg-amber-400/20 flex items-center justify-center">
@@ -1284,72 +1363,88 @@ export const AdminLifeAtRequin: React.FC = () => {
                     </div>
 
                     {/* Top Upload Actions Banner (Targeted to Active Year) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      {/* Direct Multi-Upload Button */}
-                      <button
-                        type="button"
-                        disabled={isUploadingFiles}
-                        onClick={() => batchFileInputRef.current?.click()}
-                        className="p-4 rounded-2xl border-2 border-dashed border-[#08B9E8]/40 hover:border-[#08B9E8] bg-[#E0F7FE]/30 hover:bg-[#E0F7FE]/60 text-left transition-all cursor-pointer group flex flex-col justify-between"
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="w-8 h-8 rounded-xl bg-[#08B9E8]/20 text-[#0284c7] flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <Upload className="w-4 h-4" />
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        {/* Direct Multi-Upload Button */}
+                        <button
+                          type="button"
+                          disabled={isUploadingFiles}
+                          onClick={() => batchFileInputRef.current?.click()}
+                          className="p-4 rounded-2xl border-2 border-dashed border-[#08B9E8]/40 hover:border-[#08B9E8] bg-[#E0F7FE]/30 hover:bg-[#E0F7FE]/60 text-left transition-all cursor-pointer group flex flex-col justify-between"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="w-8 h-8 rounded-xl bg-[#08B9E8]/20 text-[#0284c7] flex items-center justify-center group-hover:scale-110 transition-transform">
+                              <Upload className="w-4 h-4" />
+                            </div>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#08B9E8] text-slate-950">
+                              → {targetUploadYear}
+                            </span>
                           </div>
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#08B9E8] text-slate-950">
-                            → {targetUploadYear}
-                          </span>
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">
-                            Upload to {targetUploadYear}
+                          <div>
+                            <div className="text-xs font-bold text-slate-900">
+                              Upload to {targetUploadYear}
+                            </div>
+                            <p className="text-[11px] text-slate-500 mt-0.5">
+                              File size must be less than 5 MB per photo
+                            </p>
                           </div>
-                          <p className="text-[11px] text-slate-500 mt-0.5">
-                            Select multiple JPG / PNG files from computer
-                          </p>
-                        </div>
-                      </button>
+                        </button>
 
-                      {/* Select From Media Library */}
-                      <button
-                        type="button"
-                        onClick={() => handleOpenMediaPicker('add-photo', null, targetUploadYear)}
-                        className="p-4 rounded-2xl border border-slate-200 hover:border-slate-300 bg-slate-50/60 hover:bg-slate-100 text-left transition-all cursor-pointer group flex flex-col justify-between"
-                      >
-                        <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                          <FolderPlus className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">
-                            Media Library → {targetUploadYear}
+                        {/* Select From Media Library */}
+                        <button
+                          type="button"
+                          onClick={() => handleOpenMediaPicker('add-photo', null, targetUploadYear)}
+                          className="p-4 rounded-2xl border border-slate-200 hover:border-slate-300 bg-slate-50/60 hover:bg-slate-100 text-left transition-all cursor-pointer group flex flex-col justify-between"
+                        >
+                          <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                            <FolderPlus className="w-4 h-4" />
                           </div>
-                          <p className="text-[11px] text-slate-500 mt-0.5">
-                            Pick from previously uploaded photos
-                          </p>
-                        </div>
-                      </button>
+                          <div>
+                            <div className="text-xs font-bold text-slate-900">
+                              Media Library → {targetUploadYear}
+                            </div>
+                            <p className="text-[11px] text-slate-500 mt-0.5">
+                              Pick from previously uploaded photos
+                            </p>
+                          </div>
+                        </button>
 
-                      {/* Add via URL */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setManualPhotoYear(targetUploadYear);
-                          setShowManualUrlInput(!showManualUrlInput);
-                        }}
-                        className="p-4 rounded-2xl border border-slate-200 hover:border-slate-300 bg-slate-50/60 hover:bg-slate-100 text-left transition-all cursor-pointer group flex flex-col justify-between"
-                      >
-                        <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                          <Plus className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">
-                            Add via Photo URL
+                        {/* Add via URL */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setManualPhotoYear(targetUploadYear);
+                            setShowManualUrlInput(!showManualUrlInput);
+                          }}
+                          className="p-4 rounded-2xl border border-slate-200 hover:border-slate-300 bg-slate-50/60 hover:bg-slate-100 text-left transition-all cursor-pointer group flex flex-col justify-between"
+                        >
+                          <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                            <Plus className="w-4 h-4" />
                           </div>
-                          <p className="text-[11px] text-slate-500 mt-0.5">
-                            Paste direct link for {targetUploadYear}
-                          </p>
+                          <div>
+                            <div className="text-xs font-bold text-slate-900">
+                              Add via Photo URL
+                            </div>
+                            <p className="text-[11px] text-slate-500 mt-0.5">
+                              Paste direct link for {targetUploadYear}
+                            </p>
+                          </div>
+                        </button>
+                      </div>
+
+                      {batchUploadError && (
+                        <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+                          <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                          <span>{batchUploadError}</span>
                         </div>
-                      </button>
+                      )}
+
+                      {batchUploadSuccess && (
+                        <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
+                          <Check className="w-4 h-4 shrink-0 text-emerald-600" />
+                          <span>{batchUploadSuccess}</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Manual URL Input Box */}
@@ -1527,9 +1622,12 @@ export const AdminLifeAtRequin: React.FC = () => {
                                             {/* Photo Thumbnail & Cover Badge */}
                                             <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-slate-900 shrink-0 border border-slate-200 group/img">
                                               <img
-                                                src={photo.image}
-                                                alt={photo.title}
+                                                src={getMediaUrl(photo.image)}
+                                                alt={photo.title || 'Photo'}
                                                 className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                  (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                                                }}
                                               />
                                               {isCover && (
                                                 <div className="absolute top-1.5 left-1.5 bg-amber-400 text-slate-950 text-[10px] font-extrabold px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1">
@@ -1864,9 +1962,12 @@ export const AdminLifeAtRequin: React.FC = () => {
             <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 shadow-xs">
               {quickCoverUrl ? (
                 <img
-                  src={quickCoverUrl}
+                  src={getMediaUrl(quickCoverUrl)}
                   alt="Cover Preview"
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                  }}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-slate-500">
@@ -1880,24 +1981,36 @@ export const AdminLifeAtRequin: React.FC = () => {
             </div>
 
             {/* Upload or Choose from Media */}
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => quickCoverFileInputRef.current?.click()}
-                className="p-3 rounded-xl border border-slate-200 hover:border-[#08B9E8] bg-slate-50 hover:bg-[#E0F7FE]/40 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all cursor-pointer"
-              >
-                <Upload className="w-4 h-4 text-[#08B9E8]" />
-                <span>Upload From PC</span>
-              </button>
+            <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => quickCoverFileInputRef.current?.click()}
+                  className="p-3 rounded-xl border border-slate-200 hover:border-[#08B9E8] bg-slate-50 hover:bg-[#E0F7FE]/40 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  <Upload className="w-4 h-4 text-[#08B9E8]" />
+                  <span>Upload From PC</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => handleOpenMediaPicker('quick-cover')}
-                className="p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all cursor-pointer"
-              >
-                <FolderPlus className="w-4 h-4 text-purple-600" />
-                <span>Media Library</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => handleOpenMediaPicker('quick-cover')}
+                  className="p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  <FolderPlus className="w-4 h-4 text-purple-600" />
+                  <span>Media Library</span>
+                </button>
+              </div>
+              <p className="text-[11px] text-slate-400 text-center">
+                File size must be less than 5 MB.
+              </p>
+
+              {quickCoverUploadError && (
+                <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                  <span>{quickCoverUploadError}</span>
+                </div>
+              )}
             </div>
 
             {/* Custom URL Input */}
@@ -1936,9 +2049,12 @@ export const AdminLifeAtRequin: React.FC = () => {
                         title={p.title || `Photo ${idx + 1}`}
                       >
                         <img
-                          src={p.image}
+                          src={getMediaUrl(p.image)}
                           alt=""
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                          }}
                         />
                         {isSelected && (
                           <div className="absolute inset-0 bg-amber-400/25 flex items-center justify-center">
@@ -2043,9 +2159,12 @@ export const AdminLifeAtRequin: React.FC = () => {
                         className="group relative aspect-square rounded-xl overflow-hidden border border-slate-200 hover:border-[#08B9E8] hover:ring-2 hover:ring-[#08B9E8]/30 cursor-pointer transition-all bg-slate-900"
                       >
                         <img
-                          src={item.url}
+                          src={getMediaUrl(item.url)}
                           alt={item.originalName}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                          }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2 flex flex-col justify-end">
                           <span className="text-[10px] font-bold text-white truncate">

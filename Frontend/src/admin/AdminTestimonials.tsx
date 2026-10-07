@@ -14,6 +14,8 @@ import {
   Image as ImageIcon,
 } from 'lucide-react';
 import { testimonialService, TestimonialItem } from '../services/testimonialService';
+import { AdminImageUploader } from './AdminImageUploader';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 export const AdminTestimonials: React.FC = () => {
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
@@ -189,9 +191,12 @@ export const AdminTestimonials: React.FC = () => {
                 <div className="flex items-start justify-between gap-3 mb-4">
                   <div className="flex items-center gap-3">
                     <img
-                      src={item.image}
+                      src={getMediaUrl(item.image)}
                       alt={item.name}
                       className="w-12 h-12 rounded-xl object-cover object-top border border-slate-200"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                      }}
                     />
                     <div>
                       <h3 className="font-bold text-slate-900 text-base leading-snug">
@@ -347,15 +352,12 @@ export const AdminTestimonials: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                    Client Photo URL
-                  </label>
-                  <input
-                    type="url"
-                    placeholder="https://images.unsplash.com/..."
+                  <AdminImageUploader
+                    label="Client Photo"
                     value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-none focus:border-[#08B9E8]"
+                    onChange={(url) => setFormData({ ...formData, image: url })}
+                    module="testimonial"
+                    helpText="File size must be less than 5 MB."
                   />
                 </div>
 

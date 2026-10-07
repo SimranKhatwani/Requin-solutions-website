@@ -5,6 +5,7 @@ import { Footer } from '../components/Footer';
 import { LoginModal } from '../components/LoginModal';
 import { QuizModal } from '../components/QuizModal';
 import { projectService, ProjectItem } from '../services/projectService';
+import { getMediaUrl } from '../utils/mediaUrl';
 import {
   FolderGit2,
   ExternalLink,
@@ -596,10 +597,13 @@ export const PublicProjectsPage: React.FC = () => {
                               {/* Screenshot Body */}
                               <div className="relative w-full overflow-hidden bg-slate-950">
                                 <img
-                                  src={project.featuredImage}
+                                  src={getMediaUrl(project.featuredImage)}
                                   alt={project.projectName}
                                   className="w-full h-auto max-h-[440px] object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
                                   loading="lazy"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                                  }}
                                 />
 
                                 {/* Subtle Hover Overlay */}
@@ -662,13 +666,16 @@ export const PublicProjectsPage: React.FC = () => {
             {/* Modal Image Viewport */}
             <div className="relative flex-1 overflow-auto bg-slate-950 flex items-center justify-center min-h-[300px] sm:min-h-[450px]">
               <img
-                src={
+                src={getMediaUrl(
                   (Array.isArray(activeGalleryProject.galleryImages) &&
                     activeGalleryProject.galleryImages[galleryPhotoIndex]) ||
                   activeGalleryProject.featuredImage
-                }
+                )}
                 alt={`Screen ${galleryPhotoIndex + 1}`}
                 className="w-full h-full max-h-[60vh] object-contain"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                }}
               />
 
               {/* Prev / Next Floating Arrows */}
@@ -711,7 +718,14 @@ export const PublicProjectsPage: React.FC = () => {
                         : 'border-slate-700/80 opacity-60 hover:opacity-100 hover:border-slate-500'
                     }`}
                   >
-                    <img src={img} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover" />
+                    <img
+                      src={getMediaUrl(img)}
+                      alt={`Thumb ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                      }}
+                    />
                   </button>
                 ))}
               </div>

@@ -5,6 +5,7 @@ import { Footer } from '../components/Footer';
 import { LoginModal } from '../components/LoginModal';
 import { QuizModal } from '../components/QuizModal';
 import { storyService, StoryItem } from '../services/storyService';
+import { getMediaUrl } from '../utils/mediaUrl';
 import {
   BookOpen,
   Calendar,
@@ -138,9 +139,12 @@ export const PublicStoriesPage: React.FC = () => {
                   <div className="w-full lg:w-1/2">
                     <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-xl group">
                       <img
-                        src={story.image}
+                        src={getMediaUrl(story.image)}
                         alt={story.title}
                         className="w-full h-72 sm:h-80 object-cover transition-transform duration-500 group-hover:scale-105"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                        }}
                       />
                       <div className="absolute top-4 left-4 px-3.5 py-1 rounded-full bg-[#071827]/90 border border-white/20 text-[#08B9E8] font-bold text-sm font-mono backdrop-blur-md">
                         {story.year}

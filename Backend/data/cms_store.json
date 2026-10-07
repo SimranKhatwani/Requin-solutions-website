@@ -390,6 +390,70 @@
   ],
   "activities": [
     {
+      "id": "act-1791360840829-ykag",
+      "action": "Deleted media file (1791360839977-sample.jpg)",
+      "entityType": "media",
+      "entityTitle": "1791360839977-sample.jpg",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-07T08:14:00.829Z"
+    },
+    {
+      "id": "act-1791360840200-xyp4",
+      "action": "Uploaded image \"sample.jpg\" to GridFS",
+      "entityType": "media",
+      "entityTitle": "sample.jpg",
+      "adminEmail": "admin@requinsolutions.com",
+      "timestamp": "2026-10-07T08:14:00.200Z"
+    },
+    {
+      "id": "act-1791360741172-kxtj",
+      "action": "Deleted media file (1791360739915-test-banner.webp)",
+      "entityType": "media",
+      "entityTitle": "1791360739915-test-banner.webp",
+      "adminEmail": "admin@requingroup.com",
+      "timestamp": "2026-10-07T08:12:21.173Z"
+    },
+    {
+      "id": "act-1791360740833-p2vk",
+      "action": "Deleted media file (1791360739765-test-logo.png)",
+      "entityType": "media",
+      "entityTitle": "1791360739765-test-logo.png",
+      "adminEmail": "admin@requingroup.com",
+      "timestamp": "2026-10-07T08:12:20.833Z"
+    },
+    {
+      "id": "act-1791360740522-9kg8",
+      "action": "Deleted media file (1791360738998-test-sample-image.jpg)",
+      "entityType": "media",
+      "entityTitle": "1791360738998-test-sample-image.jpg",
+      "adminEmail": "admin@requingroup.com",
+      "timestamp": "2026-10-07T08:12:20.522Z"
+    },
+    {
+      "id": "act-1791360740055-oqoa",
+      "action": "Uploaded image \"test-banner.webp\" to GridFS",
+      "entityType": "media",
+      "entityTitle": "test-banner.webp",
+      "adminEmail": "admin@requingroup.com",
+      "timestamp": "2026-10-07T08:12:20.055Z"
+    },
+    {
+      "id": "act-1791360739913-s11o",
+      "action": "Uploaded image \"test-logo.png\" to GridFS",
+      "entityType": "media",
+      "entityTitle": "test-logo.png",
+      "adminEmail": "admin@requingroup.com",
+      "timestamp": "2026-10-07T08:12:19.913Z"
+    },
+    {
+      "id": "act-1791360739627-0aex",
+      "action": "Uploaded image \"test-sample-image.jpg\" to GridFS",
+      "entityType": "media",
+      "entityTitle": "test-sample-image.jpg",
+      "adminEmail": "admin@requingroup.com",
+      "timestamp": "2026-10-07T08:12:19.627Z"
+    },
+    {
       "id": "act-1791348941625-0rir",
       "action": "Admin logged in",
       "entityType": "auth",

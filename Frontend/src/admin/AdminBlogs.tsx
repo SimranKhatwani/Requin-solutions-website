@@ -19,6 +19,8 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { blogService, BlogItem } from '../services/blogService';
+import { AdminImageUploader } from './AdminImageUploader';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 export const AdminBlogs: React.FC = () => {
   const [blogs, setBlogs] = useState<BlogItem[]>([]);
@@ -286,9 +288,12 @@ export const AdminBlogs: React.FC = () => {
                     <td className="py-4 px-6 max-w-md">
                       <div className="flex items-center gap-3">
                         <img
-                          src={blog.featuredImage}
+                          src={getMediaUrl(blog.featuredImage)}
                           alt={blog.title}
                           className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                          }}
                         />
                         <div className="min-w-0">
                           <p className="font-bold text-slate-900 truncate leading-snug">
@@ -480,15 +485,12 @@ export const AdminBlogs: React.FC = () => {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      Featured Image URL
-                    </label>
-                    <input
-                      type="text"
+                    <AdminImageUploader
+                      label="Featured Image"
                       value={formData.featuredImage}
-                      onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
-                      placeholder="/images/cloud_infrastructure_1790576629897.jpg or https://..."
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                      onChange={(url) => setFormData({ ...formData, featuredImage: url })}
+                      module="blog"
+                      helpText="File size must be less than 5 MB."
                     />
                   </div>
 
@@ -620,9 +622,12 @@ export const AdminBlogs: React.FC = () => {
             {/* Preview Content (Scrollable) */}
             <div className="p-6 sm:p-8 overflow-y-auto flex-1 space-y-6">
               <img
-                src={previewBlog.featuredImage}
+                src={getMediaUrl(previewBlog.featuredImage)}
                 alt={previewBlog.title}
                 className="w-full h-64 object-cover rounded-xl border border-slate-800"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                }}
               />
 
               <div className="flex items-center gap-3 text-xs text-[#08B9E8] font-medium">

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { LIFE_AT_REQUIN_GALLERY, GalleryImage, GalleryPhotoItem } from '../data/requinData';
 import { lifeAtRequinService } from '../services/lifeAtRequinService';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 export const LifeAtRequinSection: React.FC = () => {
   const [galleries, setGalleries] = useState<GalleryImage[]>(LIFE_AT_REQUIN_GALLERY);
@@ -382,11 +383,14 @@ export const LifeAtRequinSection: React.FC = () => {
                   <div className="relative w-full h-full group overflow-hidden">
                     {/* Event Photo */}
                     <img
-                      src={item.image}
+                      src={getMediaUrl(item.image)}
                       alt={item.title}
                       className={`w-full h-full object-cover transition-transform duration-700 ${
                         isCenter ? 'group-hover:scale-105' : ''
                       }`}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                      }}
                       referrerPolicy="no-referrer"
                     />
 
@@ -550,9 +554,12 @@ export const LifeAtRequinSection: React.FC = () => {
               {/* Full Cover Image Stage */}
               <div className="relative w-full h-[260px] sm:h-[320px] md:h-[360px] lg:h-[390px] overflow-hidden bg-[#071827] shrink-0">
                 <img
-                  src={currentActivePhoto.image}
+                  src={getMediaUrl(currentActivePhoto.image)}
                   alt={currentActivePhoto.title || activeModalItem.title}
                   className="w-full h-full object-cover transition-all duration-300"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                  }}
                   referrerPolicy="no-referrer"
                 />
 
@@ -612,9 +619,12 @@ export const LifeAtRequinSection: React.FC = () => {
                       }`}
                     >
                       <img
-                        src={photo.image}
+                        src={getMediaUrl(photo.image)}
                         alt={photo.title || `Photo ${idx + 1}`}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                        }}
                         referrerPolicy="no-referrer"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />

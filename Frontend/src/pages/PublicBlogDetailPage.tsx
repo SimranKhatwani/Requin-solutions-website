@@ -5,6 +5,7 @@ import { Footer } from '../components/Footer';
 import { LoginModal } from '../components/LoginModal';
 import { QuizModal } from '../components/QuizModal';
 import { blogService, BlogItem } from '../services/blogService';
+import { getMediaUrl } from '../utils/mediaUrl';
 import {
   Calendar,
   User,
@@ -315,9 +316,12 @@ export const PublicBlogDetailPage: React.FC = () => {
               {/* Featured Image */}
               <div className="relative rounded-3xl overflow-hidden border border-slate-200/90 bg-slate-100 shadow-xl">
                 <img
-                  src={blog.featuredImage}
+                  src={getMediaUrl(blog.featuredImage)}
                   alt={blog.title}
                   className="w-full max-h-[460px] object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                  }}
                 />
               </div>
 

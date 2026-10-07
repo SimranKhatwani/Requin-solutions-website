@@ -17,6 +17,8 @@ import {
   ArrowUpDown,
 } from 'lucide-react';
 import { projectService, ProjectItem } from '../services/projectService';
+import { AdminImageUploader } from './AdminImageUploader';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 export const AdminProjects: React.FC = () => {
   const [projects, setProjects] = useState<ProjectItem[]>([]);
@@ -287,9 +289,12 @@ export const AdminProjects: React.FC = () => {
                     <td className="py-4 px-6 max-w-sm">
                       <div className="flex items-center gap-3">
                         <img
-                          src={proj.featuredImage}
+                          src={getMediaUrl(proj.featuredImage)}
                           alt={proj.projectName}
                           className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                          }}
                         />
                         <div className="min-w-0">
                           <p className="font-bold text-slate-900 truncate leading-snug">
@@ -496,15 +501,12 @@ export const AdminProjects: React.FC = () => {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      Featured Image URL
-                    </label>
-                    <input
-                      type="text"
+                    <AdminImageUploader
+                      label="Featured Image"
                       value={formData.featuredImage}
-                      onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
-                      placeholder="/images/modern_software_mockup_1790576657118.jpg"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-[#08B9E8]"
+                      onChange={(url) => setFormData({ ...formData, featuredImage: url })}
+                      module="project"
+                      helpText="File size must be less than 5 MB."
                     />
                   </div>
 
@@ -662,9 +664,12 @@ export const AdminProjects: React.FC = () => {
             {/* Preview Content (Scrollable) */}
             <div className="p-6 sm:p-8 overflow-y-auto flex-1 space-y-4">
               <img
-                src={previewProject.featuredImage}
+                src={getMediaUrl(previewProject.featuredImage)}
                 alt={previewProject.projectName}
                 className="w-full h-56 object-cover rounded-xl border border-slate-800 mb-2"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                }}
               />
 
               <span className="text-xs font-semibold text-[#08B9E8] uppercase tracking-wider block">
