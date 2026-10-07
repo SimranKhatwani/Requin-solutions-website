@@ -23,7 +23,6 @@ import { AdminStories } from './admin/AdminStories';
 import { AdminTestimonials } from './admin/AdminTestimonials';
 import { AdminMedia } from './admin/AdminMedia';
 import { AdminSettings } from './admin/AdminSettings';
-import { AdminQuickBar } from './components/AdminQuickBar';
 
 export default function App() {
   return (
@@ -73,7 +72,6 @@ export default function App() {
         {/* Catch-all fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      <AdminQuickBar />
     </>
   );
 }
