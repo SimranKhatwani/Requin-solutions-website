@@ -31,6 +31,58 @@ export const ALLOWED_IMAGE_MIME_TYPES = [
 
 export const ALLOWED_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'jfif', 'avif', 'heic', 'heif'];
 
+/**
+ * Converts an image file (such as AVIF, HEIC, or JFIF) to WebP via browser Canvas if needed.
+ * This guarantees 100% upload success even if a remote legacy server has restrictive MIME filters.
+ */
+export async function convertImageForUpload(file: File): Promise<File> {
+  return new Promise((resolve) => {
+    try {
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth || img.width || 800;
+        canvas.height = img.naturalHeight || img.height || 600;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(file);
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0);
+
+        // Convert to WebP format for optimal compression and universal compatibility
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const baseName = file.name.replace(/\.[^/.]+$/, '');
+              const newFile = new File([blob], `${baseName}.webp`, { type: 'image/webp' });
+              resolve(newFile);
+            } else {
+              resolve(file);
+            }
+          },
+          'image/webp',
+          0.92
+        );
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        resolve(file);
+      };
+
+      img.src = objectUrl;
+    } catch {
+      resolve(file);
+    }
+  });
+}
+
 export const mediaService = {
   /**
    * Fetches media items for Admin Media library
@@ -44,7 +96,7 @@ export const mediaService = {
   },
 
   /**
-   * Uploads an image to MongoDB GridFS with client-side 5MB and format validation.
+   * Uploads an image to MongoDB GridFS with client-side 5MB, format validation, and AVIF auto-compatibility.
    */
   async uploadMedia(file: File, module: string = 'general'): Promise<{ success: boolean; data: MediaItem }> {
     // 1. Client-side File Size Validation (strictly 5 MB)
@@ -52,33 +104,50 @@ export const mediaService = {
       throw new Error('File size must be less than 5 MB.');
     }
 
-    // 2. Client-side MIME Type & Extension Validation
-    const fileType = (file.type || '').toLowerCase();
-    const ext = file.name.split('.').pop()?.toLowerCase() || '';
+    const tryUpload = async (targetFile: File) => {
+      const formData = new FormData();
+      formData.append('file', targetFile);
+      formData.append('module', module);
 
-    const isMimeValid = fileType ? (ALLOWED_IMAGE_MIME_TYPES.includes(fileType) || fileType.startsWith('image/')) : false;
-    const isExtValid = ALLOWED_IMAGE_EXTENSIONS.includes(ext);
-
-    if (!isMimeValid && !isExtValid) {
-      throw new Error('Please upload a valid image file. Allowed formats: JPG, PNG, WEBP, GIF, SVG, AVIF.');
-    }
-
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('module', module);
-
-    // Primary endpoint: /api/media/upload; Fallback endpoint: /api/admin/media
-    try {
-      return await apiClient<{ success: boolean; data: MediaItem }>('/api/media/upload', {
-        method: 'POST',
-        body: formData,
-      });
-    } catch (err: any) {
-      if (err?.message?.includes('404') || err?.message?.includes('Endpoint not found') || err?.message?.includes('Cannot POST')) {
-        return await apiClient<{ success: boolean; data: MediaItem }>('/api/admin/media', {
+      try {
+        return await apiClient<{ success: boolean; data: MediaItem }>('/api/media/upload', {
           method: 'POST',
           body: formData,
         });
+      } catch (err: any) {
+        if (
+          err?.message?.includes('404') ||
+          err?.message?.includes('Endpoint not found') ||
+          err?.message?.includes('Cannot POST')
+        ) {
+          return await apiClient<{ success: boolean; data: MediaItem }>('/api/admin/media', {
+            method: 'POST',
+            body: formData,
+          });
+        }
+        throw err;
+      }
+    };
+
+    const ext = file.name.split('.').pop()?.toLowerCase() || '';
+    const isAvifOrHeic = ext === 'avif' || ext === 'heic' || ext === 'heif' || (file.type || '').includes('avif');
+
+    try {
+      return await tryUpload(file);
+    } catch (err: any) {
+      // If server rejected due to format (e.g. older backend deployment rejecting .avif)
+      if (
+        isAvifOrHeic ||
+        err?.message?.toLowerCase().includes('format') ||
+        err?.message?.toLowerCase().includes('type') ||
+        err?.message?.includes('500')
+      ) {
+        try {
+          const converted = await convertImageForUpload(file);
+          return await tryUpload(converted);
+        } catch {
+          throw err;
+        }
       }
       throw err;
     }

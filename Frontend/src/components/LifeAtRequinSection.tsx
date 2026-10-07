@@ -3,7 +3,6 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
-  Play,
   ArrowRight,
   X,
   Sparkles,
@@ -403,15 +402,6 @@ export const LifeAtRequinSection: React.FC = () => {
                         {item.category}
                       </span>
                     </div>
-
-                    {/* Center Circular Play/Explore Indicator */}
-                    {isCenter && (
-                      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/95 backdrop-blur-md text-[#071827] flex items-center justify-center shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:bg-[#08B9E8] group-hover:text-white group-hover:shadow-[0_0_30px_rgba(8,185,232,0.6)]">
-                          <Play className="w-6 h-6 sm:w-7 sm:h-7 ml-0.5 fill-current" />
-                        </div>
-                      </div>
-                    )}
 
                     {/* Bottom Content: Title and Explore Gallery */}
                     <div className="absolute bottom-0 inset-x-0 p-5 sm:p-7 md:p-8 text-left z-10">
