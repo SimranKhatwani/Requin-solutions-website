@@ -64,7 +64,11 @@ export const ProjectService = {
       projectUrl: projectUrl || 'https://www.requingroup.com/',
       clientName: clientName || 'Enterprise Partner',
       status: status === 'PUBLISHED' ? 'PUBLISHED' : 'DRAFT',
-      displayOrder: typeof displayOrder === 'number' ? displayOrder : allProjects.length + 1,
+      displayOrder: (typeof displayOrder === 'number' && !isNaN(displayOrder))
+        ? displayOrder
+        : (displayOrder !== undefined && !isNaN(Number(displayOrder)))
+        ? Number(displayOrder)
+        : allProjects.length + 1,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -119,7 +123,11 @@ export const ProjectService = {
       projectUrl: projectUrl ?? prev.projectUrl,
       clientName: clientName ?? prev.clientName,
       status: status ?? prev.status,
-      displayOrder: typeof displayOrder === 'number' ? displayOrder : prev.displayOrder,
+      displayOrder: (typeof displayOrder === 'number' && !isNaN(displayOrder))
+        ? displayOrder
+        : (displayOrder !== undefined && !isNaN(Number(displayOrder)))
+        ? Number(displayOrder)
+        : prev.displayOrder,
     });
 
     if (updated) {

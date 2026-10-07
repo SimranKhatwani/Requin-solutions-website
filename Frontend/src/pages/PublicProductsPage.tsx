@@ -5,14 +5,101 @@ import { Footer } from '../components/Footer';
 import { LoginModal } from '../components/LoginModal';
 import { QuizModal } from '../components/QuizModal';
 import { ProductFeatureModal } from '../components/ProductFeatureModal';
-import { ProductItem, EXPLORE_MORE_PRODUCTS } from '../data/requinData';
+import { ProductItem, ProductGalleryItem, EXPLORE_MORE_PRODUCTS, ALL_PRODUCTS } from '../data/requinData';
+import { projectService, ProjectItem as CMSProjectItem } from '../services/projectService';
 import {
   ChevronRight,
   ArrowRight,
   Layers,
+  Loader2,
 } from 'lucide-react';
 
+// Helper to convert MongoDB ProjectItem to rich ProductItem for More Products page
+const mapProjectDocToProductItem = (proj: CMSProjectItem): ProductItem => {
+  const normalizedSlug = (proj.slug || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const matched = ALL_PRODUCTS.find((p) => {
+    const pSlug = p.id.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return pSlug === normalizedSlug || normalizedSlug.includes(pSlug) || pSlug.includes(normalizedSlug);
+  });
+
+  const techList = Array.isArray(proj.technologies)
+    ? proj.technologies
+    : typeof proj.technologies === 'string'
+    ? (proj.technologies as string).split(',').map((t) => t.trim()).filter(Boolean)
+    : [];
+
+  const galleryImages = Array.isArray(proj.galleryImages)
+    ? proj.galleryImages
+    : typeof proj.galleryImages === 'string'
+    ? (proj.galleryImages as string).split(',').map((g) => g.trim()).filter(Boolean)
+    : [];
+
+  const featuredImage = proj.featuredImage || matched?.image || '/images/modern_software_mockup_1790576657118.jpg';
+
+  // Construct bullets
+  const bullets =
+    techList.length > 0
+      ? techList
+      : matched?.bullets && matched.bullets.length > 0
+      ? matched.bullets
+      : proj.shortDescription
+      ? [proj.shortDescription]
+      : ['High-Velocity Software Architecture', 'Enterprise Deployment'];
+
+  // Construct features
+  const features =
+    matched?.features && matched.features.length > 0
+      ? matched.features
+      : bullets;
+
+  // Construct gallery
+  let gallery: ProductGalleryItem[] = [];
+  if (galleryImages.length > 0) {
+    gallery = galleryImages.map((img, i) => ({
+      title: `${proj.projectName} — Screen ${i + 1}`,
+      caption: proj.shortDescription || proj.projectName,
+      image: img,
+    }));
+  } else if (matched?.gallery && matched.gallery.length > 0) {
+    gallery = matched.gallery;
+  } else {
+    gallery = [
+      {
+        title: proj.projectName,
+        caption: proj.shortDescription || proj.projectName,
+        image: featuredImage,
+      },
+    ];
+  }
+
+  // Construct metrics
+  const metrics =
+    matched?.metrics && matched.metrics.length > 0
+      ? matched.metrics
+      : [
+          { label: 'System Uptime', value: '99.9%' },
+          { label: 'Architecture', value: `${techList.length || 4}+ Tech Stack` },
+        ];
+
+  return {
+    id: proj.slug || proj.id,
+    title: matched ? matched.title : proj.projectName,
+    tagline: matched ? matched.tagline : (proj.shortDescription || proj.projectName),
+    description: proj.fullDescription || proj.shortDescription || (matched ? matched.description : ''),
+    category: proj.category || (matched ? matched.category : 'Enterprise Platform'),
+    features,
+    bullets,
+    gallery,
+    visualSide: 'right',
+    metrics,
+    image: featuredImage,
+    architectureDetails: techList.length > 0 ? techList : (matched?.architectureDetails || ['React', 'Node.js']),
+  };
+};
+
 export const PublicProductsPage: React.FC = () => {
+  const [products, setProducts] = useState<ProductItem[]>(EXPLORE_MORE_PRODUCTS);
+  const [loading, setLoading] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
   const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -22,6 +109,22 @@ export const PublicProductsPage: React.FC = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const fetchMoreProducts = async () => {
+      try {
+        setLoading(true);
+        const res = await projectService.getPublishedProjects();
+        if (res.data && res.data.length > 0) {
+          const sorted = [...res.data].sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+          const mapped = sorted.map(mapProjectDocToProductItem);
+          setProducts(mapped);
+        }
+      } catch (err) {
+        console.warn('Using default More Products showcase dataset:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMoreProducts();
   }, []);
 
   const handleOpenFeatures = (product: ProductItem) => {
@@ -190,9 +293,10 @@ export const PublicProductsPage: React.FC = () => {
               PRODUCTS SHOWCASE LIST (Alternating Right & Left Images with Full-Height Cyber Background)
           ======================================================== */}
           <div className="space-y-16 sm:space-y-24">
-            {EXPLORE_MORE_PRODUCTS.map((product, index) => {
+            {products.map((product, index) => {
               // Alternate: Index 0 (Vastra) -> Image Right, Index 1 (Dine & Dusk) -> Image Left, etc.
               const isImageRight = index % 2 === 0;
+              const cleanId = String(product.id || `prod-${index}`).replace(/[^a-zA-Z0-9_-]/g, '_');
 
               const getProductBadges = (id: string) => {
                 switch (id) {
@@ -284,7 +388,7 @@ export const PublicProductsPage: React.FC = () => {
 
                   {/* Bullet Checklist with Cyan Dots */}
                   <ul className="space-y-3 pt-1">
-                    {product.bullets.map((bullet, idx) => (
+                    {(Array.isArray(product.bullets) ? product.bullets : [product.description]).map((bullet, idx) => (
                       <li key={idx} className="flex items-start gap-3 text-sm sm:text-base text-slate-200">
                         <span className="w-2 h-2 rounded-full bg-[#08B9E8] mt-2 shrink-0 shadow-[0_0_8px_#08B9E8]" />
                         <span className="leading-snug">{bullet}</span>
@@ -306,7 +410,7 @@ export const PublicProductsPage: React.FC = () => {
               );
 
               return (
-                <div key={product.id} className="relative">
+                <div key={product.id || index} className="relative">
                   {/* ========================================================
                       ROW-LEVEL CYBER WAVES & CONSTELLATION NODES (Guaranteed Full Coverage for EVERY Project)
                   ======================================================== */}
@@ -335,23 +439,23 @@ export const PublicProductsPage: React.FC = () => {
                       aria-hidden="true"
                     >
                       <defs>
-                        <linearGradient id={`cyanWaveLeft_${product.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                        <linearGradient id={`cyanWaveLeft_${cleanId}`} x1="0%" y1="0%" x2="100%" y2="100%">
                           <stop offset="0%" stopColor="#08B9E8" stopOpacity="0.4" />
                           <stop offset="60%" stopColor="#00c2ff" stopOpacity="0.15" />
                           <stop offset="100%" stopColor="#08B9E8" stopOpacity="0.02" />
                         </linearGradient>
-                        <linearGradient id={`cyanWaveRight_${product.id}`} x1="100%" y1="0%" x2="0%" y2="100%">
+                        <linearGradient id={`cyanWaveRight_${cleanId}`} x1="100%" y1="0%" x2="0%" y2="100%">
                           <stop offset="0%" stopColor="#08B9E8" stopOpacity="0.4" />
                           <stop offset="60%" stopColor="#00c2ff" stopOpacity="0.15" />
                           <stop offset="100%" stopColor="#08B9E8" stopOpacity="0.02" />
                         </linearGradient>
-                        <filter id={`nodeGlow_${product.id}`} x="-50%" y="-50%" width="200%" height="200%">
+                        <filter id={`nodeGlow_${cleanId}`} x="-50%" y="-50%" width="200%" height="200%">
                           <feGaussianBlur in="SourceGraphic" stdDeviation="3" />
                         </filter>
                       </defs>
 
                       {/* LEFT SIDE FLOWING CURVED WAVES */}
-                      <g stroke={`url(#cyanWaveLeft_${product.id})`} strokeWidth="1.2">
+                      <g stroke={`url(#cyanWaveLeft_${cleanId})`} strokeWidth="1.2">
                         <path d="M-60,180 C80,140 140,280 60,400 C-20,520 180,560 280,460 C360,380 220,300 320,220" strokeOpacity="0.25" />
                         <path d="M-80,240 C60,190 110,330 30,450 C-50,570 150,600 250,500 C330,420 200,340 300,260" strokeOpacity="0.18" />
                         <path d="M-40,120 C100,80 180,220 90,340 C0,460 210,500 310,400" strokeOpacity="0.14" strokeDasharray="3 5" />
@@ -359,16 +463,16 @@ export const PublicProductsPage: React.FC = () => {
 
                       {/* LEFT SIDE NODES & CONSTELLATION POINTS */}
                       <g fill="#08B9E8">
-                        <circle cx="70" cy="220" r="4" fillOpacity="0.4" filter={`url(#nodeGlow_${product.id})`} />
+                        <circle cx="70" cy="220" r="4" fillOpacity="0.4" filter={`url(#nodeGlow_${cleanId})`} />
                         <circle cx="70" cy="220" r="2" fillOpacity="0.9" />
-                        <circle cx="280" cy="460" r="3.5" fillOpacity="0.3" filter={`url(#nodeGlow_${product.id})`} />
+                        <circle cx="280" cy="460" r="3.5" fillOpacity="0.3" filter={`url(#nodeGlow_${cleanId})`} />
                         <circle cx="280" cy="460" r="1.5" fillOpacity="0.85" />
                         <circle cx="160" cy="340" r="2" fillOpacity="0.5" />
                         <circle cx="20" cy="400" r="2.5" fillOpacity="0.4" />
                       </g>
 
                       {/* RIGHT SIDE FLOWING CURVED WAVES */}
-                      <g stroke={`url(#cyanWaveRight_${product.id})`} strokeWidth="1.2">
+                      <g stroke={`url(#cyanWaveRight_${cleanId})`} strokeWidth="1.2">
                         <path d="M1500,180 C1360,140 1300,280 1380,400 C1460,520 1260,560 1160,460 C1080,380 1220,300 1120,220" strokeOpacity="0.25" />
                         <path d="M1520,240 C1380,190 1330,330 1410,450 C1490,570 1290,600 1190,500 C1110,420 1240,340 1140,260" strokeOpacity="0.18" />
                         <path d="M1480,120 C1340,80 1260,220 1350,340 C1440,460 1230,500 1130,400" strokeOpacity="0.14" strokeDasharray="3 5" />
@@ -376,9 +480,9 @@ export const PublicProductsPage: React.FC = () => {
 
                       {/* RIGHT SIDE NODES & CONSTELLATION POINTS */}
                       <g fill="#00c2ff">
-                        <circle cx="1370" cy="220" r="4" fillOpacity="0.4" filter={`url(#nodeGlow_${product.id})`} />
+                        <circle cx="1370" cy="220" r="4" fillOpacity="0.4" filter={`url(#nodeGlow_${cleanId})`} />
                         <circle cx="1370" cy="220" r="2" fillOpacity="0.9" />
-                        <circle cx="1160" cy="460" r="3.5" fillOpacity="0.3" filter={`url(#nodeGlow_${product.id})`} />
+                        <circle cx="1160" cy="460" r="3.5" fillOpacity="0.3" filter={`url(#nodeGlow_${cleanId})`} />
                         <circle cx="1160" cy="460" r="1.5" fillOpacity="0.85" />
                         <circle cx="1280" cy="340" r="2" fillOpacity="0.5" />
                         <circle cx="1420" cy="400" r="2.5" fillOpacity="0.4" />
