@@ -1,30 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
-import { LoginModal } from '../components/LoginModal';
-import { QuizModal } from '../components/QuizModal';
+import { BlogSidebar, POPULAR_BLOG_TAGS } from '../components/BlogSidebar';
 import { blogService, BlogItem } from '../services/blogService';
+import { REQUIN_BLOGS } from '../data/requinData';
 import { getMediaUrl } from '../utils/mediaUrl';
 import {
   Calendar,
   User,
   ArrowRight,
   Search,
-  Loader2,
   BookOpen,
   Sparkles,
+  Clock,
+  Tag,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Mail,
+  Check,
 } from 'lucide-react';
+
+const ITEMS_PER_PAGE = 6;
 
 export const PublicBlogsPage: React.FC = () => {
   const [blogs, setBlogs] = useState<BlogItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const [selectedTag, setSelectedTag] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const navigate = useNavigate();
 
@@ -34,9 +39,15 @@ export const PublicBlogsPage: React.FC = () => {
       try {
         setLoading(true);
         const res = await blogService.getPublishedBlogs();
-        if (res.data) setBlogs(res.data);
-      } catch (err: any) {
-        setError(err.message || 'Failed to load blog articles.');
+        if (res.data && res.data.length > 0) {
+          setBlogs(res.data);
+        } else {
+          // Fallback to offline / pre-populated real blogs from requinData
+          setBlogs(REQUIN_BLOGS as unknown as BlogItem[]);
+        }
+      } catch (err) {
+        console.warn('Could not reach backend blogs API, using loaded publications fallback.', err);
+        setBlogs(REQUIN_BLOGS as unknown as BlogItem[]);
       } finally {
         setLoading(false);
       }
@@ -44,23 +55,75 @@ export const PublicBlogsPage: React.FC = () => {
     fetchBlogs();
   }, []);
 
-  const categories = ['All', ...Array.from(new Set(blogs.map((b) => b.category)))];
+  // Filter blogs by search term and selected popular tag
+  const filteredBlogs = useMemo(() => {
+    return blogs.filter((b) => {
+      const term = searchTerm.toLowerCase().trim();
+      const matchesSearch =
+        !term ||
+        b.title.toLowerCase().includes(term) ||
+        (b.shortDescription || '').toLowerCase().includes(term) ||
+        (b.tags || []).some((t) => t.toLowerCase().includes(term));
 
-  const filteredBlogs = blogs.filter((b) => {
-    const matchesSearch =
-      b.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      b.shortDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      b.tags.some((t) => t.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesTag =
+        selectedTag === 'All' ||
+        (b.tags || []).some((t) => {
+          const tClean = t.toLowerCase().replace(/[^a-z0-9]/g, '');
+          const selClean = selectedTag.toLowerCase().replace(/[^a-z0-9]/g, '');
+          return tClean === selClean || t.toLowerCase() === selectedTag.toLowerCase();
+        }) ||
+        (b.category && b.category.toLowerCase().includes(selectedTag.toLowerCase())) ||
+        b.title.toLowerCase().includes(selectedTag.toLowerCase()) ||
+        (b.shortDescription || '').toLowerCase().includes(selectedTag.toLowerCase());
 
-    const matchesCat =
-      selectedCategory === 'All' ? true : b.category.toLowerCase() === selectedCategory.toLowerCase();
+      return matchesSearch && matchesTag;
+    });
+  }, [blogs, searchTerm, selectedTag]);
 
-    return matchesSearch && matchesCat;
-  });
+  // Reset to page 1 on filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedTag]);
+
+  // Paginated blogs list
+  const totalPages = Math.ceil(filteredBlogs.length / ITEMS_PER_PAGE) || 1;
+  const paginatedBlogs = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredBlogs.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredBlogs, currentPage]);
+
+  const featuredBlog = useMemo(() => {
+    if (currentPage === 1 && !searchTerm && selectedTag === 'All') {
+      return filteredBlogs[0] || null;
+    }
+    return null;
+  }, [filteredBlogs, currentPage, searchTerm, selectedTag]);
+
+  const gridBlogs = useMemo(() => {
+    if (featuredBlog && currentPage === 1) {
+      return paginatedBlogs.slice(1);
+    }
+    return paginatedBlogs;
+  }, [paginatedBlogs, featuredBlog, currentPage]);
+
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return 'Recent';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+    } catch {
+      return dateStr;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#F5FAFD] text-[#0B1726] flex flex-col font-sans selection:bg-[#08B9E8]/20 selection:text-[#08B9E8] relative overflow-hidden">
-      {/* Background Technology-Inspired Ambience & Keyframe Animations (Services Theme) */}
+      {/* Background Technology-Inspired Ambience & Keyframe Animations (Matching Services Theme) */}
       <style>{`
         @keyframes ambientFloat {
           0%, 100% {
@@ -109,19 +172,19 @@ export const PublicBlogsPage: React.FC = () => {
       ======================================================== */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         {/* Top-Left Ambient Cyan Glow */}
-        <div className="absolute -top-24 -left-24 w-[650px] h-[500px] bg-[radial-gradient(circle_at_30%_30%,rgba(8,185,232,0.14),transparent_65%)] blur-3xl animate-ambient-float" />
+        <div className="absolute -top-24 -left-24 w-[700px] h-[550px] bg-[radial-gradient(circle_at_30%_30%,rgba(8,185,232,0.12),transparent_65%)] blur-3xl animate-ambient-float" />
         
         {/* Top-Right Soft Blue/Cyan Glow */}
-        <div className="absolute -top-16 -right-16 w-[600px] h-[450px] bg-[radial-gradient(circle_at_70%_30%,rgba(0,194,255,0.12),transparent_65%)] blur-3xl animate-ambient-float" style={{ animationDelay: '-6s' }} />
+        <div className="absolute -top-16 -right-16 w-[650px] h-[500px] bg-[radial-gradient(circle_at_70%_30%,rgba(0,194,255,0.10),transparent_65%)] blur-3xl animate-ambient-float" style={{ animationDelay: '-6s' }} />
         
         {/* Bottom-Left Ambient Cyan Glow */}
-        <div className="absolute -bottom-20 -left-12 w-[550px] h-[450px] bg-[radial-gradient(circle_at_40%_70%,rgba(8,185,232,0.10),transparent_65%)] blur-3xl animate-ambient-float" style={{ animationDelay: '-10s' }} />
+        <div className="absolute -bottom-20 -left-12 w-[600px] h-[500px] bg-[radial-gradient(circle_at_40%_70%,rgba(8,185,232,0.08),transparent_65%)] blur-3xl animate-ambient-float" style={{ animationDelay: '-10s' }} />
         
         {/* Bottom-Right Subtle Blue Glow */}
-        <div className="absolute -bottom-20 -right-12 w-[600px] h-[480px] bg-[radial-gradient(circle_at_70%_70%,rgba(2,132,199,0.08),transparent_65%)] blur-3xl animate-ambient-float" style={{ animationDelay: '-3s' }} />
+        <div className="absolute -bottom-20 -right-12 w-[650px] h-[520px] bg-[radial-gradient(circle_at_70%_70%,rgba(2,132,199,0.07),transparent_65%)] blur-3xl animate-ambient-float" style={{ animationDelay: '-3s' }} />
 
         {/* Center subtle light depth */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] bg-[radial-gradient(circle,rgba(255,255,255,0.7),transparent_70%)] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[700px] bg-[radial-gradient(circle,rgba(255,255,255,0.7),transparent_70%)] pointer-events-none" />
 
         {/* Tech Blueprint Micro-Grid Pattern */}
         <div 
@@ -134,7 +197,7 @@ export const PublicBlogsPage: React.FC = () => {
       </div>
 
       {/* ========================================================
-          BACKGROUND LAYER 2: Subtle Digital Network & Flowing Lines Pattern (Services Theme)
+          BACKGROUND LAYER 2: Subtle Digital Network & Constellation Nodes (Services Theme)
       ======================================================== */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none z-0 animate-network-pulse"
@@ -201,227 +264,370 @@ export const PublicBlogsPage: React.FC = () => {
           <circle cx="74%" cy="14%" r="3" fillOpacity="0.3" />
           <circle cx="98%" cy="25%" r="2" fillOpacity="0.4" />
         </g>
-
-        {/* BOTTOM-LEFT & BOTTOM-RIGHT CORNER NODES */}
-        <g stroke="url(#blogNetGrad)" strokeWidth="1.2" fill="none">
-          <line x1="3%" y1="78%" x2="9%" y2="88%" />
-          <line x1="9%" y1="88%" x2="16%" y2="82%" />
-          <line x1="97%" y1="76%" x2="91%" y2="86%" />
-          <line x1="91%" y1="86%" x2="83%" y2="80%" />
-        </g>
-        <g fill="#08B9E8">
-          <circle cx="3%" cy="78%" r="2.5" fillOpacity="0.4" />
-          <circle cx="9%" cy="88%" r="3" fillOpacity="0.3" />
-          <circle cx="16%" cy="82%" r="2" fillOpacity="0.5" />
-          <circle cx="97%" cy="76%" r="2.5" fillOpacity="0.4" />
-          <circle cx="91%" cy="86%" r="3" fillOpacity="0.3" />
-          <circle cx="83%" cy="80%" r="2" fillOpacity="0.5" />
-        </g>
       </svg>
 
-      {/* ========================================================
-          BACKGROUND LAYER 3: Subtle Flowing Wave Curves (Near Bottom)
-      ======================================================== */}
-      <div className="absolute inset-x-0 bottom-0 h-48 pointer-events-none z-0 overflow-hidden opacity-75 animate-wave-float">
-        <svg
-          viewBox="0 0 1440 200"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full preserve-3d"
-        >
-          <path
-            d="M-50,130 C220,70 540,170 880,100 C1180,40 1350,140 1500,90"
-            stroke="#08B9E8"
-            strokeWidth="1.5"
-            strokeOpacity="0.12"
-            strokeDasharray="5 7"
-          />
-          <path
-            d="M-50,165 C300,110 650,200 1000,125 C1300,65 1420,150 1500,120"
-            stroke="#00c2ff"
-            strokeWidth="1.2"
-            strokeOpacity="0.10"
-          />
-        </svg>
-      </div>
+      {/* Top Navigation */}
+      <Navbar onNavigateSection={(sec) => navigate(`/#${sec}`)} />
 
-      <Navbar
-        onOpenLogin={() => setIsLoginOpen(true)}
-        onOpenQuiz={() => setIsQuizOpen(true)}
-        onNavigateSection={(sectionId) => {
-          navigate(`/#${sectionId}`);
-        }}
-      />
-
+      {/* Main Blog Publications Content */}
       <main className="flex-1 pt-32 pb-24 text-left relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Breadcrumb & Navigation */}
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-6">
-            <Link to="/" className="hover:text-[#08B9E8] transition-colors">
+          
+          {/* Breadcrumb Navigation */}
+          <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-500 mb-8">
+            <Link to="/" className="hover:text-[#0284c7] transition-colors">
               Home
             </Link>
-            <span>/</span>
-            <span className="text-[#08B9E8] font-bold">Blogs & Insights</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <span className="text-[#0284c7]">Blog & Publications</span>
           </div>
 
-          {/* Page Hero Header */}
-          <div className="max-w-3xl mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E1F7FD] border border-[#08B9E8]/30 text-[#08B9E8] text-xs sm:text-sm font-bold mb-4 shadow-xs">
-              <Sparkles className="w-4 h-4 text-[#08B9E8]" />
-              <span>Latest Updates & Engineering Insights</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#061827] leading-[1.12] mb-4">
-              Requin Tech &{' '}
-              <span className="bg-gradient-to-r from-[#08B9E8] to-[#0088EE] bg-clip-text text-transparent">
-                Software Insights
-              </span>
+          {/* Section Hero Header Banner */}
+          <div className="text-center py-6 sm:py-10 relative mb-12">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#E0F7FE] border border-[#08B9E8]/30 text-[#0284c7] text-xs sm:text-sm font-bold uppercase tracking-wider mb-4 shadow-sm">
+              <BookOpen className="w-4 h-4 text-[#08B9E8]" />
+              <span>REQUIN INSIGHTS & EDITORIAL PUBLICATIONS</span>
+            </span>
+
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#0B1726] tracking-tight">
+              Insights, Architecture & <span className="text-[#0284c7]">Technology Trends.</span>
             </h1>
-            <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-normal">
-              In-depth architectural analyses, EdTech developments, cloud transformation playbooks, and modern enterprise software practices published by the Requin engineering team.
+
+            <p className="text-slate-600 text-base sm:text-lg lg:text-xl mt-4 max-w-3xl mx-auto leading-relaxed font-normal">
+              Stay ahead with curated perspectives on enterprise software engineering, AI breakthroughs, cloud solutions, academic tools, and digital transformation.
             </p>
           </div>
 
-          {/* Search & Categories Bar (visible when blogs exist) */}
-          {blogs.length > 0 && (
-            <div className="bg-white/95 border border-slate-200/90 rounded-2xl p-4 sm:p-5 mb-10 flex flex-col md:flex-row items-center justify-between gap-4 backdrop-blur-md shadow-sm">
-              {/* Search Input */}
-              <div className="relative w-full md:w-80">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  placeholder="Search articles or topics..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-[#F5FAFD] border border-slate-200 text-xs sm:text-sm text-[#0B1726] placeholder:text-slate-400 focus:outline-none focus:border-[#08B9E8] transition-colors shadow-2xs"
-                />
-              </div>
+          {/* Instant Search Bar */}
+          <div className="mb-6">
+            <div className="relative w-full max-w-2xl mx-auto">
+              <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search articles by title, keywords, or topics..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-11 pr-10 py-3 rounded-2xl bg-white border border-slate-200/90 text-xs sm:text-sm text-[#0B1726] placeholder:text-slate-400 focus:outline-none focus:border-[#08B9E8] transition-colors shadow-xs"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
 
-              {/* Category Pills */}
-              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none w-full md:w-auto pb-1 md:pb-0">
-                {categories.map((cat) => (
+          {/* Active Filters Bar (Matching Image 2 - Appears when a tag is selected from sidebar or search is active) */}
+          {(selectedTag !== 'All' || searchTerm) && (
+            <div className="mb-8 flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs sm:text-sm animate-in fade-in duration-200">
+              <span className="text-slate-600 font-medium">Active filters:</span>
+
+              {selectedTag !== 'All' && (
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0E2442] border border-[#08B9E8]/40 text-[#00c2ff] font-semibold shadow-xs">
+                  <span>Tag: {selectedTag}</span>
                   <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                      selectedCategory === cat
-                        ? 'bg-[#08B9E8] text-[#071827] shadow-sm shadow-[#08B9E8]/30 font-bold'
-                        : 'bg-white text-slate-600 hover:text-[#061827] hover:bg-[#E8F7FC] border border-slate-200'
-                    }`}
+                    onClick={() => setSelectedTag('All')}
+                    className="hover:text-red-400 hover:bg-[#163761] p-0.5 rounded-full transition-colors cursor-pointer"
+                    title="Remove tag filter"
                   >
-                    {cat}
+                    <X className="w-3.5 h-3.5" />
                   </button>
-                ))}
-              </div>
+                </span>
+              )}
+
+              {searchTerm && (
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0E2442] border border-[#08B9E8]/40 text-[#00c2ff] font-semibold shadow-xs">
+                  <span>Search: "{searchTerm}"</span>
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="hover:text-red-400 hover:bg-[#163761] p-0.5 rounded-full transition-colors cursor-pointer"
+                    title="Clear search filter"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </span>
+              )}
+
+              <button
+                onClick={() => {
+                  setSelectedTag('All');
+                  setSearchTerm('');
+                }}
+                className="text-[#0284c7] hover:text-[#0369a1] underline font-bold text-xs sm:text-sm cursor-pointer ml-1"
+              >
+                Clear all filters
+              </button>
             </div>
           )}
 
-          {/* Blog Cards Grid */}
-          {loading ? (
-            <div className="py-24 text-center">
-              <Loader2 className="w-10 h-10 text-[#08B9E8] animate-spin mx-auto mb-4" />
-              <p className="text-sm font-medium text-slate-500">Loading publications from database...</p>
-            </div>
-          ) : error ? (
-            <div className="p-8 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 text-center">
-              <p className="text-sm font-medium">{error}</p>
-            </div>
-          ) : blogs.length === 0 ? (
-            <div className="py-24 text-center bg-white/95 rounded-3xl border border-slate-200/90 max-w-2xl mx-auto px-6 shadow-sm">
-              <div className="w-16 h-16 rounded-2xl bg-[#E8F7FC] text-[#08B9E8] flex items-center justify-center mx-auto mb-5 border border-[#08B9E8]/30 shadow-xs">
-                <BookOpen className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-[#061827] mb-2">No Articles Published Yet</h3>
-              <p className="text-sm text-slate-600 leading-relaxed max-w-md mx-auto font-normal">
-                Our engineering team will publish upcoming technical architecture deep dives, case studies, and EdTech insights here. Check back soon!
-              </p>
-            </div>
-          ) : filteredBlogs.length === 0 ? (
-            <div className="py-20 text-center bg-white/95 rounded-2xl border border-slate-200">
-              <BookOpen className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-              <p className="text-base font-bold text-[#061827]">No articles matched your search</p>
-              <p className="text-xs text-slate-500 mt-1">Try another search keyword or reset the category filter.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredBlogs.map((blog) => (
-                <article
-                  key={blog.id}
-                  onClick={() => navigate(`/blog/${blog.slug}`)}
-                  className="bg-white rounded-3xl border border-slate-200/90 hover:border-[#08B9E8]/60 transition-all duration-300 hover:-translate-y-2 shadow-[0_4px_20px_-4px_rgba(8,185,232,0.08),0_2px_8px_-2px_rgba(11,23,38,0.04)] hover:shadow-[0_20px_45px_-10px_rgba(0,194,255,0.25),0_8px_16px_-4px_rgba(11,23,38,0.06)] flex flex-col justify-between overflow-hidden cursor-pointer group"
+          {/* ========================================================
+              2-COLUMN CONTENT: Articles on Left + Sidebar (Recent Posts & Newsletter) on Right
+          ======================================================== */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+            
+            {/* ========================================================
+                LEFT COLUMN (8 COLS): Featured Hero + Blog Cards Grid + Pagination
+            ======================================================== */}
+            <div className="lg:col-span-8 space-y-10">
+              
+              {/* FEATURED HERO ARTICLE CARD (When on Page 1 with no strict filters) */}
+              {featuredBlog && (
+                <div
+                  onClick={() => navigate(`/blog/${featuredBlog.slug}`)}
+                  className="bg-white rounded-3xl border border-slate-200/90 shadow-lg hover:shadow-2xl hover:border-[#08B9E8]/60 transition-all duration-300 p-6 sm:p-8 cursor-pointer group relative overflow-hidden flex flex-col space-y-6"
                 >
-                  <div className="relative h-52 overflow-hidden bg-slate-100">
+                  {/* Soft subtle ambient cyan glow */}
+                  <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#00c2ff]/10 rounded-full blur-3xl pointer-events-none group-hover:opacity-100 opacity-60 transition-opacity" />
+
+                  {/* Cover Image Showcase */}
+                  <div className="relative rounded-2xl overflow-hidden aspect-video bg-slate-100 border border-slate-200/80 shadow-sm">
                     <img
-                      src={getMediaUrl(blog.featuredImage)}
-                      alt={blog.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      src={getMediaUrl(featuredBlog.featuredImage || (featuredBlog as any).image)}
+                      alt={featuredBlog.title}
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                        (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
                       }}
                     />
-                    <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md border border-slate-200 text-[11px] font-bold text-[#08B9E8] shadow-xs">
-                      {blog.category}
-                    </span>
+                    <div className="absolute top-3 left-3 bg-[#0284c7] text-white text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-[#BAE6FD]" />
+                      <span>Featured Story</span>
+                    </div>
                   </div>
 
-                  <div className="p-6 flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center gap-3 text-xs text-slate-500 mb-3 font-medium">
-                        <span className="flex items-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5 text-[#08B9E8]" />
-                          <span>{blog.publishedDate}</span>
-                        </span>
-                        <span>·</span>
-                        <span className="flex items-center gap-1.5 truncate">
-                          <User className="w-3.5 h-3.5 text-slate-400" />
-                          <span>{blog.author}</span>
-                        </span>
-                      </div>
-
-                      <h3 className="text-lg font-bold text-[#061827] group-hover:text-[#08B9E8] transition-colors leading-snug line-clamp-2 mb-3">
-                        {blog.title}
-                      </h3>
-
-                      <p className="text-slate-600 text-xs sm:text-sm leading-relaxed line-clamp-3 mb-4">
-                        {blog.shortDescription}
-                      </p>
+                  {/* Article Details & CTA */}
+                  <div className="space-y-3.5 text-left flex flex-col justify-center">
+                    <div className="flex items-center gap-2.5 flex-wrap text-xs">
+                      <span className="px-3 py-1 rounded-full bg-[#E0F7FE] border border-[#08B9E8]/30 text-[#0284c7] font-bold">
+                        {featuredBlog.category}
+                      </span>
+                      <span className="text-slate-400">·</span>
+                      <span className="text-slate-500 font-medium flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5 text-[#08B9E8]" />
+                        {(featuredBlog as any).readTime || '5 min read'}
+                      </span>
                     </div>
 
-                    <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                      <div className="flex flex-wrap gap-1.5">
-                        {blog.tags.slice(0, 2).map((t, i) => (
-                          <span
-                            key={i}
-                            className="text-[10px] px-2 py-0.5 rounded bg-[#E8F7FC] text-[#08B9E8] border border-[#08B9E8]/20 font-semibold"
-                          >
-                            #{t}
-                          </span>
-                        ))}
+                    <h2 className="text-2xl sm:text-3xl font-black text-[#0B1726] group-hover:text-[#0284c7] transition-colors duration-200 tracking-tight leading-snug">
+                      {featuredBlog.title}
+                    </h2>
+
+                    <p className="text-slate-600 text-sm sm:text-base leading-relaxed line-clamp-3 font-normal">
+                      {featuredBlog.shortDescription}
+                    </p>
+
+                    <div className="pt-2 flex items-center justify-between border-t border-slate-100">
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <User className="w-3.5 h-3.5 text-[#08B9E8]" />
+                        <span className="font-semibold text-slate-700">{featuredBlog.author || 'Requin Team'}</span>
+                        <span>·</span>
+                        <span>{formatDate(featuredBlog.publishedDate || featuredBlog.createdAt)}</span>
                       </div>
 
-                      <span className="inline-flex items-center gap-1 text-xs font-bold text-[#08B9E8] group-hover:translate-x-1 transition-transform">
-                        <span>Read More</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                      <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#0284c7] group-hover:text-[#00a6e0]">
+                        <span>Read Story</span>
+                        <ArrowRight className="w-4 h-4 text-[#08B9E8] transition-transform duration-200 group-hover:translate-x-1.5" />
                       </span>
                     </div>
                   </div>
-                </article>
-              ))}
+
+                  {/* Animated Bottom Cyan Progress Line */}
+                  <div className="absolute bottom-0 inset-x-0 h-1 bg-slate-100">
+                    <div className="h-full w-0 bg-gradient-to-r from-[#08B9E8] to-[#00c2ff] transition-all duration-500 ease-out group-hover:w-full" />
+                  </div>
+                </div>
+              )}
+
+              {/* ARTICLE CARDS GRID */}
+              {loading ? (
+                <div className="py-24 text-center">
+                  <div className="w-10 h-10 border-3 border-[#08B9E8] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                  <p className="text-sm font-medium text-slate-500">Loading publications from repository...</p>
+                </div>
+              ) : filteredBlogs.length === 0 ? (
+                <div className="py-20 text-center bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+                  <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                  <h3 className="text-lg font-bold text-[#0B1726]">No Articles Found</h3>
+                  <p className="text-sm text-slate-500 mt-1 max-w-md mx-auto">
+                    We couldn't find any articles matching "{searchTerm}". Try clearing your filters or search keywords.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setSearchTerm('');
+                      setSelectedTag('All');
+                    }}
+                    className="mt-5 px-5 py-2 rounded-xl bg-[#0284c7] text-white text-xs font-bold hover:bg-[#0369a1] transition-colors shadow-sm cursor-pointer"
+                  >
+                    Clear All Filters
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {gridBlogs.map((b) => (
+                    <article
+                      key={b.id || b.slug}
+                      onClick={() => navigate(`/blog/${b.slug}`)}
+                      className="bg-white rounded-3xl border border-slate-200/90 shadow-md hover:shadow-2xl hover:border-[#08B9E8]/60 transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer relative"
+                    >
+                      {/* Subtle top-right ambient glow */}
+                      <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#00c2ff]/10 rounded-full blur-2xl pointer-events-none group-hover:opacity-100 opacity-50" />
+
+                      {/* Card Thumbnail Frame */}
+                      <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
+                        <img
+                          src={getMediaUrl(b.featuredImage || (b as any).image)}
+                          alt={b.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
+                          }}
+                        />
+                        <div className="absolute top-3 left-3 bg-[#E0F7FE]/95 backdrop-blur-sm border border-[#08B9E8]/30 text-[#0284c7] text-[11px] font-bold px-3 py-0.5 rounded-full shadow-xs">
+                          {b.category}
+                        </div>
+                      </div>
+
+                      {/* Card Body */}
+                      <div className="p-6 flex-1 flex flex-col justify-between space-y-4 text-left">
+                        <div className="space-y-2.5">
+                          {/* Meta: Read time & Date */}
+                          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
+                            <span className="flex items-center gap-1 text-slate-500">
+                              <Calendar className="w-3.5 h-3.5 text-[#08B9E8]" />
+                              {formatDate(b.publishedDate || b.createdAt)}
+                            </span>
+                            <span>·</span>
+                            <span className="flex items-center gap-1 text-slate-500">
+                              <Clock className="w-3.5 h-3.5 text-[#08B9E8]" />
+                              {(b as any).readTime || '5 min read'}
+                            </span>
+                          </div>
+
+                          {/* Title */}
+                          <h3 className="text-lg sm:text-xl font-bold text-[#0B1726] group-hover:text-[#0284c7] transition-colors duration-200 leading-snug line-clamp-2">
+                            {b.title}
+                          </h3>
+
+                          {/* Excerpt */}
+                          <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 font-normal">
+                            {b.shortDescription}
+                          </p>
+                        </div>
+
+                        {/* Footer: Author & Read Link */}
+                        <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                          <div className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold truncate max-w-[150px]">
+                            <User className="w-3.5 h-3.5 text-[#08B9E8] shrink-0" />
+                            <span className="truncate">{b.author || 'Requin Team'}</span>
+                          </div>
+
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-[#0284c7] group-hover:text-[#00a6e0] transition-colors shrink-0">
+                            <span>Read Article</span>
+                            <ArrowRight className="w-3.5 h-3.5 text-[#08B9E8] transition-transform duration-200 group-hover:translate-x-1" />
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Animated Bottom Cyan Line */}
+                      <div className="h-1 w-full bg-slate-100 overflow-hidden">
+                        <div className="h-full w-0 bg-gradient-to-r from-[#08B9E8] to-[#00c2ff] transition-all duration-400 ease-out group-hover:w-full" />
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+
+              {/* PAGINATION BAR */}
+              {totalPages > 1 && (
+                <div className="mt-12 flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => {
+                      setCurrentPage((prev) => Math.max(1, prev - 1));
+                      window.scrollTo({ top: 400, behavior: 'smooth' });
+                    }}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-[#E0F7FE] hover:text-[#0284c7] disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-2xs flex items-center gap-1 cursor-pointer"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    <span>Previous</span>
+                  </button>
+
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }).map((_, idx) => {
+                      const pageNum = idx + 1;
+                      if (
+                        pageNum === 1 ||
+                        pageNum === totalPages ||
+                        (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
+                      ) {
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => {
+                              setCurrentPage(pageNum);
+                              window.scrollTo({ top: 400, behavior: 'smooth' });
+                            }}
+                            className={`w-9 h-9 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                              currentPage === pageNum
+                                ? 'bg-[#0284c7] text-white shadow-md shadow-[#0284c7]/30'
+                                : 'bg-white text-slate-600 hover:bg-[#E8F7FC] hover:text-[#0284c7] border border-slate-200'
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      } else if (
+                        pageNum === currentPage - 2 ||
+                        pageNum === currentPage + 2
+                      ) {
+                        return (
+                          <span key={pageNum} className="px-1 text-slate-400 text-xs font-bold">
+                            ...
+                          </span>
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setCurrentPage((prev) => Math.min(totalPages, prev + 1));
+                      window.scrollTo({ top: 400, behavior: 'smooth' });
+                    }}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-[#E0F7FE] hover:text-[#0284c7] disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-2xs flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>Next</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+
+            {/* ========================================================
+                RIGHT COLUMN (4 COLS): STICKY SIDEBAR (Popular Tags, Recent Posts & Newsletter)
+            ======================================================== */}
+            <div className="lg:col-span-4">
+              <BlogSidebar
+                recentPosts={blogs}
+                selectedTag={selectedTag}
+                onSelectTag={setSelectedTag}
+              />
+            </div>
+
+          </div>
+
         </div>
       </main>
 
-      <Footer
-        onNavigateSection={(sec) => navigate(`/#${sec}`)}
-        onOpenQuiz={() => setIsQuizOpen(true)}
-      />
-
-      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      <QuizModal
-        isOpen={isQuizOpen}
-        onClose={() => setIsQuizOpen(false)}
-        onSelectService={() => setIsQuizOpen(false)}
-      />
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
+
+export default PublicBlogsPage;

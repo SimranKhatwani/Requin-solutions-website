@@ -86,6 +86,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
 
             <button
+              onClick={() => {
+                navigate('/blog');
+                setMobileMenuOpen(false);
+              }}
+              className="hover:text-[#00c2ff] transition-colors duration-150 py-1 focus:outline-none cursor-pointer"
+            >
+              Blogs
+            </button>
+
+            <button
               onClick={() => handleNavClick('contact')}
               className="hover:text-[#00c2ff] transition-colors duration-150 py-1 focus:outline-none cursor-pointer"
             >
@@ -147,6 +157,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="block w-full text-left py-2 text-base font-semibold text-white hover:text-[#00c2ff]"
           >
             Our Products
+          </button>
+          <button
+            onClick={() => {
+              navigate('/blog');
+              setMobileMenuOpen(false);
+            }}
+            className="block w-full text-left py-2 text-base font-semibold text-white hover:text-[#00c2ff]"
+          >
+            Blogs
           </button>
           <button
             onClick={() => handleNavClick('contact')}

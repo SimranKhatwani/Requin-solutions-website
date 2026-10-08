@@ -40,7 +40,9 @@ export default function App() {
         <Route path="/our-products" element={<PublicProductsPage />} />
         <Route path="/projects" element={<PublicProjectsPage />} />
         <Route path="/blogs" element={<PublicBlogsPage />} />
+        <Route path="/blog" element={<PublicBlogsPage />} />
         <Route path="/blog/:slug" element={<PublicBlogDetailPage />} />
+        <Route path="/blogs/:slug" element={<PublicBlogDetailPage />} />
         <Route path="/careers" element={<PublicCareersPage />} />
         <Route path="/our-stories" element={<PublicStoriesPage />} />
         <Route path="/quiz" element={<PublicQuizPage />} />
