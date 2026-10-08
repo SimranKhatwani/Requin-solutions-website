@@ -9,6 +9,7 @@ import { PublicServiceDetailPage } from './pages/PublicServiceDetailPage';
 import { PublicProductsPage } from './pages/PublicProductsPage';
 import { PublicQuizPage } from './pages/PublicQuizPage';
 import { PublicCareersPage } from './pages/PublicCareersPage';
+import { PublicTermsPage } from './pages/PublicTermsPage';
 
 // Admin CMS Components
 import { AdminLogin } from './admin/AdminLogin';
@@ -43,6 +44,9 @@ export default function App() {
         <Route path="/careers" element={<PublicCareersPage />} />
         <Route path="/our-stories" element={<PublicStoriesPage />} />
         <Route path="/quiz" element={<PublicQuizPage />} />
+        <Route path="/termsandconditions" element={<PublicTermsPage />} />
+        <Route path="/terms-and-conditions" element={<PublicTermsPage />} />
+        <Route path="/terms" element={<PublicTermsPage />} />
         <Route path="/contact" element={<PublicHomePage initialScrollTo="contact" />} />
 
         {/* ========================================================

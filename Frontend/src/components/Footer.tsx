@@ -244,7 +244,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               </li>
               <li>
                 <button
-                  onClick={() => setActiveModal('Terms and Conditions')}
+                  onClick={() => navigate('/termsandconditions')}
                   className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Terms and Conditions
@@ -411,8 +411,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
         onClose={() => setActiveModal(null)}
       />
 
-      {/* Informative Modal Overlay for Terms & Careers */}
-      {activeModal && activeModal !== 'FAQs' && (
+      {/* Informative Modal Overlay for Career */}
+      {activeModal === 'Career' && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#071827]/85 backdrop-blur-md"
           onClick={() => setActiveModal(null)}
@@ -424,7 +424,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
             <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-5">
               <h3 className="text-xl font-bold text-white flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-[#08B9E8]" />
-                <span>{activeModal}</span>
+                <span>Careers at Requin</span>
               </h3>
               <button
                 onClick={() => setActiveModal(null)}
@@ -435,44 +435,35 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
             </div>
 
             <div className="text-sm text-slate-300 space-y-4 leading-relaxed font-normal">
-              {activeModal === 'Terms and Conditions' && (
-                <>
-                  <p>
-                    Welcome to Requin Solutions Pvt Ltd. By accessing our services, enterprise applications, and advisory portals, you agree to comply with our standardized development, deployment, and service agreements.
-                  </p>
-                  <p>
-                    All deliverables, custom software architectures, and intellectual property developed under contract are securely transferred to client ownership upon milestone completion and contractual settlement.
-                  </p>
-                  <p>
-                    For detailed legal documentation or enterprise master service agreements (MSA), contact our legal department at <span className="text-[#08B9E8]">legal@requinsolutions.com</span>.
-                  </p>
-                </>
-              )}
-
-              {activeModal === 'Career' && (
-                <>
-                  <p>
-                    Join our Jaipur engineering hub and global consulting team! We are continually looking for passionate Full-Stack Developers, Cloud Architects, and AI Engineers.
-                  </p>
-                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
-                    <p className="font-semibold text-white">Current Openings:</p>
-                    <ul className="list-disc list-inside text-xs space-y-1 text-slate-300">
-                      <li>Senior React / TypeScript Developer</li>
-                      <li>Node.js / Distributed Systems Architect</li>
-                      <li>DevOps & Kubernetes Cloud Specialist</li>
-                    </ul>
-                  </div>
-                  <p>
-                    Send your portfolio and resume to <span className="text-[#08B9E8]">careers@requinsolutions.com</span>.
-                  </p>
-                </>
-              )}
+              <p>
+                Join our Jaipur engineering hub and global consulting team! We are continually looking for passionate Full-Stack Developers, Cloud Architects, and AI Engineers.
+              </p>
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                <p className="font-semibold text-white">Current Openings:</p>
+                <ul className="list-disc list-inside text-xs space-y-1 text-slate-300">
+                  <li>Senior React / TypeScript Developer</li>
+                  <li>Node.js / Distributed Systems Architect</li>
+                  <li>DevOps & Kubernetes Cloud Specialist</li>
+                </ul>
+              </div>
+              <p>
+                Send your portfolio and resume to <span className="text-[#08B9E8]">careers@requinsolutions.com</span>.
+              </p>
             </div>
 
-            <div className="pt-6 border-t border-white/10 flex justify-end">
+            <div className="pt-6 border-t border-white/10 flex justify-between items-center">
+              <button
+                onClick={() => {
+                  setActiveModal(null);
+                  navigate('/careers');
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-[#08B9E8]/20 hover:bg-[#08B9E8]/30 border border-[#08B9E8]/40 transition-all cursor-pointer"
+              >
+                View Careers Page →
+              </button>
               <button
                 onClick={() => setActiveModal(null)}
-                className="px-5 py-2.5 rounded-xl text-xs font-semibold text-[#071827] bg-[#08B9E8] hover:bg-[#4DD4F5] transition-all cursor-pointer"
+                className="px-5 py-2 rounded-xl text-xs font-semibold text-[#071827] bg-[#08B9E8] hover:bg-[#4DD4F5] transition-all cursor-pointer"
               >
                 Close
               </button>
