@@ -840,7 +840,7 @@ export const AdminLifeAtRequin: React.FC = () => {
         </div>
 
         {/* Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-xl">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar scrollbar-none pb-1 max-w-xl">
           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 shrink-0">
             Category:
           </span>
@@ -1025,7 +1025,7 @@ export const AdminLifeAtRequin: React.FC = () => {
                           </button>
                         </div>
 
-                        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none pb-1">
                           {gallery.photos.slice(0, 6).map((p, pIdx) => {
                             const isThisCover = gallery.image === p.image;
                             return (
@@ -1276,7 +1276,7 @@ export const AdminLifeAtRequin: React.FC = () => {
                           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                             Or click any album photo below to set as cover:
                           </div>
-                          <div className="flex items-center gap-2 overflow-x-auto pb-1 max-h-16">
+                          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none pb-1 max-h-16">
                             {formData.photos.map((p, pIdx) => {
                               const isSelectedCover = formData.image === p.image;
                               return (
@@ -2114,7 +2114,7 @@ export const AdminLifeAtRequin: React.FC = () => {
                 <label className="block text-[11px] font-bold text-slate-600 mb-1.5">
                   Or select from this album's photos ({quickCoverModalGallery.photos.length}):
                 </label>
-                <div className="flex items-center gap-2 overflow-x-auto pb-2">
+                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none pb-2">
                   {quickCoverModalGallery.photos.map((p, idx) => {
                     const isSelected = quickCoverUrl === p.image;
                     return (

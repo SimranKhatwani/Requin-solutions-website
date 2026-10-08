@@ -297,7 +297,7 @@ export const PublicBlogsPage: React.FC = () => {
               </div>
 
               {/* Category Pills */}
-              <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none w-full md:w-auto pb-1 md:pb-0">
                 {categories.map((cat) => (
                   <button
                     key={cat}

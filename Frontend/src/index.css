@@ -43,9 +43,10 @@
   box-shadow: 0 0 24px -6px rgba(8, 185, 232, 0.2);
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Dark Mode Default */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
   background: #071827;
@@ -56,6 +57,35 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #08B9E8;
+}
+
+/* Utility to completely hide visible scrollbars across all browsers */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar,
+.scrollbar-none {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+}
+
+/* Admin panel light scrollbar theme for light backgrounds */
+.bg-slate-50 ::-webkit-scrollbar-track,
+.bg-white ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+.bg-slate-50 ::-webkit-scrollbar-thumb,
+.bg-white ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.bg-slate-50 ::-webkit-scrollbar-thumb:hover,
+.bg-white ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 /* Floating Callout Card Keyframes for Experience & Feature Visuals */
@@ -91,5 +121,3 @@
     animation: none !important;
   }
 }
-
-
