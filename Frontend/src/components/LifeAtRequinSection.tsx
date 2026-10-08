@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   Calendar,
   ChevronLeft,
@@ -121,29 +121,47 @@ export const LifeAtRequinSection: React.FC = () => {
 
   const activeModalItem = filteredList[modalActiveIndex] || filteredList[0];
 
-  // Derive photos for the active modal event
-  const allEventPhotos: GalleryPhotoItem[] =
-    activeModalItem?.photos && activeModalItem.photos.length > 0
-      ? activeModalItem.photos
-      : [
-          {
-            id: activeModalItem?.id || 'photo-default',
-            image: activeModalItem?.image || '',
-            year: activeModalItem?.date || '2024',
-            title: activeModalItem?.title || '',
-            caption: activeModalItem?.caption || '',
-          },
-        ];
+  // Derive photos for the active modal event - sorted in descending order of year (e.g., 2026 -> 2025 -> 2024)
+  const allEventPhotos: GalleryPhotoItem[] = useMemo(() => {
+    const raw =
+      activeModalItem?.photos && activeModalItem.photos.length > 0
+        ? [...activeModalItem.photos]
+        : [
+            {
+              id: activeModalItem?.id || 'photo-default',
+              image: activeModalItem?.image || '',
+              year: activeModalItem?.date || '2026',
+              title: activeModalItem?.title || '',
+              caption: activeModalItem?.caption || '',
+            },
+          ];
 
-  const availableYears: string[] =
-    activeModalItem?.years && activeModalItem.years.length > 0
-      ? activeModalItem.years
-      : Array.from(new Set(allEventPhotos.map((p) => p.year).filter(Boolean)));
+    return raw.sort((a, b) => {
+      const yearA = parseInt(String(a.year || '').replace(/\D/g, ''), 10) || 0;
+      const yearB = parseInt(String(b.year || '').replace(/\D/g, ''), 10) || 0;
+      return yearB - yearA; // Descending: 2026 -> 2025 -> 2024
+    });
+  }, [activeModalItem]);
 
-  const displayedPhotos: GalleryPhotoItem[] =
-    modalSelectedYear === 'All'
-      ? allEventPhotos
-      : allEventPhotos.filter((p) => p.year === modalSelectedYear);
+  const availableYears: string[] = useMemo(() => {
+    const rawYears =
+      activeModalItem?.years && activeModalItem.years.length > 0
+        ? [...activeModalItem.years]
+        : Array.from(new Set(allEventPhotos.map((p) => p.year).filter(Boolean)));
+
+    return Array.from(new Set(rawYears)).sort((a, b) => {
+      const yearA = parseInt(String(a).replace(/\D/g, ''), 10) || 0;
+      const yearB = parseInt(String(b).replace(/\D/g, ''), 10) || 0;
+      return yearB - yearA; // Descending: 2026 -> 2025 -> 2024
+    });
+  }, [activeModalItem, allEventPhotos]);
+
+  const displayedPhotos: GalleryPhotoItem[] = useMemo(() => {
+    if (modalSelectedYear === 'All') {
+      return allEventPhotos;
+    }
+    return allEventPhotos.filter((p) => p.year === modalSelectedYear);
+  }, [allEventPhotos, modalSelectedYear]);
 
   const safePhotos: GalleryPhotoItem[] =
     displayedPhotos.length > 0 ? displayedPhotos : allEventPhotos;
@@ -674,7 +692,7 @@ export const LifeAtRequinSection: React.FC = () => {
                 })()}
 
                 {/* Thumbnails Strip with Year Badges */}
-                <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto pb-1 pt-0.5 scrollbar-thin">
+                <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto no-scrollbar scrollbar-none pb-1 pt-0.5">
                   {safePhotos.map((photo, idx) => (
                     <button
                       key={photo.id || idx}

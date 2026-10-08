@@ -19,10 +19,19 @@ export const LifeAtRequinService = {
     }
 
     const allGalleries = await LifeAtRequinModel.findAll();
-    const safePhotos = Array.isArray(photos) ? photos : [];
-    const safeYears = Array.isArray(years) && years.length > 0
+    const safePhotos = (Array.isArray(photos) ? photos : []).sort((a: any, b: any) => {
+      const yearA = parseInt(String(a.year || '').replace(/\D/g, ''), 10) || 0;
+      const yearB = parseInt(String(b.year || '').replace(/\D/g, ''), 10) || 0;
+      return yearB - yearA; // Descending: 2026 -> 2025 -> 2024
+    });
+    const rawYears = Array.isArray(years) && years.length > 0
       ? years
       : Array.from(new Set(safePhotos.map((p: any) => p.year).filter(Boolean)));
+    const safeYears = Array.from(new Set(rawYears)).sort((a: any, b: any) => {
+      const yearA = parseInt(String(a).replace(/\D/g, ''), 10) || 0;
+      const yearB = parseInt(String(b).replace(/\D/g, ''), 10) || 0;
+      return yearB - yearA;
+    });
 
     const newGallery: LifeAtRequinDoc = {
       id: `g-${Date.now()}`,
@@ -58,10 +67,20 @@ export const LifeAtRequinService = {
     }
 
     const { title, category, image, caption, date, photoCount, years, photos, displayOrder, status } = data;
-    const safePhotos = Array.isArray(photos) ? photos : prev.photos;
-    const safeYears = Array.isArray(years) && years.length > 0
+    const rawPhotos = Array.isArray(photos) ? photos : prev.photos;
+    const safePhotos = (Array.isArray(rawPhotos) ? rawPhotos : []).sort((a: any, b: any) => {
+      const yearA = parseInt(String(a.year || '').replace(/\D/g, ''), 10) || 0;
+      const yearB = parseInt(String(b.year || '').replace(/\D/g, ''), 10) || 0;
+      return yearB - yearA; // Descending: 2026 -> 2025 -> 2024
+    });
+    const rawYears = Array.isArray(years) && years.length > 0
       ? years
       : Array.from(new Set(safePhotos.map((p: any) => p.year).filter(Boolean)));
+    const safeYears = Array.from(new Set(rawYears)).sort((a: any, b: any) => {
+      const yearA = parseInt(String(a).replace(/\D/g, ''), 10) || 0;
+      const yearB = parseInt(String(b).replace(/\D/g, ''), 10) || 0;
+      return yearB - yearA;
+    });
 
     const updated = await LifeAtRequinModel.update(id, {
       title: title ?? prev.title,
