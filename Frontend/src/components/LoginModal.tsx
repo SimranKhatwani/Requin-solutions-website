@@ -34,7 +34,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
       await adminAuthService.login(cleanEmail, password);
       setIsSubmitting(false);
       onClose();
-      navigate('/admin');
+      navigate('/ad');
     } catch (err: any) {
       setIsSubmitting(false);
       setErrorMessage(

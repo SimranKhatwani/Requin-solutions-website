@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -14,52 +14,43 @@ import {
   ExternalLink,
   Menu,
   X,
-  ShieldCheck,
-  User,
 } from 'lucide-react';
-import { adminAuthService, AdminProfile } from '../services/adminAuthService';
+import { adminAuthService } from '../services/adminAuthService';
 
 export const AdminLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<AdminProfile | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-
-  useEffect(() => {
-    adminAuthService.getMe().then((res) => {
-      if (res.user) setCurrentUser(res.user);
-    }).catch(() => {});
-  }, []);
 
   const handleLogout = async () => {
     if (window.confirm('Are you sure you want to log out of the Admin Panel?')) {
       await adminAuthService.logout();
-      navigate('/admin/login');
+      navigate('/ad/login');
     }
   };
 
   const navItems = [
-    { label: 'Dashboard', path: '/admin', icon: LayoutDashboard, exact: true },
-    { label: 'Blogs', path: '/admin/blogs', icon: FileText },
-    { label: 'Projects', path: '/admin/projects', icon: FolderGit2 },
-    { label: 'Careers', path: '/admin/careers', icon: Briefcase },
-    { label: 'Life at Requin', path: '/admin/life-at-requin', icon: Sparkles },
-    { label: 'Our Stories', path: '/admin/our-stories', icon: BookOpen },
-    { label: 'Testimonials', path: '/admin/testimonials', icon: MessageSquare },
-    { label: 'Media Library', path: '/admin/media', icon: ImageIcon },
-    { label: 'Settings', path: '/admin/settings', icon: Settings },
+    { label: 'Dashboard', path: '/ad', icon: LayoutDashboard, exact: true },
+    { label: 'Blogs', path: '/ad/blogs', icon: FileText },
+    { label: 'Projects', path: '/ad/projects', icon: FolderGit2 },
+    { label: 'Careers', path: '/ad/careers', icon: Briefcase },
+    { label: 'Life at Requin', path: '/ad/life-at-requin', icon: Sparkles },
+    { label: 'Our Stories', path: '/ad/our-stories', icon: BookOpen },
+    { label: 'Testimonials', path: '/ad/testimonials', icon: MessageSquare },
+    { label: 'Media Library', path: '/ad/media', icon: ImageIcon },
+    { label: 'Settings', path: '/ad/settings', icon: Settings },
   ];
 
   const getPageTitle = () => {
-    if (location.pathname === '/admin') return 'Dashboard Overview';
-    if (location.pathname.startsWith('/admin/blogs')) return 'Blog Management';
-    if (location.pathname.startsWith('/admin/projects')) return 'Project Portfolio';
-    if (location.pathname.startsWith('/admin/careers')) return 'Careers & Openings';
-    if (location.pathname.startsWith('/admin/life-at-requin')) return 'Life at Requin Gallery';
-    if (location.pathname.startsWith('/admin/our-stories')) return 'Our Stories & Milestones';
-    if (location.pathname.startsWith('/admin/testimonials')) return 'Client Feedback & Testimonials';
-    if (location.pathname.startsWith('/admin/media')) return 'Media Library';
-    if (location.pathname.startsWith('/admin/settings')) return 'CMS Settings';
+    if (location.pathname === '/ad' || location.pathname === '/ad/') return 'Dashboard Overview';
+    if (location.pathname.startsWith('/ad/blogs')) return 'Blog Management';
+    if (location.pathname.startsWith('/ad/projects')) return 'Project Portfolio';
+    if (location.pathname.startsWith('/ad/careers')) return 'Careers & Openings';
+    if (location.pathname.startsWith('/ad/life-at-requin')) return 'Life at Requin Gallery';
+    if (location.pathname.startsWith('/ad/our-stories')) return 'Our Stories & Milestones';
+    if (location.pathname.startsWith('/ad/testimonials')) return 'Client Feedback & Testimonials';
+    if (location.pathname.startsWith('/ad/media')) return 'Media Library';
+    if (location.pathname.startsWith('/ad/settings')) return 'CMS Settings';
     return 'Admin Panel';
   };
 
@@ -80,7 +71,7 @@ export const AdminLayout: React.FC = () => {
         } border-r border-slate-800 shadow-xl lg:shadow-none`}
       >
         {/* Brand Area */}
-        <div className="h-20 px-6 flex items-center justify-between border-b border-slate-800 bg-slate-950/60">
+        <div className="h-20 px-6 flex items-center justify-between border-b border-slate-800 bg-slate-950/60 shrink-0">
           <div className="flex items-center gap-3">
             <div className="flex items-center">
               <img
@@ -98,14 +89,14 @@ export const AdminLayout: React.FC = () => {
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+            className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
             aria-label="Close Sidebar"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Navigation Items */}
+        {/* Navigation Items & Quick Links */}
         <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
           <div className="px-3 pb-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
             Content Management
@@ -150,32 +141,16 @@ export const AdminLayout: React.FC = () => {
             </div>
             <span className="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded">Live</span>
           </a>
-        </nav>
 
-        {/* User Card & Logout in Sidebar Footer */}
-        <div className="p-4 border-t border-slate-800 bg-slate-950/40">
-          <div className="flex items-center gap-3 px-2 py-2 mb-2">
-            <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-[#08B9E8] shrink-0 font-bold text-xs">
-              <User className="w-4 h-4" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-white truncate">
-                {currentUser?.name || 'Administrator'}
-              </p>
-              <p className="text-[11px] text-slate-400 truncate">
-                {currentUser?.email || 'admin@requinsolutions.com'}
-              </p>
-            </div>
-          </div>
-
+          {/* Native Sign Out Nav Item */}
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 border border-rose-500/20 transition-colors"
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-rose-500/15 hover:text-rose-400 transition-all duration-200 cursor-pointer group text-left"
           >
-            <LogOut className="w-3.5 h-3.5" />
+            <LogOut className="w-4 h-4 text-slate-400 group-hover:text-rose-400 shrink-0" />
             <span>Sign Out</span>
           </button>
-        </div>
+        </nav>
       </aside>
 
       {/* Main Content Area */}
@@ -185,7 +160,7 @@ export const AdminLayout: React.FC = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              className="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               aria-label="Open Sidebar"
             >
               <Menu className="w-6 h-6" />
@@ -203,11 +178,6 @@ export const AdminLayout: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Database Connected</span>
-            </div>
-
             <a
               href="/"
               target="_blank"

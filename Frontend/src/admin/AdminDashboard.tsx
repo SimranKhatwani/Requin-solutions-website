@@ -9,9 +9,7 @@ import {
   Image as ImageIcon,
   Plus,
   ArrowRight,
-  TrendingUp,
   Clock,
-  CheckCircle2,
   AlertCircle,
   Loader2,
   ExternalLink,
@@ -62,7 +60,7 @@ export const AdminDashboard: React.FC = () => {
         <p className="text-sm">{error || 'Unknown error occurred.'}</p>
         <button
           onClick={loadStats}
-          className="mt-4 px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-semibold hover:bg-rose-700"
+          className="mt-4 px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-semibold hover:bg-rose-700 cursor-pointer"
         >
           Retry
         </button>
@@ -76,7 +74,7 @@ export const AdminDashboard: React.FC = () => {
       count: stats.totalBlogs,
       subtext: `${stats.publishedBlogs} published · ${stats.draftBlogs} draft`,
       icon: FileText,
-      path: '/admin/blogs',
+      path: '/ad/blogs',
       color: 'bg-blue-500',
     },
     {
@@ -84,7 +82,7 @@ export const AdminDashboard: React.FC = () => {
       count: stats.totalProjects,
       subtext: `${stats.publishedProjects} active in public showcase`,
       icon: FolderGit2,
-      path: '/admin/projects',
+      path: '/ad/projects',
       color: 'bg-emerald-500',
     },
     {
@@ -92,7 +90,7 @@ export const AdminDashboard: React.FC = () => {
       count: stats.totalCareers ?? 0,
       subtext: `${stats.publishedCareers ?? 0} active · ${stats.totalApplications ?? 0} applicants`,
       icon: Briefcase,
-      path: '/admin/careers',
+      path: '/ad/careers',
       color: 'bg-cyan-500',
     },
     {
@@ -100,7 +98,7 @@ export const AdminDashboard: React.FC = () => {
       count: stats.totalLifeAtRequin ?? 4,
       subtext: `${stats.publishedLifeAtRequin ?? 4} gallery events published`,
       icon: Sparkles,
-      path: '/admin/life-at-requin',
+      path: '/ad/life-at-requin',
       color: 'bg-pink-500',
     },
     {
@@ -108,7 +106,7 @@ export const AdminDashboard: React.FC = () => {
       count: stats.totalStories,
       subtext: `${stats.publishedStories} milestones published`,
       icon: BookOpen,
-      path: '/admin/our-stories',
+      path: '/ad/our-stories',
       color: 'bg-purple-500',
     },
     {
@@ -116,7 +114,7 @@ export const AdminDashboard: React.FC = () => {
       count: stats.totalMedia,
       subtext: 'Images & documents stored',
       icon: ImageIcon,
-      path: '/admin/media',
+      path: '/ad/media',
       color: 'bg-amber-500',
     },
   ];
@@ -139,7 +137,7 @@ export const AdminDashboard: React.FC = () => {
 
           <div className="flex flex-wrap items-center gap-3 pt-6">
             <button
-              onClick={() => navigate('/admin/blogs?action=new')}
+              onClick={() => navigate('/ad/blogs?action=new')}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs text-slate-950 bg-[#08B9E8] hover:bg-[#4DD4F5] transition-all shadow-md shadow-[#08B9E8]/20 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
@@ -147,7 +145,7 @@ export const AdminDashboard: React.FC = () => {
             </button>
 
             <button
-              onClick={() => navigate('/admin/projects?action=new')}
+              onClick={() => navigate('/ad/projects?action=new')}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" />
@@ -155,7 +153,7 @@ export const AdminDashboard: React.FC = () => {
             </button>
 
             <button
-              onClick={() => navigate('/admin/life-at-requin?action=new')}
+              onClick={() => navigate('/ad/life-at-requin?action=new')}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-[#08B9E8]" />
@@ -163,7 +161,7 @@ export const AdminDashboard: React.FC = () => {
             </button>
 
             <button
-              onClick={() => navigate('/admin/our-stories?action=new')}
+              onClick={() => navigate('/ad/our-stories?action=new')}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" />
@@ -171,7 +169,7 @@ export const AdminDashboard: React.FC = () => {
             </button>
 
             <button
-              onClick={() => navigate('/admin/media')}
+              onClick={() => navigate('/ad/media')}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer"
             >
               <ImageIcon className="w-4 h-4" />
@@ -305,8 +303,6 @@ export const AdminDashboard: React.FC = () => {
               </a>
             </div>
           </div>
-
-
         </div>
       </div>
     </div>

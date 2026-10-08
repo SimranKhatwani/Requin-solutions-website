@@ -46,12 +46,12 @@ export default function App() {
         <Route path="/contact" element={<PublicHomePage initialScrollTo="contact" />} />
 
         {/* ========================================================
-            ADMIN PANEL CMS ROUTES (Protected separate admin interface)
+            ADMIN PANEL CMS ROUTES (Mounted at /ad)
         ======================================================== */}
-        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/ad/login" element={<AdminLogin />} />
 
         <Route
-          path="/admin"
+          path="/ad"
           element={
             <AdminProtectedRoute>
               <AdminLayout />
@@ -68,6 +68,11 @@ export default function App() {
           <Route path="media" element={<AdminMedia />} />
           <Route path="settings" element={<AdminSettings />} />
         </Route>
+
+        {/* Seamless Aliases & Redirects for legacy /admin routes to /ad */}
+        <Route path="/admin/login" element={<Navigate to="/ad/login" replace />} />
+        <Route path="/admin" element={<Navigate to="/ad" replace />} />
+        <Route path="/admin/*" element={<Navigate to="/ad" replace />} />
 
         {/* Catch-all fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

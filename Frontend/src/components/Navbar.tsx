@@ -3,13 +3,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, ArrowRight } from 'lucide-react';
 
 interface NavbarProps {
-  onOpenLogin: () => void;
+  onOpenLogin?: () => void;
   onOpenQuiz?: () => void;
   onNavigateSection: (sectionId: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  onOpenLogin,
   onNavigateSection,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -93,18 +92,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               Contact
             </button>
 
-            {/* Outlined Login Button */}
-            <button
-              onClick={onOpenLogin}
-              className="px-4 py-2 border border-white/70 hover:border-[#00c2ff] hover:text-[#00c2ff] rounded-lg text-sm font-semibold text-white transition-all duration-150 hover:bg-[#00c2ff]/10 focus:outline-none cursor-pointer ml-1"
-            >
-              Login
-            </button>
-
             {/* Solid Get Started CTA Button */}
             <button
               onClick={() => handleNavClick('quiz')}
-              className="inline-flex items-center gap-1.5 px-4.5 py-2 text-md font-semibold text-[#05131f] bg-[#00c2ff] hover:bg-[#38d4ff] rounded-lg transition-all duration-200 shadow-sm hover:shadow-md hover:shadow-[#00c2ff]/25 focus:outline-none active:scale-[0.98] cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4.5 py-2 text-md font-semibold text-[#05131f] bg-[#00c2ff] hover:bg-[#38d4ff] rounded-lg transition-all duration-200 shadow-sm hover:shadow-md hover:shadow-[#00c2ff]/25 focus:outline-none active:scale-[0.98] cursor-pointer ml-2"
             >
               <span>Get Started</span>
               <ArrowRight className="w-4 h-4" />
@@ -114,14 +105,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Menu Trigger */}
           <div className="flex lg:hidden items-center gap-2 sm:gap-3">
             <button
-              onClick={onOpenLogin}
-              className="px-3 py-1 border border-white/70 hover:border-[#00c2ff] hover:text-[#00c2ff] rounded-lg text-xs font-semibold text-white"
-            >
-              Login
-            </button>
-            <button
               onClick={() => handleNavClick('quiz')}
-              className="px-3 py-1 bg-[#00c2ff] text-[#05131f] rounded-lg text-xs font-semibold"
+              className="px-3.5 py-1.5 bg-[#00c2ff] hover:bg-[#38d4ff] text-[#05131f] rounded-lg text-xs font-semibold shadow-xs"
             >
               Get Started
             </button>
@@ -170,15 +155,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             Contact
           </button>
           <div className="pt-2 space-y-2.5">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenLogin();
-              }}
-              className="w-full py-2.5 border border-white/70 hover:border-white rounded-lg text-sm font-semibold text-white text-center hover:bg-white/10"
-            >
-              Login
-            </button>
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
