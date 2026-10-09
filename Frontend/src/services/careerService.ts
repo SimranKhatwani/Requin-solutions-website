@@ -6,6 +6,7 @@ export interface CareerItem {
   slug: string;
   department: string;
   location: string;
+  jobType?: 'Onsite' | 'Hybrid' | 'Remote' | string;
   employmentType: 'Full-time' | 'Part-time' | 'Contract' | 'Internship';
   experience: string;
   salary?: string;

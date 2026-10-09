@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
@@ -26,6 +26,10 @@ import {
   Laptop,
   TrendingUp,
   FileCheck2,
+  Calendar,
+  SlidersHorizontal,
+  RotateCcw,
+  ChevronDown,
 } from 'lucide-react';
 
 export const PublicCareersPage: React.FC = () => {
@@ -33,10 +37,12 @@ export const PublicCareersPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Filter & Search
+  // Dynamic Filter & Search State
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState('All');
-  const [selectedType, setSelectedType] = useState('All');
+  const [selectedJobTypes, setSelectedJobTypes] = useState<string[]>([]);
+  const [selectedTeam, setSelectedTeam] = useState('All');
+  const [selectedExperience, setSelectedExperience] = useState('All');
+  const [selectedLocation, setSelectedLocation] = useState('All');
 
   // Application Modal State
   const [selectedCareer, setSelectedCareer] = useState<CareerItem | null>(null);
@@ -75,24 +81,139 @@ export const PublicCareersPage: React.FC = () => {
     fetchCareers();
   }, []);
 
-  const departments = ['All', ...Array.from(new Set(careers.map((c) => c.department).filter(Boolean)))];
+  // Helper to clean location string (strip any redundant (hybrid)/(remote)/(onsite) badges)
+  const cleanLocation = (loc?: string): string => {
+    if (!loc) return 'Jaipur, Rajasthan';
+    return loc
+      .replace(/\s*\([^)]*(onsite|hybrid|remote|on-site)[^)]*\)/gi, '')
+      .replace(/\s*-\s*(onsite|hybrid|remote|on-site)/gi, '')
+      .trim() || 'Jaipur, Rajasthan';
+  };
 
-  const filteredCareers = careers.filter((c) => {
-    const matchesSearch =
-      c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.shortDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (c.requirements && c.requirements.some((r) => r.toLowerCase().includes(searchTerm.toLowerCase())));
+  // Helper to normalize job type
+  const getCareerJobType = (c: CareerItem): 'Onsite' | 'Hybrid' | 'Remote' => {
+    if (c.jobType) {
+      const j = c.jobType.trim().toLowerCase();
+      if (j === 'onsite' || j.includes('onsite') || j.includes('on-site')) return 'Onsite';
+      if (j === 'hybrid' || j.includes('hybrid')) return 'Hybrid';
+      if (j === 'remote' || j.includes('remote')) return 'Remote';
+      return 'Onsite';
+    }
+    const loc = (c.location || '').toLowerCase();
+    if (loc.includes('remote')) return 'Remote';
+    if (loc.includes('hybrid') && !loc.includes('onsite')) return 'Hybrid';
+    if (loc.includes('onsite') || loc.includes('on-site')) return 'Onsite';
+    return 'Onsite';
+  };
 
-    const matchesDept =
-      selectedDepartment === 'All' || c.department.toLowerCase() === selectedDepartment.toLowerCase();
+  // Dynamic Options (Only show options actually present in active careers)
+  const availableJobTypes = useMemo(() => {
+    const types = new Set<string>();
+    careers.forEach((c) => {
+      const t = getCareerJobType(c);
+      if (t) types.add(t);
+    });
+    return Array.from(types);
+  }, [careers]);
 
-    const matchesType =
-      selectedType === 'All' || c.employmentType.toLowerCase() === selectedType.toLowerCase();
+  const availableTeams = useMemo(() => {
+    return Array.from(new Set(careers.map((c) => c.department).filter(Boolean)));
+  }, [careers]);
 
-    return matchesSearch && matchesDept && matchesType;
-  });
+  const availableExperienceLevels = useMemo(() => {
+    return Array.from(new Set(careers.map((c) => c.experience).filter(Boolean)));
+  }, [careers]);
+
+  const availableLocations = useMemo(() => {
+    return Array.from(new Set(careers.map((c) => cleanLocation(c.location)).filter(Boolean)));
+  }, [careers]);
+
+  // Dynamic Filtering Logic
+  const filteredCareers = useMemo(() => {
+    return careers.filter((c) => {
+      // 1. Search query
+      const q = searchTerm.toLowerCase().trim();
+      const matchesSearch =
+        !q ||
+        c.title.toLowerCase().includes(q) ||
+        c.department.toLowerCase().includes(q) ||
+        cleanLocation(c.location).toLowerCase().includes(q) ||
+        (c.requirements && c.requirements.some((r) => r.toLowerCase().includes(q))) ||
+        (c.responsibilities && c.responsibilities.some((r) => r.toLowerCase().includes(q)));
+
+      // 2. Job Type Checkboxes
+      const jType = getCareerJobType(c);
+      const matchesJobType =
+        selectedJobTypes.length === 0 || selectedJobTypes.includes(jType);
+
+      // 3. Team / Department
+      const matchesTeam =
+        selectedTeam === 'All' || c.department.toLowerCase() === selectedTeam.toLowerCase();
+
+      // 4. Experience Level
+      const matchesExperience =
+        selectedExperience === 'All' || c.experience.toLowerCase() === selectedExperience.toLowerCase();
+
+      // 5. Location
+      const matchesLocation =
+        selectedLocation === 'All' ||
+        cleanLocation(c.location).toLowerCase().includes(selectedLocation.toLowerCase());
+
+      return matchesSearch && matchesJobType && matchesTeam && matchesExperience && matchesLocation;
+    });
+  }, [careers, searchTerm, selectedJobTypes, selectedTeam, selectedExperience, selectedLocation]);
+
+  const toggleJobType = (type: string) => {
+    setSelectedJobTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    );
+  };
+
+  const isFilterActive =
+    searchTerm !== '' ||
+    selectedJobTypes.length > 0 ||
+    selectedTeam !== 'All' ||
+    selectedExperience !== 'All' ||
+    selectedLocation !== 'All';
+
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setSelectedJobTypes([]);
+    setSelectedTeam('All');
+    setSelectedExperience('All');
+    setSelectedLocation('All');
+  };
+
+  const formatSalaryINR = (val?: string) => {
+    if (!val) return '';
+    const trimmed = val.trim();
+    if (trimmed.startsWith('₹') || trimmed.toLowerCase().startsWith('rs') || trimmed.toLowerCase().startsWith('inr')) {
+      return trimmed;
+    }
+    // Check if it's purely digits or has month/annum suffix
+    const numMatch = trimmed.match(/^(\d+)(.*)$/);
+    if (numMatch) {
+      const num = Number(numMatch[1]);
+      const suffix = numMatch[2] ? ` ${numMatch[2].trim()}` : '';
+      return `₹${num.toLocaleString('en-IN')}${suffix}`;
+    }
+    return `₹${trimmed}`;
+  };
+
+  const formatPublishedDate = (dateStr?: string) => {
+    if (!dateStr) return 'Recently';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    } catch {
+      return dateStr;
+    }
+  };
 
   const handleOpenApply = (career?: CareerItem) => {
     setSelectedCareer(career || null);
@@ -120,8 +241,10 @@ export const PublicCareersPage: React.FC = () => {
     setSubmitting(true);
     setApplyError(null);
 
+    const recipientEmail = selectedCareer?.applyEmail || 'Hr@requinsolutions.com';
+
     try {
-      // 1. Submit to Backend API
+      // 1. Submit to Backend API (MongoDB Atlas storage for Admin Dashboard)
       await careerService.applyForJob({
         careerId: selectedCareer?.id,
         jobTitle: selectedCareer?.title || 'Open Engineering Application',
@@ -134,24 +257,30 @@ export const PublicCareersPage: React.FC = () => {
         message: applyForm.message.trim(),
       });
 
-      // 2. Also forward to Hr@requinsolutions.com via FormSubmit AJAX service
+      // 2. Direct real-time email forwarding to Hr@requinsolutions.com
       const payload = new FormData();
-      payload.append('Role', selectedCareer?.title || 'Open Engineering Candidate');
+      payload.append('Role Applied For', selectedCareer?.title || 'General Engineering Role');
+      payload.append('Department', selectedCareer?.department || 'Engineering');
+      payload.append('Location', selectedCareer?.location || 'Jaipur');
       payload.append('Candidate Name', applyForm.name.trim());
-      payload.append('Email', applyForm.email.trim());
-      payload.append('Phone', applyForm.phone.trim());
-      payload.append('Experience Level', applyForm.experienceLevel.trim());
-      payload.append('Portfolio / Resume URL', applyForm.portfolioUrl.trim());
-      payload.append('Cover Note', applyForm.message.trim());
-      payload.append('_subject', `New Job Application: ${selectedCareer?.title || 'Open Application'} from ${applyForm.name.trim()}`);
+      payload.append('Candidate Email', applyForm.email.trim());
+      payload.append('Candidate Phone', applyForm.phone.trim() || 'Not specified');
+      payload.append('Experience Level', applyForm.experienceLevel.trim() || 'Not specified');
+      payload.append('Portfolio / LinkedIn / Resume URL', applyForm.portfolioUrl.trim() || 'Not provided');
+      payload.append('Cover Note / Background', applyForm.message.trim() || 'No cover note attached');
+      payload.append('_subject', `New Job Application: ${selectedCareer?.title || 'General Role'} - ${applyForm.name.trim()}`);
       payload.append('_replyto', applyForm.email.trim());
       payload.append('_captcha', 'false');
 
-      fetch('https://formsubmit.co/ajax/Hr@requinsolutions.com', {
-        method: 'POST',
-        headers: { Accept: 'application/json' },
-        body: payload,
-      }).catch((err) => console.log('Candidate FormSubmit notification:', err));
+      try {
+        await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(recipientEmail)}`, {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: payload,
+        });
+      } catch (submitErr) {
+        console.warn('Direct HR Email Transmission status:', submitErr);
+      }
 
       setApplySuccess(true);
     } catch (err: any) {
@@ -216,101 +345,19 @@ export const PublicCareersPage: React.FC = () => {
           </div>
         </section>
 
-        {/* ========================================================
-            CULTURE & PERKS (LIGHT THEME)
-        ======================================================== */}
-        <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-10 border-t border-[#D3E6F8]">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0A2540] tracking-tight">
-              Why Engineers Love Working at Requin
-            </h2>
-            <p className="text-sm text-slate-500 mt-2 font-medium">
-              We foster a collaborative culture built on technical excellence, transparent ownership, and rapid career progression.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 sm:p-7 rounded-2xl bg-white border border-[#D3E6F8] shadow-xs hover:border-[#08B9E8] hover:shadow-md transition-all text-left">
-              <div className="w-12 h-12 rounded-xl bg-[#E6F4FE] text-[#0088EE] flex items-center justify-center mb-4">
-                <Laptop className="w-6 h-6" />
-              </div>
-              <h3 className="text-base font-bold text-[#0A2540] mb-2">Modern Hardware & Tools</h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-                Work with top-tier developer machines, multi-monitor workstations, premium SaaS licenses, and direct cloud sandboxes.
-              </p>
-            </div>
-
-            <div className="p-6 sm:p-7 rounded-2xl bg-white border border-[#D3E6F8] shadow-xs hover:border-[#08B9E8] hover:shadow-md transition-all text-left">
-              <div className="w-12 h-12 rounded-xl bg-[#E6F4FE] text-[#0088EE] flex items-center justify-center mb-4">
-                <TrendingUp className="w-6 h-6" />
-              </div>
-              <h3 className="text-base font-bold text-[#0A2540] mb-2">Fast Growth & Appraisals</h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-                Biannual appraisal cycles, milestone-based performance bonuses, and direct technical mentorship from senior software architects.
-              </p>
-            </div>
-
-            <div className="p-6 sm:p-7 rounded-2xl bg-white border border-[#D3E6F8] shadow-xs hover:border-[#08B9E8] hover:shadow-md transition-all text-left">
-              <div className="w-12 h-12 rounded-xl bg-[#E6F4FE] text-[#0088EE] flex items-center justify-center mb-4">
-                <HeartHandshake className="w-6 h-6" />
-              </div>
-              <h3 className="text-base font-bold text-[#0A2540] mb-2">Empowering Work Culture</h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-                Flexible hybrid work policies, comprehensive health insurance coverage, sponsored technical certifications, and team offsites.
-              </p>
-            </div>
-          </div>
-        </section>
-
+        
         {/* ========================================================
             DYNAMIC OPEN ROLES SECTION (CONTROLLED BY ADMIN PANEL)
         ======================================================== */}
         <section id="openings" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-10 border-t border-[#D3E6F8]">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8 text-left">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0A2540] tracking-tight">
-                Current Openings
-              </h2>
-              <p className="text-sm text-slate-500 mt-1 font-medium">
-                Live vacancies updated in real time directly from our engineering management desk.
-              </p>
-            </div>
-
-            {/* Search Input */}
-            {careers.length > 0 && (
-              <div className="relative w-full md:w-80">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  placeholder="Search by role, skills, stack..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-[#D3E6F8] text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#0099FF] shadow-xs"
-                />
-              </div>
-            )}
+          <div className="text-left mb-8">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0A2540] tracking-tight">
+              Current Openings
+            </h2>
+            
           </div>
 
-          {/* Department Filter Pills (Only shown when there are careers) */}
-          {careers.length > 0 && (
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-4 mb-8 text-left">
-              {departments.map((dept) => (
-                <button
-                  key={dept}
-                  onClick={() => setSelectedDepartment(dept)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                    selectedDepartment === dept
-                      ? 'bg-[#0099FF] text-white shadow-sm'
-                      : 'bg-white text-slate-600 hover:text-slate-900 border border-[#D3E6F8] hover:border-[#0099FF]'
-                  }`}
-                >
-                  {dept}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Openings Grid / Clean Empty State */}
+          {/* Loading / Error States */}
           {loading ? (
             <div className="py-20 text-center text-slate-500 flex flex-col items-center justify-center gap-3">
               <Loader2 className="w-8 h-8 animate-spin text-[#0099FF]" />
@@ -321,118 +368,291 @@ export const PublicCareersPage: React.FC = () => {
               <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
               <p className="text-sm text-red-600 font-medium">{error}</p>
             </div>
-          ) : filteredCareers.length === 0 ? (
-            /* Clean Empty State when no fake data is present */
+          ) : careers.length === 0 ? (
+            /* Clean Empty State when no jobs are posted */
             <div className="py-14 px-6 sm:px-10 text-center rounded-3xl bg-white border border-[#D3E6F8] max-w-2xl mx-auto shadow-sm">
               <div className="w-16 h-16 rounded-2xl bg-[#E6F4FE] text-[#0088EE] flex items-center justify-center mx-auto mb-4 shadow-xs">
                 <Briefcase className="w-8 h-8" />
               </div>
               <h3 className="text-xl font-extrabold text-[#0A2540]">
-                No Current Openings Posted
+                No Current Openings Posted.
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 mt-2 max-w-md mx-auto leading-relaxed">
-                We do not have active public vacancies listed at this moment. Roles are added and managed directly through our Admin Panel.
+                We do not have active public vacancies listed at this moment.
               </p>
-              <p className="text-xs text-slate-600 mt-2 font-medium">
-                Want to work with us in Jaipur? You can submit an open application with your resume directly below!
-              </p>
-
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                <button
-                  onClick={() => handleOpenApply()}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#0099FF] to-[#08B9E8] hover:from-[#0088EE] hover:to-[#00A8D8] text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-[0.98] cursor-pointer flex items-center gap-2"
-                >
-                  <Send className="w-4 h-4" />
-                  <span>Submit Open Application</span>
-                </button>
-
-                <a
-                  href="mailto:Hr@requinsolutions.com?subject=Open%20Application%20-%20Requin%20Solutions"
-                  className="px-5 py-2.5 rounded-xl bg-[#F0F7FD] hover:bg-[#E2F0FC] text-[#0088EE] border border-[#BDE0FE] font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer"
-                >
-                  <Mail className="w-4 h-4" />
-                  <span>Email: Hr@requinsolutions.com</span>
-                </a>
-              </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-left">
-              {filteredCareers.map((career) => (
-                <div
-                  key={career.id}
-                  id={career.slug}
-                  className="p-6 sm:p-7 rounded-3xl bg-white border border-[#D3E6F8] hover:border-[#0099FF] hover:shadow-md transition-all duration-200 shadow-xs flex flex-col justify-between group"
-                >
-                  <div>
-                    {/* Role Header */}
-                    <div className="flex items-start justify-between gap-4 mb-2">
-                      <div>
-                        <span className="px-2.5 py-0.5 rounded-md bg-[#E6F4FE] border border-[#BDE0FE] text-[#0088CC] text-[11px] font-bold tracking-wide uppercase">
-                          {career.department}
-                        </span>
-                        <h3 className="text-xl font-extrabold text-[#0A2540] mt-2 group-hover:text-[#0088EE] transition-colors leading-snug">
-                          {career.title}
-                        </h3>
-                      </div>
+            /* Two Column Layout: Left Filter Sidebar & Right Career Cards */
+            <div className="flex flex-col lg:flex-row items-start gap-8">
+              {/* ========================================================
+                  LEFT DYNAMIC FILTERS SIDEBAR
+              ======================================================== */}
+              <div className="w-full lg:w-72 xl:w-80 shrink-0 text-left">
+                <div className="bg-[#0A1B2D] text-white rounded-3xl p-6 sm:p-7 border border-[#183B5E] shadow-xl sticky top-28 space-y-6">
+                  {/* Header */}
+                  <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                    <div className="flex items-center gap-2.5">
+                      <SlidersHorizontal className="w-4 h-4 text-[#08B9E8]" />
+                      <h3 className="text-lg font-bold text-white tracking-tight">Filters</h3>
                     </div>
-
-                    {/* Metadata Badges */}
-                    <div className="flex flex-wrap items-center gap-2.5 text-xs text-slate-500 my-3">
-                      <div className="flex items-center gap-1.5 bg-[#F5F9FD] px-2.5 py-1 rounded-lg border border-[#E2EEF8]">
-                        <MapPin className="w-3.5 h-3.5 text-[#0088EE]" />
-                        <span>{career.location}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 bg-[#F5F9FD] px-2.5 py-1 rounded-lg border border-[#E2EEF8]">
-                        <Clock className="w-3.5 h-3.5 text-[#0088EE]" />
-                        <span>{career.employmentType} · {career.experience}</span>
-                      </div>
-                      {career.salary && (
-                        <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg border border-emerald-200 font-semibold">
-                          <DollarSign className="w-3.5 h-3.5" />
-                          <span>{career.salary}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Short Description */}
-                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-4">
-                      {career.shortDescription}
-                    </p>
-
-                    {/* Requirements Highlights */}
-                    {career.requirements && career.requirements.length > 0 && (
-                      <div className="mb-5 space-y-1.5">
-                        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-                          Key Qualifications:
-                        </span>
-                        <ul className="space-y-1 text-xs text-slate-600">
-                          {career.requirements.slice(0, 3).map((req, idx) => (
-                            <li key={idx} className="flex items-start gap-2">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-[#0099FF] shrink-0 mt-0.5" />
-                              <span className="line-clamp-1">{req}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                    {isFilterActive && (
+                      <button
+                        onClick={handleResetFilters}
+                        className="text-xs text-[#08B9E8] hover:text-[#4DD4F5] font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                        <span>Reset</span>
+                      </button>
                     )}
                   </div>
 
-                  {/* Apply Button */}
-                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-xs text-slate-500">
-                      Direct: <span className="text-[#0088EE] font-bold">{career.applyEmail || 'Hr@requinsolutions.com'}</span>
-                    </span>
+                  {/* Section 1: Job Type (Dynamic Checkboxes - Only available types shown) */}
+                  {availableJobTypes.length > 0 && (
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">
+                        Job Type
+                      </label>
+                      <div className="space-y-2">
+                        {availableJobTypes.map((type) => {
+                          const isChecked = selectedJobTypes.includes(type);
+                          const count = careers.filter((c) => getCareerJobType(c) === type).length;
+                          return (
+                            <label
+                              key={type}
+                              className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer select-none ${
+                                isChecked
+                                  ? 'bg-[#08B9E8]/15 border-[#08B9E8]/50 text-white font-semibold'
+                                  : 'border-white/5 text-slate-300 hover:bg-white/5'
+                              }`}
+                            >
+                              <div className="flex items-center gap-3">
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={() => toggleJobType(type)}
+                                  className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-[#08B9E8] focus:ring-[#08B9E8] cursor-pointer accent-[#08B9E8]"
+                                />
+                                <span className="text-xs sm:text-sm">{type}</span>
+                              </div>
+                              <span className="text-[11px] text-slate-400 bg-white/10 px-2 py-0.5 rounded-md font-mono">
+                                {count}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
-                    <button
-                      onClick={() => handleOpenApply(career)}
-                      className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#0099FF] to-[#08B9E8] hover:from-[#0088EE] hover:to-[#00A8D8] text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-sm transition-all active:scale-[0.98] cursor-pointer"
-                    >
-                      <span>Apply Now</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
+                  {/* Section 2: Team (Dropdown - Only available teams) */}
+                  {availableTeams.length > 0 && (
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        Team
+                      </label>
+                      <div className="relative">
+                        <select
+                          value={selectedTeam}
+                          onChange={(e) => setSelectedTeam(e.target.value)}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-[#071626] border border-white/15 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-[#08B9E8] cursor-pointer appearance-none"
+                        >
+                          <option value="All">All Teams ({careers.length})</option>
+                          {availableTeams.map((team) => (
+                            <option key={team} value={team}>
+                              {team}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Section 3: Experience Level (Dropdown - Only available levels) */}
+                  {availableExperienceLevels.length > 0 && (
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        Experience Level
+                      </label>
+                      <div className="relative">
+                        <select
+                          value={selectedExperience}
+                          onChange={(e) => setSelectedExperience(e.target.value)}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-[#071626] border border-white/15 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-[#08B9E8] cursor-pointer appearance-none"
+                        >
+                          <option value="All">All Levels</option>
+                          {availableExperienceLevels.map((exp) => (
+                            <option key={exp} value={exp}>
+                              {exp}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Section 4: Location (Dropdown - Only available locations) */}
+                  {availableLocations.length > 0 && (
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                        Location
+                      </label>
+                      <div className="relative">
+                        <select
+                          value={selectedLocation}
+                          onChange={(e) => setSelectedLocation(e.target.value)}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-[#071626] border border-white/15 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-[#08B9E8] cursor-pointer appearance-none"
+                        >
+                          <option value="All">All Locations</option>
+                          {availableLocations.map((loc) => (
+                            <option key={loc} value={loc}>
+                              {loc}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* ========================================================
+                  RIGHT OPENINGS LIST & SEARCH
+              ======================================================== */}
+              <div className="flex-1 w-full min-w-0">
+                {/* Search Bar & Counter */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+                  <div className="relative flex-1">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      placeholder="Search roles by title, stack, skill..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-[#D3E6F8] text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#0099FF] shadow-xs"
+                    />
+                  </div>
+
+                  <div className="text-xs text-slate-500 font-semibold shrink-0 text-left sm:text-right">
+                    Showing <span className="text-[#0088EE] font-bold">{filteredCareers.length}</span> of {careers.length} openings
                   </div>
                 </div>
-              ))}
+
+                {/* Openings Grid / Filter Empty State */}
+                {filteredCareers.length === 0 ? (
+                  <div className="p-10 text-center bg-white rounded-3xl border border-[#D3E6F8] shadow-xs space-y-3">
+                    <Briefcase className="w-8 h-8 text-slate-400 mx-auto" />
+                    <h4 className="text-base font-bold text-slate-800">No Openings Match Your Filters</h4>
+                    <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                      Try adjusting or resetting your filter criteria to view all available roles.
+                    </p>
+                    <button
+                      onClick={handleResetFilters}
+                      className="mt-2 px-4 py-2 rounded-xl bg-[#0099FF] text-white text-xs font-bold hover:bg-[#0088EE] transition-all cursor-pointer shadow-xs"
+                    >
+                      Clear All Filters
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 text-left">
+                    {filteredCareers.map((career) => (
+                      <div
+                        key={career.id}
+                        id={career.slug}
+                        className="p-6 sm:p-7 rounded-3xl bg-white border border-[#D3E6F8] hover:border-[#0099FF] hover:shadow-md transition-all duration-200 shadow-xs flex flex-col justify-between group"
+                      >
+                        <div>
+                          {/* Role Header */}
+                          <div className="flex items-start justify-between gap-4 mb-2">
+                            <div>
+                              <span className="px-2.5 py-0.5 rounded-md bg-[#E6F4FE] border border-[#BDE0FE] text-[#0088CC] text-[11px] font-bold tracking-wide uppercase">
+                                {career.department}
+                              </span>
+                              <h3 className="text-xl font-extrabold text-[#0A2540] mt-2 group-hover:text-[#0088EE] transition-colors leading-snug">
+                                {career.title}
+                              </h3>
+                            </div>
+                          </div>
+
+                          {/* Metadata Badges */}
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 my-3">
+                            <div className="flex items-center gap-1.5 bg-[#F5F9FD] px-2.5 py-1 rounded-lg border border-[#E2EEF8]">
+                              <MapPin className="w-3.5 h-3.5 text-[#0088EE]" />
+                              <span>{cleanLocation(career.location)}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 bg-[#F5F9FD] px-2.5 py-1 rounded-lg border border-[#E2EEF8]">
+                              <Clock className="w-3.5 h-3.5 text-[#0088EE]" />
+                              <span>{getCareerJobType(career)} · {career.employmentType} · {career.experience}</span>
+                            </div>
+                            {career.salary && (
+                              <div className="flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg border border-emerald-200 font-semibold text-xs">
+                                <span>{formatSalaryINR(career.salary)}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Key Responsibilities */}
+                          {career.responsibilities && career.responsibilities.length > 0 && (
+                            <div className="mb-5 space-y-2">
+                              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                                Key Responsibilities:
+                              </span>
+                              <ul className="space-y-1.5 text-xs sm:text-sm text-slate-600">
+                                {career.responsibilities.map((resp, idx) => (
+                                  <li key={idx} className="flex items-start gap-2">
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-[#0099FF] shrink-0 mt-0.5" />
+                                    <span className="leading-relaxed">{resp}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {/* Requirements / Key Qualifications */}
+                          {career.requirements && career.requirements.length > 0 && (
+                            <div className="mb-5 space-y-2">
+                              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                                Key Qualifications:
+                              </span>
+                              <ul className="space-y-1.5 text-xs sm:text-sm text-slate-600">
+                                {career.requirements.slice(0, 4).map((req, idx) => (
+                                  <li key={idx} className="flex items-start gap-2">
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-[#0088EE] shrink-0 mt-0.5" />
+                                    <span className="leading-relaxed">{req}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Apply Button & HR Contact */}
+                        <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+                          <div className="flex flex-col text-left">
+                            <span className="text-xs text-slate-500">
+                              Direct: <a href={`mailto:${career.applyEmail || 'Hr@requinsolutions.com'}`} className="text-[#0088EE] font-bold hover:underline">{career.applyEmail || 'Hr@requinsolutions.com'}</a>
+                            </span>
+                            <span className="text-[11px] text-slate-400 mt-1 flex items-center gap-1 font-medium">
+                              <Calendar className="w-3 h-3 text-[#0099FF] shrink-0" />
+                              <span>Posted on: {formatPublishedDate(career.createdAt)}</span>
+                            </span>
+                          </div>
+
+                          <button
+                            onClick={() => handleOpenApply(career)}
+                            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#0099FF] to-[#08B9E8] hover:from-[#0088EE] hover:to-[#00A8D8] text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-sm transition-all active:scale-[0.98] cursor-pointer shrink-0"
+                          >
+                            <span>Apply Now</span>
+                            <ArrowRight className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </section>
@@ -450,7 +670,7 @@ export const PublicCareersPage: React.FC = () => {
                 Connect Directly with Our HR Team
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
-                Whether you are a developer, designer, or product manager, send your resume and portfolio directly to our engineering center in Jaipur.
+               Send your resume and portfolio directly to our team in Jaipur.
               </p>
 
               <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs font-semibold">

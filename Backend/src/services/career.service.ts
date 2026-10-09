@@ -21,6 +21,7 @@ export const CareerService = {
       slug,
       department,
       location,
+      jobType,
       employmentType,
       experience,
       salary,
@@ -47,12 +48,29 @@ export const CareerService = {
     }
 
     const allCareers = CareerModel.findAll();
+    const resolvedJobType: 'Onsite' | 'Hybrid' | 'Remote' = jobType
+      ? (jobType.trim().toLowerCase().includes('hybrid')
+          ? 'Hybrid'
+          : jobType.trim().toLowerCase().includes('remote')
+          ? 'Remote'
+          : 'Onsite')
+      : (location && location.toLowerCase().includes('hybrid')
+          ? 'Hybrid'
+          : location && location.toLowerCase().includes('remote')
+          ? 'Remote'
+          : 'Onsite');
+
+    const cleanLoc = (location || 'Jaipur, Rajasthan')
+      .replace(/\s*\((hybrid|remote|onsite|on-site)\)/gi, '')
+      .trim() || 'Jaipur, Rajasthan';
+
     const newCareer: CareerDoc = {
       id: `career-${Date.now()}`,
       title,
       slug: autoSlug,
       department,
-      location: location || 'Malviya Nagar, Jaipur, Rajasthan (On-Site)',
+      location: cleanLoc,
+      jobType: resolvedJobType,
       employmentType: (employmentType as any) || 'Full-time',
       experience: experience || '2-4 Years',
       salary: salary || 'Competitive & Commensurate with Experience',
@@ -89,6 +107,7 @@ export const CareerService = {
       slug,
       department,
       location,
+      jobType,
       employmentType,
       experience,
       salary,
@@ -111,11 +130,32 @@ export const CareerService = {
       finalSlug = cleanSlug;
     }
 
+    const resolvedJobType: 'Onsite' | 'Hybrid' | 'Remote' = jobType !== undefined
+      ? (jobType.trim().toLowerCase().includes('hybrid')
+          ? 'Hybrid'
+          : jobType.trim().toLowerCase().includes('remote')
+          ? 'Remote'
+          : 'Onsite')
+      : (prev.jobType && prev.jobType.toLowerCase().includes('hybrid')
+          ? 'Hybrid'
+          : prev.jobType && prev.jobType.toLowerCase().includes('remote')
+          ? 'Remote'
+          : prev.location.toLowerCase().includes('hybrid')
+          ? 'Hybrid'
+          : prev.location.toLowerCase().includes('remote')
+          ? 'Remote'
+          : 'Onsite');
+
+    const cleanLoc = location !== undefined
+      ? (location.replace(/\s*\((hybrid|remote|onsite|on-site)\)/gi, '').trim() || 'Jaipur, Rajasthan')
+      : prev.location.replace(/\s*\((hybrid|remote|onsite|on-site)\)/gi, '').trim();
+
     const updated = CareerModel.update(id, {
       title: title ?? prev.title,
       slug: finalSlug,
       department: department ?? prev.department,
-      location: location ?? prev.location,
+      location: cleanLoc,
+      jobType: resolvedJobType,
       employmentType: (employmentType as any) ?? prev.employmentType,
       experience: experience ?? prev.experience,
       salary: salary ?? prev.salary,

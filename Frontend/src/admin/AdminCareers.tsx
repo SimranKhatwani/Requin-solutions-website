@@ -42,12 +42,36 @@ export const AdminCareers: React.FC = () => {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [previewApp, setPreviewApp] = useState<JobApplicationItem | null>(null);
 
+  const normalizeJobType = (jobType?: string, location?: string): 'Onsite' | 'Hybrid' | 'Remote' => {
+    if (jobType) {
+      const j = jobType.trim().toLowerCase();
+      if (j === 'onsite' || j.includes('onsite') || j.includes('on-site')) return 'Onsite';
+      if (j === 'hybrid' || j.includes('hybrid')) return 'Hybrid';
+      if (j === 'remote' || j.includes('remote')) return 'Remote';
+      return 'Onsite';
+    }
+    const loc = (location || '').toLowerCase();
+    if (loc.includes('remote')) return 'Remote';
+    if (loc.includes('hybrid') && !loc.includes('onsite')) return 'Hybrid';
+    if (loc.includes('onsite') || loc.includes('on-site')) return 'Onsite';
+    return 'Onsite';
+  };
+
+  const cleanLocation = (loc?: string): string => {
+    if (!loc) return 'Jaipur, Rajasthan';
+    return loc
+      .replace(/\s*\([^)]*(onsite|hybrid|remote|on-site)[^)]*\)/gi, '')
+      .replace(/\s*-\s*(onsite|hybrid|remote|on-site)/gi, '')
+      .trim() || 'Jaipur, Rajasthan';
+  };
+
   // Form State
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
     department: 'Frontend Engineering',
-    location: 'Jaipur, Rajasthan (Onsite / Hybrid)',
+    location: 'Jaipur, Rajasthan',
+    jobType: 'Onsite' as 'Onsite' | 'Hybrid' | 'Remote',
     employmentType: 'Full-time' as CareerItem['employmentType'],
     experience: '2+ Years',
     salary: 'Competitive / Best in Industry',
@@ -94,14 +118,15 @@ export const AdminCareers: React.FC = () => {
       title: '',
       slug: '',
       department: 'Frontend Engineering',
-      location: 'Jaipur, Rajasthan (Onsite / Hybrid)',
+      location: 'Jaipur, Rajasthan',
+      jobType: 'Onsite',
       employmentType: 'Full-time',
       experience: '2+ Years',
       salary: '₹7 LPA – ₹14 LPA',
       shortDescription: '',
       responsibilitiesText: 'Architect modular, high-performance web applications using React & TypeScript.\nCollaborate with UI/UX designers to translate Figma design systems.\nOptimize client-side performance and ensure cross-browser compatibility.',
       requirementsText: '2+ years of professional production experience.\nStrong proficiency in modern JavaScript/TypeScript, React, and CSS/Tailwind.\nExcellent problem-solving and communication skills.',
-      benefitsText: 'Competitive salary with biannual performance appraisals.\nModern Jaipur engineering hub with high-end developer hardware.\nComprehensive health insurance and flexible hybrid working policies.',
+      benefitsText: 'Competitive salary with biannual performance appraisals.\nModern Jaipur engineering hub with high-end developer hardware.\nComprehensive health insurance and progressive wellness benefits.',
       status: 'PUBLISHED',
       displayOrder: careers.length + 1,
       applyEmail: 'Hr@requinsolutions.com',
@@ -116,7 +141,8 @@ export const AdminCareers: React.FC = () => {
       title: career.title,
       slug: career.slug,
       department: career.department,
-      location: career.location,
+      location: cleanLocation(career.location),
+      jobType: normalizeJobType(career.jobType, career.location),
       employmentType: career.employmentType,
       experience: career.experience,
       salary: career.salary || '',
@@ -146,7 +172,8 @@ export const AdminCareers: React.FC = () => {
       title: formData.title.trim(),
       slug: formData.slug.trim() || undefined,
       department: formData.department.trim(),
-      location: formData.location.trim(),
+      location: cleanLocation(formData.location.trim()),
+      jobType: formData.jobType,
       employmentType: formData.employmentType,
       experience: formData.experience.trim(),
       salary: formData.salary.trim(),
@@ -375,11 +402,11 @@ export const AdminCareers: React.FC = () => {
                         <td className="py-4 px-4 text-slate-600">
                           <div className="flex items-center gap-1.5 text-xs font-medium">
                             <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                            <span>{c.location}</span>
+                            <span>{cleanLocation(c.location)}</span>
                           </div>
                           <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mt-1">
                             <Clock className="w-3 h-3 text-slate-400" />
-                            <span>{c.employmentType}</span>
+                            <span>{normalizeJobType(c.jobType, c.location)} · {c.employmentType}</span>
                           </div>
                         </td>
 
@@ -614,8 +641,8 @@ export const AdminCareers: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Location, Employment Type & Experience */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* Location, Job Type, Employment Type & Experience */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
                       Location
@@ -631,7 +658,27 @@ export const AdminCareers: React.FC = () => {
 
                   <div>
                     <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                      Type
+                      Job Type
+                    </label>
+                    <select
+                      value={formData.jobType}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          jobType: normalizeJobType(e.target.value),
+                        })
+                      }
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-[#08B9E8] bg-white cursor-pointer font-semibold text-slate-800"
+                    >
+                      <option value="Onsite">Onsite</option>
+                      <option value="Hybrid">Hybrid</option>
+                      <option value="Remote">Remote</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                      Employment Type
                     </label>
                     <select
                       value={formData.employmentType}
@@ -641,7 +688,7 @@ export const AdminCareers: React.FC = () => {
                           employmentType: e.target.value as any,
                         })
                       }
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-[#08B9E8] bg-white cursor-pointer"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-[#08B9E8] bg-white cursor-pointer font-semibold text-slate-800"
                     >
                       <option value="Full-time">Full-time</option>
                       <option value="Part-time">Part-time</option>
@@ -668,11 +715,11 @@ export const AdminCareers: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                      Salary Range / Package
+                      Salary Range / Package (INR ₹)
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. ₹7 LPA – ₹14 LPA"
+                      placeholder="e.g. ₹15,000 / month or ₹7 LPA – ₹14 LPA"
                       value={formData.salary}
                       onChange={(e) => setFormData({ ...formData, salary: e.target.value })}
                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-[#08B9E8]"
