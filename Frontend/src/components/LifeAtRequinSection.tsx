@@ -357,7 +357,7 @@ export const LifeAtRequinSection: React.FC = () => {
             Life at <span className="text-[#08B9E8]">Requin</span>
           </h2>
           <p className="mt-3 text-base sm:text-lg text-slate-600 font-normal leading-[1.6]">
-            Where people, ideas, and technology come together. Glimpse into our company celebrations, team hackathons, and collaborative culture.
+            Where people, ideas, and technology come together. Glimpse into our company celebrations and collaborative culture.
           </p>
         </div>
 
