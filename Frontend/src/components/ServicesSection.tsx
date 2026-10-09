@@ -211,7 +211,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
           </div>
 
           {/* Service Title */}
-          <h3 className="text-xl sm:text-2xl font-bold text-[#0B1726] group-hover:text-[#0284c7] transition-colors duration-200 mt-6 tracking-[-0.01em]">
+          <h3 className="text-xl sm:text-2xl font-bold text-[#0088EE] group-hover:text-[#00c2ff] transition-colors duration-200 mt-6 tracking-[-0.01em]">
             {service.title}
           </h3>
 

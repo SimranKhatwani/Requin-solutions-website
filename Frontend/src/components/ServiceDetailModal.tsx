@@ -29,10 +29,7 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
 
         <div className="space-y-6">
           <div>
-            <div className="text-xs font-semibold text-[#08B9E8] uppercase tracking-wider mb-1">
-              {service.category}
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-bold text-[#0B1726] tracking-[-0.02em]">
+            <h3 className="text-2xl sm:text-3xl font-bold text-[#0088EE] tracking-[-0.02em]">
               {service.title}
             </h3>
             <p className="mt-2 text-sm sm:text-base text-slate-600 leading-[1.65]">
