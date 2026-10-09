@@ -356,12 +356,12 @@ export const PublicBlogsPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Right Side: Image with corner circular arrow action button (100% Fully Visible Without Cropping) */}
-                <div className="lg:col-span-6 xl:col-span-5 relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[16/10] bg-slate-50 border border-slate-200/80 shadow-md flex items-center justify-center p-2">
+                {/* Right Side: Image with corner circular arrow action button */}
+                <div className="lg:col-span-6 xl:col-span-5 relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[16/10] bg-slate-100 border border-slate-200/80 shadow-md">
                   <img
                     src={getMediaUrl(featuredBlog.featuredImage || (featuredBlog as any).image)}
                     alt={featuredBlog.title}
-                    className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-500 ease-out rounded-xl"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
                     }}
@@ -471,12 +471,12 @@ export const PublicBlogsPage: React.FC = () => {
                       <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#00c2ff]/10 rounded-full blur-2xl pointer-events-none group-hover:opacity-100 opacity-50 transition-opacity" />
 
                       <div className="space-y-4">
-                        {/* Card Thumbnail Frame (Image on top - 100% Fully Visible) */}
-                        <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-50 border border-slate-200/70 flex items-center justify-center p-1.5">
+                        {/* Card Thumbnail Frame (Image on top) */}
+                        <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/70">
                           <img
                             src={getMediaUrl(b.featuredImage || (b as any).image)}
                             alt={b.title}
-                            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out rounded-xl"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
                             }}

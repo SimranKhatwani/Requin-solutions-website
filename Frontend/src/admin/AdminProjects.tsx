@@ -646,39 +646,40 @@ export const AdminProjects: React.FC = () => {
 
       {/* Preview Modal */}
       {isPreviewOpen && previewProject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="bg-slate-900 text-white rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-800 text-left overflow-hidden animate-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-[#F5FAFD] text-slate-900 rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-[#B9E6FE] text-left overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Preview Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0 bg-slate-900 z-10">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#08B9E8]">
-                Project Showcase Preview
+            <div className="flex items-center justify-between px-6 py-4 sm:px-8 sm:py-5 border-b border-[#D0EEFC] shrink-0 bg-gradient-to-r from-[#E6F5FC] via-[#F0F9FE] to-[#E6F5FC] z-10">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#0284c7] flex items-center gap-2 bg-[#08B9E8]/10 px-3 py-1.5 rounded-full border border-[#08B9E8]/20">
+                <span>Project Showcase Preview</span>
               </span>
               <button
                 onClick={() => setIsPreviewOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-[#DDF2FB] transition-colors cursor-pointer"
+                title="Close Preview"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Preview Content (Scrollable) */}
-            <div className="p-6 sm:p-8 overflow-y-auto flex-1 space-y-4">
+            <div className="p-6 sm:p-8 overflow-y-auto flex-1 space-y-4 bg-white">
               <img
                 src={getMediaUrl(previewProject.featuredImage)}
                 alt={previewProject.projectName}
-                className="w-full h-56 object-cover rounded-xl border border-slate-800 mb-2"
+                className="w-full h-56 object-cover rounded-xl border border-[#D0EEFC] shadow-sm mb-2"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
                 }}
               />
 
-              <span className="text-xs font-semibold text-[#08B9E8] uppercase tracking-wider block">
+              <span className="text-xs font-bold text-[#0284c7] uppercase tracking-wider block">
                 {previewProject.category}
               </span>
-              <h3 className="text-2xl font-bold text-white">
+              <h3 className="text-2xl font-bold text-slate-900">
                 {previewProject.projectName}
               </h3>
-              <p className="text-sm text-slate-300 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed bg-[#F0F9FE] p-4 rounded-xl border border-[#D0EEFC]">
                 {previewProject.fullDescription || previewProject.shortDescription}
               </p>
 
@@ -689,7 +690,7 @@ export const AdminProjects: React.FC = () => {
                   ? (previewProject.technologies as string).split(',').map((t) => t.trim()).filter(Boolean)
                   : []
                 ).map((t, i) => (
-                  <span key={i} className="px-3 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-300">
+                  <span key={i} className="px-3 py-1 rounded-lg bg-[#E0F4FC] border border-[#B9E6FE] text-xs font-medium text-[#0284c7]">
                     {t}
                   </span>
                 ))}
@@ -697,10 +698,10 @@ export const AdminProjects: React.FC = () => {
             </div>
 
             {/* Preview Footer */}
-            <div className="px-6 py-4 border-t border-slate-800 shrink-0 bg-slate-950 flex justify-end">
+            <div className="px-6 py-4 sm:px-8 border-t border-[#D0EEFC] shrink-0 bg-gradient-to-r from-[#E6F5FC] via-[#F0F9FE] to-[#E6F5FC] flex justify-end">
               <button
                 onClick={() => setIsPreviewOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-white text-xs font-semibold hover:bg-slate-700 cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-[#08B9E8] text-slate-950 text-xs font-bold hover:bg-[#4DD4F5] transition-all shadow-md shadow-[#08B9E8]/20 cursor-pointer"
               >
                 Close Preview
               </button>

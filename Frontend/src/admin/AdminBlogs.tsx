@@ -1226,93 +1226,79 @@ export const AdminBlogs: React.FC = () => {
         </div>
       )}
 
-      {/* Live Preview Modal (Light Blue Theme Matching Project UI) */}
+      {/* Live Preview Modal */}
       {isPreviewOpen && previewBlog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="bg-[#F5FAFD] text-[#0B1726] rounded-2xl sm:rounded-3xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-[#BAE6FD] text-left overflow-hidden animate-in zoom-in-95 duration-150">
-            {/* Preview Header in Light Blue Accent */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#BAE6FD]/80 shrink-0 bg-gradient-to-r from-[#E0F7FE] via-[#F0F9FF] to-white z-10">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-white border border-[#08B9E8]/30 text-[#0284c7] flex items-center justify-center shadow-2xs">
-                  <Globe className="w-4 h-4 text-[#08B9E8]" />
-                </div>
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#0284c7]">
-                    Public Article Preview
-                  </span>
-                  <p className="text-[11px] text-slate-500 font-medium">Live layout on public website</p>
-                </div>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-[#F5FAFD] text-slate-900 rounded-2xl sm:rounded-3xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-[#B9E6FE] text-left overflow-hidden animate-in zoom-in-95 duration-150">
+            {/* Preview Header */}
+            <div className="flex items-center justify-between px-6 py-4 sm:px-8 sm:py-5 border-b border-[#D0EEFC] shrink-0 bg-gradient-to-r from-[#E6F5FC] via-[#F0F9FE] to-[#E6F5FC] z-10">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#0284c7] flex items-center gap-2 bg-[#08B9E8]/10 px-3 py-1.5 rounded-full border border-[#08B9E8]/20">
+                <Globe className="w-4 h-4 text-[#08B9E8]" />
+                <span>Public Article Preview</span>
+              </span>
               <button
                 onClick={() => setIsPreviewOpen(false)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-white/80 transition-colors cursor-pointer"
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-[#DDF2FB] transition-colors cursor-pointer"
+                title="Close Preview"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Preview Content (Scrollable Light Theme) */}
-            <div className="p-6 sm:p-8 overflow-y-auto flex-1 space-y-6">
-              {/* Full Image Display (Object-Contain - 100% Complete Photo Visible) */}
-              <div className="w-full rounded-2xl overflow-hidden bg-white border border-slate-200/90 shadow-sm flex items-center justify-center p-2">
+            {/* Preview Content (Scrollable) */}
+            <div className="p-6 sm:p-8 overflow-y-auto flex-1 space-y-6 bg-white">
+              {previewBlog.featuredImage && (
                 <img
                   src={getMediaUrl(previewBlog.featuredImage)}
                   alt={previewBlog.title}
-                  className="w-full h-auto max-h-[480px] object-contain rounded-xl"
+                  className="w-full h-64 sm:h-72 object-cover rounded-2xl border border-[#D0EEFC] shadow-sm"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
                   }}
                 />
+              )}
+
+              <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-[#0284c7]">
+                <span className="px-2.5 py-1 rounded-lg bg-[#E0F4FC] text-[#0284c7] border border-[#B9E6FE]">
+                  {previewBlog.category}
+                </span>
+                <span>·</span>
+                <span className="text-slate-500 font-medium">
+                  {previewBlog.publishedDate ? previewBlog.publishedDate.split('T')[0] : 'Today'}
+                </span>
+                <span>·</span>
+                <span className="text-slate-500 font-medium">By {previewBlog.author}</span>
               </div>
 
-              {/* Meta row */}
-              <div className="flex items-center gap-2 sm:gap-3 text-xs text-slate-500 font-medium flex-wrap">
-                <span className="px-3 py-1 rounded-full bg-[#E0F7FE] border border-[#08B9E8]/30 text-[#0284c7] font-bold text-xs">
-                  {previewBlog.category || 'Technology'}
-                </span>
-                <span className="text-slate-300">·</span>
-                <span className="flex items-center gap-1 text-slate-600">
-                  <Calendar className="w-3.5 h-3.5 text-[#08B9E8]" />
-                  <span>{previewBlog.publishedDate ? previewBlog.publishedDate.split('T')[0] : 'Today'}</span>
-                </span>
-                <span className="text-slate-300">·</span>
-                <span className="flex items-center gap-1 text-slate-600">
-                  <User className="w-3.5 h-3.5 text-[#08B9E8]" />
-                  <span>By {previewBlog.author || 'Requin Team'}</span>
-                </span>
-              </div>
-
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[#0284c7] leading-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 leading-tight">
                 {previewBlog.title}
               </h2>
 
-              {previewBlog.shortDescription && (
-                <p className="text-slate-700 text-sm leading-relaxed font-normal bg-white border border-slate-200/90 p-4 rounded-2xl shadow-2xs">
-                  {previewBlog.shortDescription}
-                </p>
-              )}
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-normal bg-[#F0F9FE] p-4 rounded-xl border border-[#D0EEFC]">
+                {previewBlog.shortDescription}
+              </p>
 
               <div
-                className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-xs text-slate-700 text-sm sm:text-base leading-relaxed space-y-4"
+                className="prose prose-slate max-w-none text-slate-700 text-sm sm:text-base space-y-4 leading-relaxed [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-slate-900 [&_h2]:mt-6 [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-slate-800 [&_p]:text-slate-700 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-[#08B9E8] [&_img]:rounded-xl [&_img]:w-full [&_img]:border [&_img]:border-slate-200"
                 dangerouslySetInnerHTML={{ __html: previewBlog.content }}
               />
             </div>
 
             {/* Preview Footer */}
-            <div className="px-6 py-4 border-t border-[#BAE6FD]/80 shrink-0 bg-white flex items-center justify-between">
+            <div className="px-6 py-4 sm:px-8 border-t border-[#D0EEFC] shrink-0 bg-gradient-to-r from-[#E6F5FC] via-[#F0F9FE] to-[#E6F5FC] flex items-center justify-between">
               <a
-                href={`/blog/${previewBlog.slug}`}
+                href={`/blogs/${previewBlog.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#E0F7FE] hover:bg-[#BAE6FD]/50 border border-[#08B9E8]/30 text-xs font-bold text-[#0284c7] transition-colors shadow-2xs"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0284c7] hover:text-[#08B9E8] transition-colors hover:underline"
               >
                 <span>Open public page in new tab</span>
-                <ExternalLink className="w-3.5 h-3.5 text-[#08B9E8]" />
+                <ExternalLink className="w-3.5 h-3.5" />
               </a>
 
               <button
                 onClick={() => setIsPreviewOpen(false)}
-                className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm transition-colors cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-[#08B9E8] text-slate-950 text-xs font-bold hover:bg-[#4DD4F5] transition-all shadow-md shadow-[#08B9E8]/20 cursor-pointer"
               >
                 Close Preview
               </button>
