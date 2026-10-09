@@ -992,14 +992,14 @@ export const PublicServiceDetailPage: React.FC = () => {
       />
 
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      <QuizModal
+      {/* <QuizModal
         isOpen={isQuizOpen}
         onClose={() => setIsQuizOpen(false)}
         onSelectService={() => {
           setIsQuizOpen(false);
           navigate('/#contact');
         }}
-      />
+      /> */}
     </div>
   );
 };

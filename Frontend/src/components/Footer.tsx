@@ -212,7 +212,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               </li>
               <li>
                 <button
-                  onClick={() => navigate('/our-stories')}
+                  onClick={() => handleNav('our-story')}
                   className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   About Us
@@ -226,14 +226,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
                   Contact
                 </button>
               </li>
-              <li>
+              {/* <li>
                 <button
                   onClick={() => handleNav('quiz')}
                   className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
                 >
                   Quiz
                 </button>
-              </li>
+              </li> */}
               <li>
                 <button
                   onClick={() => navigate('/products')}

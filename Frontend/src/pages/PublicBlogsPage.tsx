@@ -14,12 +14,9 @@ import {
   BookOpen,
   Sparkles,
   Clock,
-  Tag,
   ChevronLeft,
   ChevronRight,
   X,
-  Mail,
-  Check,
 } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 6;
@@ -42,7 +39,7 @@ export const PublicBlogsPage: React.FC = () => {
         if (res.data && res.data.length > 0) {
           setBlogs(res.data);
         } else {
-          // Fallback to offline / pre-populated real blogs from requinData
+          // Fallback to offline pre-populated real blogs from requinData
           setBlogs(REQUIN_BLOGS as unknown as BlogItem[]);
         }
       } catch (err) {
@@ -92,6 +89,7 @@ export const PublicBlogsPage: React.FC = () => {
     return filteredBlogs.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredBlogs, currentPage]);
 
+  // Featured top blog (shown full-width at top on page 1 when no strict filters are active)
   const featuredBlog = useMemo(() => {
     if (currentPage === 1 && !searchTerm && selectedTag === 'All') {
       return filteredBlogs[0] || null;
@@ -99,6 +97,7 @@ export const PublicBlogsPage: React.FC = () => {
     return null;
   }, [filteredBlogs, currentPage, searchTerm, selectedTag]);
 
+  // Remaining blogs for the lower 2-column grid
   const gridBlogs = useMemo(() => {
     if (featuredBlog && currentPage === 1) {
       return paginatedBlogs.slice(1);
@@ -107,7 +106,7 @@ export const PublicBlogsPage: React.FC = () => {
   }, [paginatedBlogs, featuredBlog, currentPage]);
 
   const formatDate = (dateStr?: string) => {
-    if (!dateStr) return 'Recent';
+    if (!dateStr) return 'Jul 3, 2025';
     try {
       const d = new Date(dateStr);
       if (isNaN(d.getTime())) return dateStr;
@@ -121,9 +120,24 @@ export const PublicBlogsPage: React.FC = () => {
     }
   };
 
+  const formatLongDate = (dateStr?: string) => {
+    if (!dateStr) return 'July 3, 2025';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    } catch {
+      return dateStr;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F5FAFD] text-[#0B1726] flex flex-col font-sans selection:bg-[#08B9E8]/20 selection:text-[#08B9E8] relative overflow-hidden">
-      {/* Background Technology-Inspired Ambience & Keyframe Animations (Matching Services Theme) */}
+      {/* Background Technology-Inspired Ambience & Keyframe Animations (Services Theme) */}
       <style>{`
         @keyframes ambientFloat {
           0%, 100% {
@@ -141,27 +155,15 @@ export const PublicBlogsPage: React.FC = () => {
             opacity: 0.95;
           }
         }
-        @keyframes waveFloat {
-          0%, 100% {
-            transform: translateX(0);
-          }
-          50% {
-            transform: translateX(25px);
-          }
-        }
         .animate-ambient-float {
           animation: ambientFloat 16s ease-in-out infinite;
         }
         .animate-network-pulse {
           animation: networkPulse 12s ease-in-out infinite;
         }
-        .animate-wave-float {
-          animation: waveFloat 20s ease-in-out infinite;
-        }
         @media (prefers-reduced-motion: reduce) {
           .animate-ambient-float,
-          .animate-network-pulse,
-          .animate-wave-float {
+          .animate-network-pulse {
             animation: none !important;
           }
         }
@@ -205,20 +207,20 @@ export const PublicBlogsPage: React.FC = () => {
         preserveAspectRatio="none"
       >
         <defs>
-          <linearGradient id="blogNetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="blogNetGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#08B9E8" stopOpacity="0.12" />
             <stop offset="50%" stopColor="#00c2ff" stopOpacity="0.06" />
             <stop offset="100%" stopColor="#0284c7" stopOpacity="0.10" />
           </linearGradient>
 
-          <filter id="blogNodeGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <filter id="blogNodeGlowLight" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="3" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
         </defs>
 
         {/* TOP-LEFT NETWORK CONSTELLATION */}
-        <g stroke="url(#blogNetGrad)" strokeWidth="1.2" fill="none">
+        <g stroke="url(#blogNetGradLight)" strokeWidth="1.2" fill="none">
           <line x1="4%" y1="8%" x2="11%" y2="16%" />
           <line x1="11%" y1="16%" x2="7%" y2="28%" />
           <line x1="11%" y1="16%" x2="18%" y2="20%" />
@@ -231,7 +233,7 @@ export const PublicBlogsPage: React.FC = () => {
         <g fill="#08B9E8">
           <circle cx="4%" cy="8%" r="3" fillOpacity="0.4" />
           <circle cx="4%" cy="8%" r="1.5" fillOpacity="0.8" />
-          <circle cx="11%" cy="16%" r="4" fillOpacity="0.3" filter="url(#blogNodeGlow)" />
+          <circle cx="11%" cy="16%" r="4" fillOpacity="0.3" filter="url(#blogNodeGlowLight)" />
           <circle cx="11%" cy="16%" r="2" fillOpacity="0.9" />
           <circle cx="7%" cy="28%" r="3" fillOpacity="0.4" />
           <circle cx="18%" cy="20%" r="3.5" fillOpacity="0.4" />
@@ -242,7 +244,7 @@ export const PublicBlogsPage: React.FC = () => {
         </g>
 
         {/* TOP-RIGHT NETWORK CONSTELLATION */}
-        <g stroke="url(#blogNetGrad)" strokeWidth="1.2" fill="none">
+        <g stroke="url(#blogNetGradLight)" strokeWidth="1.2" fill="none">
           <line x1="96%" y1="10%" x2="88%" y2="18%" />
           <line x1="88%" y1="18%" x2="92%" y2="30%" />
           <line x1="88%" y1="18%" x2="80%" y2="22%" />
@@ -255,7 +257,7 @@ export const PublicBlogsPage: React.FC = () => {
         <g fill="#00c2ff">
           <circle cx="96%" cy="10%" r="3" fillOpacity="0.4" />
           <circle cx="96%" cy="10%" r="1.5" fillOpacity="0.8" />
-          <circle cx="88%" cy="18%" r="4" fillOpacity="0.3" filter="url(#blogNodeGlow)" />
+          <circle cx="88%" cy="18%" r="4" fillOpacity="0.3" filter="url(#blogNodeGlowLight)" />
           <circle cx="88%" cy="18%" r="2" fillOpacity="0.9" />
           <circle cx="92%" cy="30%" r="3" fillOpacity="0.4" />
           <circle cx="80%" cy="22%" r="3.5" fillOpacity="0.4" />
@@ -298,146 +300,129 @@ export const PublicBlogsPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Instant Search Bar */}
-          <div className="mb-6">
-            <div className="relative w-full max-w-2xl mx-auto">
-              <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search articles by title, keywords, or topics..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-11 pr-10 py-3 rounded-2xl bg-white border border-slate-200/90 text-xs sm:text-sm text-[#0B1726] placeholder:text-slate-400 focus:outline-none focus:border-[#08B9E8] transition-colors shadow-xs"
-              />
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm('')}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-          </div>
+          {/* ========================================================
+              SECTION 1: TOP FEATURED BLOG OCCUPYING FULL SCREEN WIDTH
+              Content on Left, Large Image on Right (Matching Screenshot 1)
+          ======================================================== */}
+          {featuredBlog && (
+            <div
+              onClick={() => navigate(`/blog/${featuredBlog.slug}`)}
+              className="w-full bg-white rounded-3xl border border-slate-200/90 shadow-lg hover:shadow-2xl hover:border-[#08B9E8]/60 transition-all duration-300 p-6 sm:p-10 cursor-pointer group relative overflow-hidden mb-12 sm:mb-14"
+            >
+              {/* Subtle ambient cyan glow */}
+              <div className="absolute -top-16 -right-16 w-64 h-64 bg-[#00c2ff]/10 rounded-full blur-3xl pointer-events-none group-hover:opacity-100 opacity-60 transition-opacity" />
 
-          {/* Active Filters Bar (Matching Image 2 - Appears when a tag is selected from sidebar or search is active) */}
-          {(selectedTag !== 'All' || searchTerm) && (
-            <div className="mb-8 flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs sm:text-sm animate-in fade-in duration-200">
-              <span className="text-slate-600 font-medium">Active filters:</span>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                {/* Left Side: Text Content */}
+                <div className="lg:col-span-6 xl:col-span-7 space-y-6 text-left flex flex-col justify-center">
+                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E0F7FE] border border-[#08B9E8]/30 text-[#0284c7] text-xs font-bold uppercase tracking-wider w-fit">
+                    <span className="w-2 h-2 rounded-full bg-[#08B9E8] animate-pulse" />
+                    <span>Featured Article</span>
+                  </span>
 
-              {selectedTag !== 'All' && (
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0E2442] border border-[#08B9E8]/40 text-[#00c2ff] font-semibold shadow-xs">
-                  <span>Tag: {selectedTag}</span>
-                  <button
-                    onClick={() => setSelectedTag('All')}
-                    className="hover:text-red-400 hover:bg-[#163761] p-0.5 rounded-full transition-colors cursor-pointer"
-                    title="Remove tag filter"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </span>
-              )}
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-[#0B1726] leading-tight group-hover:text-[#0284c7] transition-colors tracking-tight">
+                    {featuredBlog.title}
+                  </h2>
 
-              {searchTerm && (
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0E2442] border border-[#08B9E8]/40 text-[#00c2ff] font-semibold shadow-xs">
-                  <span>Search: "{searchTerm}"</span>
-                  <button
-                    onClick={() => setSearchTerm('')}
-                    className="hover:text-red-400 hover:bg-[#163761] p-0.5 rounded-full transition-colors cursor-pointer"
-                    title="Clear search filter"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </span>
-              )}
+                  {featuredBlog.shortDescription && (
+                    <p className="text-slate-600 text-sm sm:text-base leading-relaxed line-clamp-3 font-normal">
+                      {featuredBlog.shortDescription}
+                    </p>
+                  )}
 
-              <button
-                onClick={() => {
-                  setSelectedTag('All');
-                  setSearchTerm('');
-                }}
-                className="text-[#0284c7] hover:text-[#0369a1] underline font-bold text-xs sm:text-sm cursor-pointer ml-1"
-              >
-                Clear all filters
-              </button>
+                  {/* Author Meta Row */}
+                  <div className="flex items-center gap-3.5 pt-2">
+                    <div className="w-11 h-11 rounded-full bg-[#E0F7FE] border border-[#08B9E8]/40 text-[#0284c7] flex items-center justify-center font-bold shrink-0 shadow-xs">
+                      <User className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-[#0B1726] leading-snug">
+                        {featuredBlog.author || 'Admin'}
+                      </div>
+                      <div className="text-xs text-slate-500">
+                        Author &nbsp;·&nbsp; {formatLongDate(featuredBlog.publishedDate || featuredBlog.createdAt)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Side: Image with corner circular arrow action button */}
+                <div className="lg:col-span-6 xl:col-span-5 relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[16/10] bg-slate-100 border border-slate-200/80 shadow-md">
+                  <img
+                    src={getMediaUrl(featuredBlog.featuredImage || (featuredBlog as any).image)}
+                    alt={featuredBlog.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
+                    }}
+                  />
+                  
+                  {/* Circular action button in the bottom-right corner */}
+                  <div className="absolute bottom-4 right-4 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-[#0284c7] via-[#08B9E8] to-[#00c2ff] text-white flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:brightness-110 transition-all duration-300">
+                    <ArrowRight className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Animated Bottom Cyan Progress Accent */}
+              <div className="absolute bottom-0 inset-x-0 h-1 bg-slate-100">
+                <div className="h-full w-0 bg-gradient-to-r from-[#08B9E8] to-[#00c2ff] transition-all duration-500 ease-out group-hover:w-full" />
+              </div>
             </div>
           )}
 
           {/* ========================================================
-              2-COLUMN CONTENT: Articles on Left + Sidebar (Recent Posts & Newsletter) on Right
+              SECTION 2: 2-COLUMN LAYOUT BELOW FEATURED BLOG
+              Left (8 cols): Blog Grid (Image on top, Article tag + date, Title, Read More ->)
+              Right (4 cols): Search, Popular Tags (Filter) on Top, Newsletter below
           ======================================================== */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
             
             {/* ========================================================
-                LEFT COLUMN (8 COLS): Featured Hero + Blog Cards Grid + Pagination
+                LEFT COLUMN (8 COLS): Blogs Grid + Active Filter Chips + Pagination
             ======================================================== */}
-            <div className="lg:col-span-8 space-y-10">
+            <div className="lg:col-span-8 space-y-8">
               
-              {/* FEATURED HERO ARTICLE CARD (When on Page 1 with no strict filters) */}
-              {featuredBlog && (
-                <div
-                  onClick={() => navigate(`/blog/${featuredBlog.slug}`)}
-                  className="bg-white rounded-3xl border border-slate-200/90 shadow-lg hover:shadow-2xl hover:border-[#08B9E8]/60 transition-all duration-300 p-6 sm:p-8 cursor-pointer group relative overflow-hidden flex flex-col space-y-6"
-                >
-                  {/* Soft subtle ambient cyan glow */}
-                  <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#00c2ff]/10 rounded-full blur-3xl pointer-events-none group-hover:opacity-100 opacity-60 transition-opacity" />
+              {/* Active Filters Bar (Shown when search term or tag filter is selected) */}
+              {(selectedTag !== 'All' || searchTerm) && (
+                <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm animate-in fade-in duration-200 bg-white border border-slate-200 p-4 rounded-2xl shadow-xs">
+                  <span className="text-slate-600 font-medium">Active filters:</span>
 
-                  {/* Cover Image Showcase */}
-                  <div className="relative rounded-2xl overflow-hidden aspect-video bg-slate-100 border border-slate-200/80 shadow-sm">
-                    <img
-                      src={getMediaUrl(featuredBlog.featuredImage || (featuredBlog as any).image)}
-                      alt={featuredBlog.title}
-                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
-                      }}
-                    />
-                    <div className="absolute top-3 left-3 bg-[#0284c7] text-white text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-[#BAE6FD]" />
-                      <span>Featured Story</span>
-                    </div>
-                  </div>
+                  {selectedTag !== 'All' && (
+                    <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0E2442] border border-[#08B9E8]/40 text-[#00c2ff] font-semibold text-xs shadow-xs">
+                      <span>Tag: {selectedTag}</span>
+                      <button
+                        onClick={() => setSelectedTag('All')}
+                        className="hover:text-red-400 hover:bg-[#163761] p-0.5 rounded-full transition-colors cursor-pointer"
+                        title="Remove tag filter"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </span>
+                  )}
 
-                  {/* Article Details & CTA */}
-                  <div className="space-y-3.5 text-left flex flex-col justify-center">
-                    <div className="flex items-center gap-2.5 flex-wrap text-xs">
-                      <span className="px-3 py-1 rounded-full bg-[#E0F7FE] border border-[#08B9E8]/30 text-[#0284c7] font-bold">
-                        {featuredBlog.category}
-                      </span>
-                      <span className="text-slate-400">·</span>
-                      <span className="text-slate-500 font-medium flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-[#08B9E8]" />
-                        {(featuredBlog as any).readTime || '5 min read'}
-                      </span>
-                    </div>
+                  {searchTerm && (
+                    <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0E2442] border border-[#08B9E8]/40 text-[#00c2ff] font-semibold text-xs shadow-xs">
+                      <span>Search: "{searchTerm}"</span>
+                      <button
+                        onClick={() => setSearchTerm('')}
+                        className="hover:text-red-400 hover:bg-[#163761] p-0.5 rounded-full transition-colors cursor-pointer"
+                        title="Clear search filter"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </span>
+                  )}
 
-                    <h2 className="text-2xl sm:text-3xl font-black text-[#0B1726] group-hover:text-[#0284c7] transition-colors duration-200 tracking-tight leading-snug">
-                      {featuredBlog.title}
-                    </h2>
-
-                    <p className="text-slate-600 text-sm sm:text-base leading-relaxed line-clamp-3 font-normal">
-                      {featuredBlog.shortDescription}
-                    </p>
-
-                    <div className="pt-2 flex items-center justify-between border-t border-slate-100">
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <User className="w-3.5 h-3.5 text-[#08B9E8]" />
-                        <span className="font-semibold text-slate-700">{featuredBlog.author || 'Requin Team'}</span>
-                        <span>·</span>
-                        <span>{formatDate(featuredBlog.publishedDate || featuredBlog.createdAt)}</span>
-                      </div>
-
-                      <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#0284c7] group-hover:text-[#00a6e0]">
-                        <span>Read Story</span>
-                        <ArrowRight className="w-4 h-4 text-[#08B9E8] transition-transform duration-200 group-hover:translate-x-1.5" />
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Animated Bottom Cyan Progress Line */}
-                  <div className="absolute bottom-0 inset-x-0 h-1 bg-slate-100">
-                    <div className="h-full w-0 bg-gradient-to-r from-[#08B9E8] to-[#00c2ff] transition-all duration-500 ease-out group-hover:w-full" />
-                  </div>
+                  <button
+                    onClick={() => {
+                      setSelectedTag('All');
+                      setSearchTerm('');
+                    }}
+                    className="text-[#0284c7] hover:text-[#0369a1] underline font-bold text-xs cursor-pointer ml-auto"
+                  >
+                    Clear all filters
+                  </button>
                 </div>
               )}
 
@@ -445,11 +430,11 @@ export const PublicBlogsPage: React.FC = () => {
               {loading ? (
                 <div className="py-24 text-center">
                   <div className="w-10 h-10 border-3 border-[#08B9E8] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                  <p className="text-sm font-medium text-slate-500">Loading publications from repository...</p>
+                  <p className="text-sm font-medium text-slate-500">Loading publications...</p>
                 </div>
               ) : filteredBlogs.length === 0 ? (
                 <div className="py-20 text-center bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
-                  <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                  <BookOpen className="w-12 h-12 text-slate-400 mx-auto mb-3" />
                   <h3 className="text-lg font-bold text-[#0B1726]">No Articles Found</h3>
                   <p className="text-sm text-slate-500 mt-1 max-w-md mx-auto">
                     We couldn't find any articles matching "{searchTerm}". Try clearing your filters or search keywords.
@@ -459,7 +444,7 @@ export const PublicBlogsPage: React.FC = () => {
                       setSearchTerm('');
                       setSelectedTag('All');
                     }}
-                    className="mt-5 px-5 py-2 rounded-xl bg-[#0284c7] text-white text-xs font-bold hover:bg-[#0369a1] transition-colors shadow-sm cursor-pointer"
+                    className="mt-5 px-5 py-2.5 rounded-xl bg-[#0284c7] text-white text-xs font-bold hover:bg-[#0369a1] transition-colors shadow-sm cursor-pointer"
                   >
                     Clear All Filters
                   </button>
@@ -470,69 +455,48 @@ export const PublicBlogsPage: React.FC = () => {
                     <article
                       key={b.id || b.slug}
                       onClick={() => navigate(`/blog/${b.slug}`)}
-                      className="bg-white rounded-3xl border border-slate-200/90 shadow-md hover:shadow-2xl hover:border-[#08B9E8]/60 transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer relative"
+                      className="bg-white rounded-3xl border border-slate-200/90 shadow-md hover:shadow-2xl hover:border-[#08B9E8]/60 transition-all duration-300 group cursor-pointer flex flex-col justify-between relative overflow-hidden text-left p-5"
                     >
                       {/* Subtle top-right ambient glow */}
-                      <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#00c2ff]/10 rounded-full blur-2xl pointer-events-none group-hover:opacity-100 opacity-50" />
+                      <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#00c2ff]/10 rounded-full blur-2xl pointer-events-none group-hover:opacity-100 opacity-50 transition-opacity" />
 
-                      {/* Card Thumbnail Frame */}
-                      <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
-                        <img
-                          src={getMediaUrl(b.featuredImage || (b as any).image)}
-                          alt={b.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
-                          }}
-                        />
-                        <div className="absolute top-3 left-3 bg-[#E0F7FE]/95 backdrop-blur-sm border border-[#08B9E8]/30 text-[#0284c7] text-[11px] font-bold px-3 py-0.5 rounded-full shadow-xs">
-                          {b.category}
-                        </div>
-                      </div>
-
-                      {/* Card Body */}
-                      <div className="p-6 flex-1 flex flex-col justify-between space-y-4 text-left">
-                        <div className="space-y-2.5">
-                          {/* Meta: Read time & Date */}
-                          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-                            <span className="flex items-center gap-1 text-slate-500">
-                              <Calendar className="w-3.5 h-3.5 text-[#08B9E8]" />
-                              {formatDate(b.publishedDate || b.createdAt)}
-                            </span>
-                            <span>·</span>
-                            <span className="flex items-center gap-1 text-slate-500">
-                              <Clock className="w-3.5 h-3.5 text-[#08B9E8]" />
-                              {(b as any).readTime || '5 min read'}
-                            </span>
-                          </div>
-
-                          {/* Title */}
-                          <h3 className="text-lg sm:text-xl font-bold text-[#0B1726] group-hover:text-[#0284c7] transition-colors duration-200 leading-snug line-clamp-2">
-                            {b.title}
-                          </h3>
-
-                          {/* Excerpt */}
-                          <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 font-normal">
-                            {b.shortDescription}
-                          </p>
+                      <div className="space-y-4">
+                        {/* Card Thumbnail Frame (Image on top) */}
+                        <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/70">
+                          <img
+                            src={getMediaUrl(b.featuredImage || (b as any).image)}
+                            alt={b.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
+                            }}
+                          />
                         </div>
 
-                        {/* Footer: Author & Read Link */}
-                        <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                          <div className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold truncate max-w-[150px]">
-                            <User className="w-3.5 h-3.5 text-[#08B9E8] shrink-0" />
-                            <span className="truncate">{b.author || 'Requin Team'}</span>
-                          </div>
-
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-[#0284c7] group-hover:text-[#00a6e0] transition-colors shrink-0">
-                            <span>Read Article</span>
-                            <ArrowRight className="w-3.5 h-3.5 text-[#08B9E8] transition-transform duration-200 group-hover:translate-x-1" />
+                        {/* Meta: Category Badge + Publication Date */}
+                        <div className="flex items-center justify-between text-xs pt-1">
+                          <span className="px-3 py-1 rounded-full bg-[#E0F7FE] border border-[#08B9E8]/30 text-[#0284c7] font-bold">
+                            {b.category || 'Article'}
+                          </span>
+                          <span className="text-slate-500 font-medium">
+                            {formatDate(b.publishedDate || b.createdAt)}
                           </span>
                         </div>
+
+                        {/* Title */}
+                        <h3 className="text-base sm:text-lg font-bold text-[#0B1726] group-hover:text-[#0284c7] transition-colors duration-200 line-clamp-2 leading-snug">
+                          {b.title}
+                        </h3>
                       </div>
 
-                      {/* Animated Bottom Cyan Line */}
-                      <div className="h-1 w-full bg-slate-100 overflow-hidden">
+                      {/* Footer Link: Read More -> */}
+                      <div className="pt-4 mt-3 border-t border-slate-100 flex items-center text-xs sm:text-sm font-bold text-[#0284c7] group-hover:text-[#00a6e0] transition-colors">
+                        <span>Read More</span>
+                        <ArrowRight className="w-4 h-4 ml-1.5 transition-transform duration-200 group-hover:translate-x-1" />
+                      </div>
+
+                      {/* Animated Bottom Cyan Accent */}
+                      <div className="absolute bottom-0 inset-x-0 h-1 bg-slate-100 overflow-hidden">
                         <div className="h-full w-0 bg-gradient-to-r from-[#08B9E8] to-[#00c2ff] transition-all duration-400 ease-out group-hover:w-full" />
                       </div>
                     </article>
@@ -542,7 +506,7 @@ export const PublicBlogsPage: React.FC = () => {
 
               {/* PAGINATION BAR */}
               {totalPages > 1 && (
-                <div className="mt-12 flex items-center justify-center gap-2">
+                <div className="mt-12 flex items-center justify-center gap-2 pt-4">
                   <button
                     onClick={() => {
                       setCurrentPage((prev) => Math.max(1, prev - 1));
@@ -609,13 +573,19 @@ export const PublicBlogsPage: React.FC = () => {
             </div>
 
             {/* ========================================================
-                RIGHT COLUMN (4 COLS): STICKY SIDEBAR (Popular Tags, Recent Posts & Newsletter)
+                RIGHT COLUMN (4 COLS): STICKY SIDEBAR
+                Search Input + Popular Tags (Filter) Card + Newsletter Card (Filter above Newsletter)
             ======================================================== */}
             <div className="lg:col-span-4">
               <BlogSidebar
-                recentPosts={blogs}
+                showSearch={true}
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
                 selectedTag={selectedTag}
                 onSelectTag={setSelectedTag}
+                showNewsletter={true}
+                showPopularTags={true}
+                showRecentPosts={false}
               />
             </div>
 

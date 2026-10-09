@@ -570,14 +570,14 @@ export const PublicProductsPage: React.FC = () => {
 
       {/* Modals */}
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      <QuizModal
+      {/* <QuizModal
         isOpen={isQuizOpen}
         onClose={() => setIsQuizOpen(false)}
         onSelectService={() => {
           setIsQuizOpen(false);
           navigate('/#contact');
         }}
-      />
+      /> */}
       <ProductFeatureModal
         product={selectedProduct}
         isOpen={isFeatureModalOpen}

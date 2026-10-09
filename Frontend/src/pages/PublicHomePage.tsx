@@ -79,8 +79,8 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ initialScrollTo 
         {/* Life at Requin: Prominent Photo Gallery */}
         <LifeAtRequinSection />
 
-        {/* Quiz CTA: Abstract Cyan/Blue Visual */}
-        <QuizCTA onStartQuiz={() => setIsQuizOpen(true)} />
+        {/* Quiz CTA: Abstract Cyan/Blue Visual (Commented out) */}
+        {/* <QuizCTA onStartQuiz={() => setIsQuizOpen(true)} /> */}
 
         {/* Our Clients Love Us: Moving Testimonials Carousel */}
         <TestimonialsSection />
@@ -97,14 +97,14 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ initialScrollTo 
 
       {/* Modals & Interactive Overlays */}
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      <QuizModal
+      {/* <QuizModal
         isOpen={isQuizOpen}
         onClose={() => setIsQuizOpen(false)}
         onSelectService={(serviceId) => {
           setIsQuizOpen(false);
           scrollToSection('contact');
         }}
-      />
+      /> */}
 
       <ServiceDetailModal
         service={selectedService}

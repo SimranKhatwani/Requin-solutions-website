@@ -740,11 +740,11 @@ export const PublicProjectsPage: React.FC = () => {
       />
 
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      <QuizModal
+      {/* <QuizModal
         isOpen={isQuizOpen}
         onClose={() => setIsQuizOpen(false)}
         onSelectService={() => setIsQuizOpen(false)}
-      />
+      /> */}
     </div>
   );
 };
