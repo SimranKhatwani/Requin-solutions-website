@@ -179,7 +179,7 @@ export const PublicCareersPage: React.FC = () => {
         <section className="relative px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center pt-8 pb-14">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#BDE0FE] text-[#0088CC] text-xs sm:text-sm font-bold mb-6 shadow-xs animate-in fade-in zoom-in-95 duration-300">
             <Sparkles className="w-4 h-4 text-[#0099FF]" />
-            <span>Careers at Requin Solutions · Jaipur Hub</span>
+            <span>Careers at Requin Solutions </span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#0A2540] tracking-tight leading-tight max-w-4xl mx-auto">
@@ -190,26 +190,28 @@ export const PublicCareersPage: React.FC = () => {
           </h1>
 
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto mt-5 leading-relaxed font-medium">
-            Join our engineering center in Jaipur. We design high-performance cloud architectures, custom ERP systems, and modern AI platforms for leading businesses.
+            Join our team and be part of an extraordinary journey of innovation and growth.
           </p>
 
           {/* Quick Metrics Bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-10">
             <div className="p-5 rounded-2xl bg-white border border-[#D3E6F8] shadow-xs text-center">
-              <div className="text-2xl sm:text-3xl font-black text-[#0088EE]">5+ Years</div>
-              <div className="text-xs text-slate-500 mt-1 font-semibold">Engineering Excellence</div>
+              <div className="text-2xl sm:text-3xl font-black text-[#0088EE]">
+                {loading ? '...' : careers.length}
+              </div>
+              <div className="text-xs text-slate-500 mt-1 font-semibold">Open Positions</div>
             </div>
             <div className="p-5 rounded-2xl bg-white border border-[#D3E6F8] shadow-xs text-center">
-              <div className="text-2xl sm:text-3xl font-black text-[#0088EE]">2K+</div>
-              <div className="text-xs text-slate-500 mt-1 font-semibold">Apps Developed</div>
+              <div className="text-2xl sm:text-3xl font-black text-[#0088EE]">1</div>
+              <div className="text-xs text-slate-500 mt-1 font-semibold">Office Location</div>
             </div>
             <div className="p-5 rounded-2xl bg-white border border-[#D3E6F8] shadow-xs text-center">
-              <div className="text-2xl sm:text-3xl font-black text-[#0088EE]">40+</div>
-              <div className="text-xs text-slate-500 mt-1 font-semibold">Expert Consultants</div>
+              <div className="text-2xl sm:text-3xl font-black text-[#0088EE]">10+</div>
+              <div className="text-xs text-slate-500 mt-1 font-semibold">Industry Certifications</div>
             </div>
             <div className="p-5 rounded-2xl bg-white border border-[#D3E6F8] shadow-xs text-center">
-              <div className="text-2xl sm:text-3xl font-black text-[#0088EE]">100+</div>
-              <div className="text-xs text-slate-500 mt-1 font-semibold">Talented Employees</div>
+              <div className="text-2xl sm:text-3xl font-black text-[#0088EE]">100%</div>
+              <div className="text-xs text-slate-500 mt-1 font-semibold">Customer Retention</div>
             </div>
           </div>
         </section>
