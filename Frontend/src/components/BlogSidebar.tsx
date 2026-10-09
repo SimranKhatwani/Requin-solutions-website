@@ -164,50 +164,67 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({
             </button>
           </div>
 
-          {/* Navigation items list */}
+          {/* Navigation items list matching Image 2 with vertical guideline dashes */}
           {tocExpanded && (
-            <nav className="space-y-1.5 max-h-[360px] overflow-y-auto no-scrollbar scrollbar-none text-xs sm:text-[13px] pt-1">
-              {tocItems.map((item, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => onTocClick && onTocClick(item.id)}
-                  className={`w-full text-left py-2 px-3 rounded-xl transition-all line-clamp-2 cursor-pointer ${
-                    activeTocId === item.id
-                      ? 'bg-[#0E2442] text-[#00c2ff] font-bold border border-[#08B9E8]/40 shadow-xs'
-                      : 'text-slate-300 hover:bg-white/5 hover:text-white font-medium'
-                  } ${item.level === 3 ? 'pl-6 text-[12px]' : ''}`}
-                >
-                  {item.text}
-                </button>
-              ))}
+            <nav
+              className="space-y-1 max-h-[260px] overflow-y-auto overflow-x-hidden pr-1 text-xs sm:text-[13px] pt-1"
+              style={{
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#94a3b8 rgba(255, 255, 255, 0.05)',
+              }}
+            >
+              <div className="space-y-1 w-full min-w-0">
+                {tocItems.map((item, idx) => {
+                  const isActive = activeTocId === item.id || (!activeTocId && idx === 0);
+                  const isSubItem = item.level >= 3 || /^[a-z]\./i.test(item.text.trim());
+
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => onTocClick && onTocClick(item.id)}
+                      className={`w-full text-left transition-all duration-150 cursor-pointer flex items-start min-w-0 ${
+                        isSubItem
+                          ? 'ml-3.5 pl-3 py-1.5 text-xs font-normal border-l-2'
+                          : 'pl-3.5 py-2 font-medium border-l-2'
+                      } ${
+                        isActive
+                          ? 'border-[#00c2ff] bg-[#0E2442] text-white font-bold rounded-r-xl shadow-xs'
+                          : 'border-[#1E4875]/70 hover:border-[#08B9E8]/70 text-slate-300 hover:text-white'
+                      }`}
+                    >
+                      <span className="line-clamp-2 leading-snug break-words min-w-0">{item.text}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </nav>
           )}
         </div>
       )}
 
       {/* ========================================================
-          CARD: "ABOUT THE AUTHOR" (Matching User Screenshot 2)
+          CARD: "ABOUT THE AUTHOR" (Matching User Specs - No Cut Off)
       ======================================================== */}
       {showAuthor && (
-        <div className="bg-[#07172C] border border-[#17385E] rounded-3xl p-6 sm:p-7 shadow-2xl space-y-4 text-left relative overflow-hidden group">
+        <div className="bg-[#07172C] border border-[#17385E] rounded-3xl p-5 sm:p-6 shadow-2xl space-y-3.5 text-left relative overflow-hidden group">
           {/* Ambient Glow */}
           <div className="absolute -top-10 -right-10 w-36 h-36 bg-[#08B9E8]/10 rounded-full blur-2xl pointer-events-none" />
 
-          <h3 className="text-base sm:text-lg font-bold text-white tracking-tight pb-3 border-b border-[#17385E]/80">
+          <h3 className="text-base sm:text-lg font-bold text-white tracking-tight pb-2.5 border-b border-[#17385E]/80">
             About the Author
           </h3>
 
-          <div className="flex items-center gap-3.5 pt-1">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0284c7] via-[#08B9E8] to-[#00c2ff] text-white flex items-center justify-center font-black text-lg shadow-md shrink-0">
+          <div className="flex items-center gap-3 pt-0.5">
+            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#0284c7] via-[#08B9E8] to-[#00c2ff] text-white flex items-center justify-center font-black text-base shadow-md shrink-0">
               {authorInitial}
             </div>
-            <div>
-              <h4 className="text-sm font-bold text-white leading-snug">{authorName}</h4>
+            <div className="min-w-0">
+              <h4 className="text-sm font-bold text-white leading-snug truncate">{authorName}</h4>
               <p className="text-xs text-[#00c2ff] font-medium">{authorRole}</p>
             </div>
           </div>
 
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal pt-1">
+          <p className="text-xs sm:text-[13px] text-slate-300 leading-relaxed font-normal">
             {authorBio}
           </p>
         </div>

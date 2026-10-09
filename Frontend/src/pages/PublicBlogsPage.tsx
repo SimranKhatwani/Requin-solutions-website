@@ -37,14 +37,29 @@ export const PublicBlogsPage: React.FC = () => {
         setLoading(true);
         const res = await blogService.getPublishedBlogs();
         if (res.data && res.data.length > 0) {
-          setBlogs(res.data);
+          const sorted = [...res.data].sort((a, b) => {
+            const dateA = new Date(a.updatedAt || a.publishedDate || a.createdAt || 0).getTime();
+            const dateB = new Date(b.updatedAt || b.publishedDate || b.createdAt || 0).getTime();
+            return dateB - dateA;
+          });
+          setBlogs(sorted);
         } else {
           // Fallback to offline pre-populated real blogs from requinData
-          setBlogs(REQUIN_BLOGS as unknown as BlogItem[]);
+          const sortedFallback = [...(REQUIN_BLOGS as unknown as BlogItem[])].sort((a, b) => {
+            const dateA = new Date(a.updatedAt || a.publishedDate || a.createdAt || 0).getTime();
+            const dateB = new Date(b.updatedAt || b.publishedDate || b.createdAt || 0).getTime();
+            return dateB - dateA;
+          });
+          setBlogs(sortedFallback);
         }
       } catch (err) {
         console.warn('Could not reach backend blogs API, using loaded publications fallback.', err);
-        setBlogs(REQUIN_BLOGS as unknown as BlogItem[]);
+        const sortedFallback = [...(REQUIN_BLOGS as unknown as BlogItem[])].sort((a, b) => {
+          const dateA = new Date(a.updatedAt || a.publishedDate || a.createdAt || 0).getTime();
+          const dateB = new Date(b.updatedAt || b.publishedDate || b.createdAt || 0).getTime();
+          return dateB - dateA;
+        });
+        setBlogs(sortedFallback);
       } finally {
         setLoading(false);
       }
@@ -320,7 +335,7 @@ export const PublicBlogsPage: React.FC = () => {
                     <span>Featured Article</span>
                   </span>
 
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-[#0B1726] leading-tight group-hover:text-[#0284c7] transition-colors tracking-tight">
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-[#0284c7] leading-tight group-hover:text-[#0080FF] transition-colors tracking-tight">
                     {featuredBlog.title}
                   </h2>
 
@@ -483,8 +498,8 @@ export const PublicBlogsPage: React.FC = () => {
                           </span>
                         </div>
 
-                        {/* Title */}
-                        <h3 className="text-base sm:text-lg font-bold text-[#0B1726] group-hover:text-[#0284c7] transition-colors duration-200 line-clamp-2 leading-snug">
+                        {/* Title (In Blue) */}
+                        <h3 className="text-base sm:text-lg font-bold text-[#0284c7] group-hover:text-[#0369a1] transition-colors duration-200 line-clamp-2 leading-snug">
                           {b.title}
                         </h3>
                       </div>

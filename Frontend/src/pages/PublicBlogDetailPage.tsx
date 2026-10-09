@@ -125,6 +125,29 @@ export const PublicBlogDetailPage: React.FC = () => {
     return () => clearTimeout(timer);
   }, [blog?.content, tocItems]);
 
+  // Automatically highlight current heading in TOC as user scrolls
+  useEffect(() => {
+    if (!tocItems.length) return;
+
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 180;
+      for (let i = tocItems.length - 1; i >= 0; i--) {
+        const item = tocItems[i];
+        const el = document.getElementById(item.id);
+        if (el) {
+          const top = el.getBoundingClientRect().top + window.pageYOffset;
+          if (scrollPosition >= top) {
+            setActiveTocId(item.id);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [tocItems]);
+
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
@@ -157,8 +180,8 @@ export const PublicBlogDetailPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5FAFD] text-[#0B1726] flex flex-col font-sans selection:bg-[#08B9E8]/20 selection:text-[#08B9E8] relative overflow-hidden">
-      {/* Background Technology-Inspired Ambience & Keyframe Animations (Services Theme) */}
+    <div className="min-h-screen bg-[#F5FAFD] text-[#0B1726] flex flex-col font-sans selection:bg-[#08B9E8]/20 selection:text-[#08B9E8] relative overflow-x-clip">
+      {/* Scoped CSS for Blog Detail Content & Compact Image Styling */}
       <style>{`
         @keyframes ambientFloat {
           0%, 100% {
@@ -182,6 +205,29 @@ export const PublicBlogDetailPage: React.FC = () => {
         .animate-network-pulse {
           animation: networkPulse 12s ease-in-out infinite;
         }
+
+        /* Full-Width Blog Article Images (No Left-Out Space) */
+        #blog-detail-content img {
+          width: 100% !important;
+          max-width: 100% !important;
+          height: auto !important;
+          border-radius: 1.25rem !important;
+          object-fit: cover !important;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+          border: 1px solid rgba(226, 232, 240, 0.9) !important;
+          margin: 1.5rem 0 !important;
+          display: block !important;
+        }
+        #blog-detail-content figure {
+          width: 100% !important;
+          max-width: 100% !important;
+          margin: 1.75rem 0 !important;
+        }
+        /* Completely hide title/caption below images */
+        #blog-detail-content figcaption {
+          display: none !important;
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .animate-ambient-float,
           .animate-network-pulse {
@@ -342,7 +388,7 @@ export const PublicBlogDetailPage: React.FC = () => {
             <div className="space-y-8 sm:space-y-10">
               
               {/* ========================================================
-                  TOP SECTION: CATEGORY ON TOP -> TITLE -> META LINE (Matching Screenshot 1)
+                  TOP SECTION: CATEGORY ON TOP -> BLUE TITLE -> META LINE
               ======================================================== */}
               <div className="text-center max-w-4xl mx-auto space-y-4 pt-2 pb-4 sm:pb-6">
                 {/* Related Category Badge on Top */}
@@ -352,8 +398,8 @@ export const PublicBlogDetailPage: React.FC = () => {
                   </span>
                 </div>
 
-                {/* Main Article Title */}
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0B1726] tracking-tight leading-[1.2]">
+                {/* Main Article Title (In Vibrant Requin Blue) */}
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0284c7] tracking-tight leading-[1.2]">
                   {blog.title}
                 </h1>
 
@@ -378,37 +424,30 @@ export const PublicBlogDetailPage: React.FC = () => {
 
               {/* ========================================================
                   2-COLUMN LAYOUT:
-                  - Left (8 Cols): Featured Image on Top + Scrollable Content Below
-                  - Right (4 Cols): Constant / Sticky Sidebar ("In this article" + "About the Author" + Newsletter)
+                  - Left (8 Cols): Featured Image on Top + Direct Content Below
+                  - Right (4 Cols): Constant Sticky Sidebar (moves along with scroll, stays in view)
               ======================================================== */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start relative">
                 
                 {/* ========================================================
-                    LEFT COLUMN (8 COLS): Image on top + Content below (Moves as we scroll)
+                    LEFT COLUMN (8 COLS): Featured Image + Article Body
                 ======================================================== */}
-                <div className="lg:col-span-8 space-y-8">
+                <div className="lg:col-span-8 space-y-6 min-w-0">
                   
-                  {/* Featured Image on Left */}
-                  <div className="relative rounded-3xl overflow-hidden aspect-[16/10] w-full bg-slate-100 border border-slate-200/90 shadow-lg">
+                  {/* Featured Image on Left (Compact & Clean) */}
+                  <div className="relative rounded-2xl overflow-hidden max-h-[360px] w-full bg-slate-100 border border-slate-200/90 shadow-md">
                     <img
                       src={getMediaUrl(blog.featuredImage || (blog as any).image)}
                       alt={blog.title}
-                      className="w-full h-full object-cover object-center"
+                      className="w-full h-full max-h-[360px] object-cover object-center"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
                       }}
                     />
                   </div>
 
-                  {/* Main Article Content */}
-                  <article className="space-y-8">
-                    {/* Summary / Excerpt Box (if present) */}
-                    {blog.shortDescription && (
-                      <div className="p-6 sm:p-7 rounded-2xl bg-white border-l-4 border-[#0284c7] border border-slate-200/80 shadow-xs text-base sm:text-lg text-slate-700 leading-relaxed font-medium">
-                        {blog.shortDescription}
-                      </div>
-                    )}
-
+                  {/* Main Article Content (Starts Directly with Introduction - No Extra Intro Paragraphs) */}
+                  <article className="space-y-8 pt-2">
                     {/* HTML Rich Text Body */}
                     <div
                       id="blog-detail-content"
@@ -446,7 +485,7 @@ export const PublicBlogDetailPage: React.FC = () => {
 
                       <button
                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                        className="text-xs font-bold text-[#0284c7] hover:underline cursor-pointer"
+                        className="text-md font-bold text-[#0284c7] hover:underline cursor-pointer"
                       >
                         Back to top ↑
                       </button>
@@ -456,9 +495,9 @@ export const PublicBlogDetailPage: React.FC = () => {
 
                 {/* ========================================================
                     RIGHT COLUMN (4 COLS): CONSTANT / STICKY SIDEBAR
-                    ("In this article" TOC + "About the Author" + Newsletter)
+                    (Stays visible and moves along smoothly as user scrolls)
                 ======================================================== */}
-                <div className="lg:col-span-4">
+                <div className="lg:col-span-4 lg:sticky lg:top-28 self-start space-y-6">
                   <BlogSidebar
                     currentSlug={blog.slug}
                     tocItems={tocItems}
@@ -466,11 +505,11 @@ export const PublicBlogDetailPage: React.FC = () => {
                     onTocClick={scrollToHeading}
                     authorName={blog.author || 'Requin Team'}
                     authorRole="Tech Specialist"
-                    authorBio="Expert in software development, architecture, and cloud solutions at Requin Solutions."
+                    authorBio="Expert in software development, and cloud solutions at Requin Solutions."
                     showAuthor={true}
                     showSearch={false}
                     showPopularTags={false}
-                    showNewsletter={true}
+                    showNewsletter={false}
                     showRecentPosts={false}
                   />
                 </div>
