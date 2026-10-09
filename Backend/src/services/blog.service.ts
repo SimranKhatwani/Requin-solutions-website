@@ -1,4 +1,4 @@
-import { BlogModel } from '../models/blog.model';
+import { BlogModel, BlogMongoose } from '../models/blog.model';
 import { ActivityModel } from '../models/activity.model';
 import { BlogDoc } from '../types';
 
@@ -20,7 +20,7 @@ export const BlogService = {
   },
 
   async create(data: Partial<BlogDoc>, adminEmail: string): Promise<BlogDoc | { error: string; status: number }> {
-    const { title, slug, shortDescription, content, featuredImage, author, category, tags, publishedDate, status } = data;
+    const { title, slug, shortDescription, content, featuredImage, author, category, tags, publishedDate, status, isFeatured, displayOrder } = data;
 
     if (!title || !shortDescription || !content) {
       return { error: 'Title, short description, and content are required.', status: 400 };
@@ -35,6 +35,11 @@ export const BlogService = {
       return { error: `A blog with slug "${autoSlug}" already exists. Please pick a unique slug.`, status: 400 };
     }
 
+    // If marked as cover/featured, unset other featured blogs
+    if (isFeatured) {
+      await BlogMongoose.updateMany({ isFeatured: true }, { $set: { isFeatured: false } });
+    }
+
     const newBlog: BlogDoc = {
       id: `blog-${Date.now()}`,
       title: title.trim(),
@@ -47,6 +52,8 @@ export const BlogService = {
       tags: Array.isArray(tags) ? tags : (tags ? (tags as any).split(',').map((t: string) => t.trim()).filter(Boolean) : ['Technology']),
       publishedDate: publishedDate || new Date().toISOString(),
       status: status === 'PUBLISHED' ? 'PUBLISHED' : 'DRAFT',
+      isFeatured: Boolean(isFeatured),
+      displayOrder: typeof displayOrder === 'number' ? displayOrder : 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -62,7 +69,7 @@ export const BlogService = {
       return { error: 'Blog not found.', status: 404 };
     }
 
-    const { title, slug, shortDescription, content, featuredImage, author, category, tags, publishedDate, status } = data;
+    const { title, slug, shortDescription, content, featuredImage, author, category, tags, publishedDate, status, isFeatured, displayOrder } = data;
 
     let finalSlug = prev.slug;
     if (slug && slug !== prev.slug) {
@@ -72,6 +79,11 @@ export const BlogService = {
         return { error: `Slug "${cleanSlug}" is already taken by another blog.`, status: 400 };
       }
       finalSlug = cleanSlug;
+    }
+
+    // If setting as featured, unset others
+    if (isFeatured && !prev.isFeatured) {
+      await BlogMongoose.updateMany({ isFeatured: true }, { $set: { isFeatured: false } });
     }
 
     const updated = await BlogModel.update(id, {
@@ -85,6 +97,8 @@ export const BlogService = {
       tags: tags ? (Array.isArray(tags) ? tags : (tags as any).split(',').map((t: string) => t.trim()).filter(Boolean)) : prev.tags,
       publishedDate: publishedDate ?? prev.publishedDate,
       status: status ?? prev.status,
+      isFeatured: isFeatured !== undefined ? Boolean(isFeatured) : prev.isFeatured,
+      displayOrder: displayOrder !== undefined ? Number(displayOrder) : prev.displayOrder,
     });
 
     if (updated) {
@@ -108,6 +122,45 @@ export const BlogService = {
       return updated;
     }
     return { error: 'Failed to toggle status.', status: 500 };
+  },
+
+  async toggleFeatured(id: string, adminEmail: string): Promise<BlogDoc | { error: string; status: number }> {
+    const prev = await BlogModel.findById(id);
+    if (!prev) {
+      return { error: 'Blog not found.', status: 404 };
+    }
+
+    const nextFeatured = !prev.isFeatured;
+    if (nextFeatured) {
+      // Unset other featured blogs to maintain a single primary cover article
+      await BlogMongoose.updateMany({ isFeatured: true }, { $set: { isFeatured: false } });
+    }
+
+    const updated = await BlogModel.update(id, { isFeatured: nextFeatured });
+    if (updated) {
+      ActivityModel.add(
+        nextFeatured ? `Set blog "${prev.title}" as Featured Cover Blog` : `Unset blog "${prev.title}" as Cover Blog`,
+        'blog',
+        prev.title,
+        adminEmail
+      );
+      return updated;
+    }
+    return { error: 'Failed to update cover status.', status: 500 };
+  },
+
+  async updateDisplayOrder(id: string, displayOrder: number, adminEmail: string): Promise<BlogDoc | { error: string; status: number }> {
+    const prev = await BlogModel.findById(id);
+    if (!prev) {
+      return { error: 'Blog not found.', status: 404 };
+    }
+
+    const updated = await BlogModel.update(id, { displayOrder: Number(displayOrder) });
+    if (updated) {
+      ActivityModel.add(`Updated display order for blog "${prev.title}" to ${displayOrder}`, 'blog', prev.title, adminEmail);
+      return updated;
+    }
+    return { error: 'Failed to update display order.', status: 500 };
   },
 
   async delete(id: string, adminEmail: string): Promise<BlogDoc | { error: string; status: number }> {

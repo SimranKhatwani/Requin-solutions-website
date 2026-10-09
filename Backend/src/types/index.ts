@@ -27,6 +27,8 @@ export interface BlogDoc {
   tags: string[];
   publishedDate: string;
   status: 'DRAFT' | 'PUBLISHED';
+  isFeatured?: boolean;
+  displayOrder?: number;
   createdAt: string;
   updatedAt: string;
 }

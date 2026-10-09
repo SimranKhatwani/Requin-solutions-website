@@ -53,6 +53,25 @@ export const BlogController = {
     res.json({ success: true, data: result });
   },
 
+  async toggleFeaturedBlog(req: AuthenticatedRequest, res: Response): Promise<void> {
+    const result = await BlogService.toggleFeatured(req.params.id, req.adminUser!.email);
+    if ('error' in result) {
+      res.status(result.status).json({ error: result.error });
+      return;
+    }
+    res.json({ success: true, data: result });
+  },
+
+  async updateDisplayOrder(req: AuthenticatedRequest, res: Response): Promise<void> {
+    const order = Number(req.body?.displayOrder ?? 0);
+    const result = await BlogService.updateDisplayOrder(req.params.id, order, req.adminUser!.email);
+    if ('error' in result) {
+      res.status(result.status).json({ error: result.error });
+      return;
+    }
+    res.json({ success: true, data: result });
+  },
+
   async deleteBlog(req: AuthenticatedRequest, res: Response): Promise<void> {
     const result = await BlogService.delete(req.params.id, req.adminUser!.email);
     if ('error' in result) {

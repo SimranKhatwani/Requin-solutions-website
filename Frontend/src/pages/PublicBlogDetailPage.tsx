@@ -434,12 +434,12 @@ export const PublicBlogDetailPage: React.FC = () => {
                 ======================================================== */}
                 <div className="lg:col-span-8 space-y-6 min-w-0">
                   
-                  {/* Featured Image on Left (Compact & Clean) */}
-                  <div className="relative rounded-2xl overflow-hidden max-h-[360px] w-full bg-slate-100 border border-slate-200/90 shadow-md">
+                  {/* Featured Cover Image on Left (Completely Visible Without Any Cropping) */}
+                  <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden w-full bg-slate-900/5 border border-slate-200/90 shadow-md flex items-center justify-center">
                     <img
                       src={getMediaUrl(blog.featuredImage || (blog as any).image)}
                       alt={blog.title}
-                      className="w-full h-full max-h-[360px] object-cover object-center"
+                      className="w-full h-auto max-h-[650px] object-contain rounded-2xl sm:rounded-3xl"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
                       }}

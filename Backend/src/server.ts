@@ -4,12 +4,17 @@ import { connectMongoDB } from './config/mongodb';
 import { CMSStore } from './config/db';
 import { getAllowedOrigins } from './config/cors';
 
+import { autoSeedDatabase } from './config/autoSeed';
+
 async function startServer(): Promise<void> {
   try {
     // 1. Establish MongoDB connection first
     await connectMongoDB();
 
-    // 2. Ensure legacy CMS store is initialized
+    // 2. Ensure all CMS blogs and documents are seeded in MongoDB Atlas
+    await autoSeedDatabase();
+
+    // 3. Ensure legacy CMS store is initialized
     CMSStore.get();
 
     // 3. Create Express app instance

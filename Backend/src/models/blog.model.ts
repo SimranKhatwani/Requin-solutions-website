@@ -67,6 +67,16 @@ export const BlogSchema = new Schema<IBlogDocument>(
       default: 'DRAFT',
       index: true,
     },
+    isFeatured: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    displayOrder: {
+      type: Number,
+      default: 0,
+      index: true,
+    },
   },
   {
     timestamps: true,
@@ -83,7 +93,7 @@ export const BlogSchema = new Schema<IBlogDocument>(
 
 // Indexes
 BlogSchema.index({ status: 1, category: 1 });
-BlogSchema.index({ status: 1, publishedDate: -1 });
+BlogSchema.index({ status: 1, isFeatured: -1, displayOrder: 1, publishedDate: -1 });
 BlogSchema.index({ title: 'text', shortDescription: 'text', tags: 'text' });
 
 export const BlogMongoose: Model<IBlogDocument> =
@@ -108,7 +118,9 @@ export const BlogModel = {
       ];
     }
 
-    const blogs = await BlogMongoose.find(query).sort({ publishedDate: -1, createdAt: -1 }).lean();
+    const blogs = await BlogMongoose.find(query)
+      .sort({ publishedDate: -1, createdAt: -1 })
+      .lean();
     return blogs as unknown as BlogDoc[];
   },
 
@@ -118,12 +130,16 @@ export const BlogModel = {
   },
 
   async findById(id: string): Promise<BlogDoc | null> {
-    const blog = await BlogMongoose.findOne({ id }).lean();
+    const isMongoId = mongoose.isValidObjectId(id);
+    const filter = isMongoId ? { $or: [{ id }, { _id: id }] } : { id };
+    const blog = await BlogMongoose.findOne(filter).lean();
     return blog ? (blog as unknown as BlogDoc) : null;
   },
 
   async findAll(): Promise<BlogDoc[]> {
-    const blogs = await BlogMongoose.find().sort({ updatedAt: -1, createdAt: -1 }).lean();
+    const blogs = await BlogMongoose.find()
+      .sort({ publishedDate: -1, createdAt: -1 })
+      .lean();
     return blogs as unknown as BlogDoc[];
   },
 
@@ -133,8 +149,10 @@ export const BlogModel = {
   },
 
   async update(id: string, updates: Partial<BlogDoc>): Promise<BlogDoc | null> {
+    const isMongoId = mongoose.isValidObjectId(id);
+    const filter = isMongoId ? { $or: [{ id }, { _id: id }] } : { id };
     const updated = await BlogMongoose.findOneAndUpdate(
-      { id },
+      filter,
       { $set: { ...updates, updatedAt: new Date().toISOString() } },
       { new: true }
     ).lean();
@@ -142,7 +160,9 @@ export const BlogModel = {
   },
 
   async delete(id: string): Promise<BlogDoc | null> {
-    const deleted = await BlogMongoose.findOneAndDelete({ id }).lean();
+    const isMongoId = mongoose.isValidObjectId(id);
+    const filter = isMongoId ? { $or: [{ id }, { _id: id }] } : { id };
+    const deleted = await BlogMongoose.findOneAndDelete(filter).lean();
     return deleted ? (deleted as unknown as BlogDoc) : null;
   },
 };

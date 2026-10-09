@@ -12,6 +12,8 @@ export interface BlogItem {
   tags: string[];
   publishedDate: string;
   status: 'DRAFT' | 'PUBLISHED';
+  isFeatured?: boolean;
+  displayOrder?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -52,6 +54,19 @@ export const blogService = {
   async togglePublishBlog(id: string): Promise<{ success: boolean; data: BlogItem }> {
     return apiClient<{ success: boolean; data: BlogItem }>(`/api/admin/blogs/${id}/publish`, {
       method: 'PATCH',
+    });
+  },
+
+  async toggleFeaturedBlog(id: string): Promise<{ success: boolean; data: BlogItem }> {
+    return apiClient<{ success: boolean; data: BlogItem }>(`/api/admin/blogs/${id}/featured`, {
+      method: 'PATCH',
+    });
+  },
+
+  async updateBlogOrder(id: string, displayOrder: number): Promise<{ success: boolean; data: BlogItem }> {
+    return apiClient<{ success: boolean; data: BlogItem }>(`/api/admin/blogs/${id}/order`, {
+      method: 'PATCH',
+      body: JSON.stringify({ displayOrder }),
     });
   },
 

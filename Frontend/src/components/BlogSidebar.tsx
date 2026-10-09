@@ -167,16 +167,16 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({
           {/* Navigation items list matching Image 2 with vertical guideline dashes */}
           {tocExpanded && (
             <nav
-              className="space-y-1 max-h-[260px] overflow-y-auto overflow-x-hidden pr-1 text-xs sm:text-[13px] pt-1"
+              className="space-y-1 max-h-[340px] overflow-y-auto overflow-x-hidden pr-1.5 text-xs sm:text-[13px] pt-1"
               style={{
                 scrollbarWidth: 'thin',
-                scrollbarColor: '#94a3b8 rgba(255, 255, 255, 0.05)',
+                scrollbarColor: '#475569 rgba(255, 255, 255, 0.05)',
               }}
             >
               <div className="space-y-1 w-full min-w-0">
                 {tocItems.map((item, idx) => {
                   const isActive = activeTocId === item.id || (!activeTocId && idx === 0);
-                  const isSubItem = item.level >= 3 || /^[a-z]\./i.test(item.text.trim());
+                  const isSubItem = item.level >= 3 || /^[a-z]\./i.test(item.text.trim()) || /^-\s+/i.test(item.text.trim());
 
                   return (
                     <button
@@ -184,15 +184,17 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({
                       onClick={() => onTocClick && onTocClick(item.id)}
                       className={`w-full text-left transition-all duration-150 cursor-pointer flex items-start min-w-0 ${
                         isSubItem
-                          ? 'ml-3.5 pl-3 py-1.5 text-xs font-normal border-l-2'
-                          : 'pl-3.5 py-2 font-medium border-l-2'
+                          ? 'ml-4 pl-3 py-1.5 text-[12px] font-normal border-l border-[#294B73] hover:border-[#00c2ff]'
+                          : 'pl-3.5 py-2 font-semibold text-[13px] border-l-2'
                       } ${
                         isActive
                           ? 'border-[#00c2ff] bg-[#0E2442] text-white font-bold rounded-r-xl shadow-xs'
-                          : 'border-[#1E4875]/70 hover:border-[#08B9E8]/70 text-slate-300 hover:text-white'
+                          : isSubItem
+                          ? 'text-slate-300 hover:text-white'
+                          : 'border-[#1E4875]/70 hover:border-[#08B9E8]/70 text-slate-200 hover:text-white'
                       }`}
                     >
-                      <span className="line-clamp-2 leading-snug break-words min-w-0">{item.text}</span>
+                      <span className="leading-snug break-words min-w-0">{item.text}</span>
                     </button>
                   );
                 })}
@@ -231,7 +233,7 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({
       )}
 
       {/* ========================================================
-          SIDEBAR CARD: POPULAR TAGS (Filter Above Newsletter)
+          SIDEBAR CARD: POPULAR TAGS (Filter Above Recent Posts & Newsletter)
       ======================================================== */}
       {showPopularTags && (
         <div className="bg-[#07172C] border border-[#17385E] rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5 text-left relative overflow-hidden group">
@@ -292,6 +294,85 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({
                 </button>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================
+          SIDEBAR CARD: RECENT POSTS (Placed directly below Popular Tags)
+      ======================================================== */}
+      {showRecentPosts && (
+        <div className="bg-[#07172C] border border-[#17385E] rounded-3xl p-6 sm:p-7 shadow-2xl space-y-6 text-left relative overflow-hidden group">
+          
+          {/* Ambient Top Cyan Glow */}
+          <div className="absolute -top-12 -right-12 w-44 h-44 bg-[#08B9E8]/12 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-[#0284c7]/10 rounded-full blur-2xl pointer-events-none" />
+
+          {/* Connecting Molecules Background SVG */}
+          <svg
+            className="absolute inset-0 w-full h-full pointer-events-none opacity-60"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <linearGradient id="moleculeGradRecent" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#08B9E8" stopOpacity="0.45" />
+                <stop offset="50%" stopColor="#00c2ff" stopOpacity="0.25" />
+                <stop offset="100%" stopColor="#0284c7" stopOpacity="0.4" />
+              </linearGradient>
+            </defs>
+            <g stroke="url(#moleculeGradRecent)" strokeWidth="1.2" fill="none">
+              <line x1="8%" y1="12%" x2="36%" y2="22%" />
+              <line x1="36%" y1="22%" x2="88%" y2="14%" />
+              <line x1="36%" y1="22%" x2="52%" y2="60%" />
+              <line x1="88%" y1="14%" x2="94%" y2="45%" />
+              <line x1="52%" y1="60%" x2="86%" y2="78%" />
+              <line x1="52%" y1="60%" x2="14%" y2="72%" />
+              <line x1="14%" y1="72%" x2="8%" y2="12%" />
+            </g>
+            <g fill="#08B9E8">
+              <circle cx="8%" cy="12%" r="3" fillOpacity="0.85" />
+              <circle cx="36%" cy="22%" r="4" fillOpacity="0.95" />
+              <circle cx="88%" cy="14%" r="3.2" fillOpacity="0.85" />
+              <circle cx="94%" cy="45%" r="2.5" fillOpacity="0.8" />
+              <circle cx="52%" cy="60%" r="4.5" fillOpacity="0.95" />
+              <circle cx="14%" cy="72%" r="3" fillOpacity="0.85" />
+              <circle cx="86%" cy="78%" r="3.5" fillOpacity="0.9" />
+            </g>
+          </svg>
+
+          <h3 className="text-2xl font-bold text-white tracking-tight relative z-10">
+            Recent Posts
+          </h3>
+
+          <div className="space-y-5 relative z-10">
+            {recentPosts.map((post) => (
+              <Link
+                key={post.id || post.slug}
+                to={`/blog/${post.slug}`}
+                className="flex items-start gap-4 group/item cursor-pointer"
+              >
+                <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 bg-[#0B223D] border border-[#1E4875]/80 shadow-md">
+                  <img
+                    src={getMediaUrl(post.featuredImage || (post as any).image)}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        '/images/digital_agency_office_1790576645354.jpg';
+                    }}
+                  />
+                </div>
+
+                <div className="flex-1 min-w-0 space-y-1">
+                  <h4 className="text-[15px] font-bold text-white group-hover/item:text-[#00c2ff] transition-colors duration-200 line-clamp-2 leading-snug">
+                    {post.title}
+                  </h4>
+                  <p className="text-xs text-slate-400 font-medium">
+                    {formatDate(post.publishedDate || post.createdAt)}
+                  </p>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       )}
@@ -394,85 +475,6 @@ export const BlogSidebar: React.FC<BlogSidebarProps> = ({
               </div>
             )}
           </form>
-        </div>
-      )}
-
-      {/* ========================================================
-          OPTIONAL: RECENT POSTS CARD (For Detail Pages or Alternate views)
-      ======================================================== */}
-      {showRecentPosts && (
-        <div className="bg-[#07172C] border border-[#17385E] rounded-3xl p-6 sm:p-7 shadow-2xl space-y-6 text-left relative overflow-hidden group">
-          
-          {/* Ambient Top Cyan Glow */}
-          <div className="absolute -top-12 -right-12 w-44 h-44 bg-[#08B9E8]/12 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-[#0284c7]/10 rounded-full blur-2xl pointer-events-none" />
-
-          {/* Connecting Molecules Background SVG */}
-          <svg
-            className="absolute inset-0 w-full h-full pointer-events-none opacity-60"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <defs>
-              <linearGradient id="moleculeGradRecent" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#08B9E8" stopOpacity="0.45" />
-                <stop offset="50%" stopColor="#00c2ff" stopOpacity="0.25" />
-                <stop offset="100%" stopColor="#0284c7" stopOpacity="0.4" />
-              </linearGradient>
-            </defs>
-            <g stroke="url(#moleculeGradRecent)" strokeWidth="1.2" fill="none">
-              <line x1="8%" y1="12%" x2="36%" y2="22%" />
-              <line x1="36%" y1="22%" x2="88%" y2="14%" />
-              <line x1="36%" y1="22%" x2="52%" y2="60%" />
-              <line x1="88%" y1="14%" x2="94%" y2="45%" />
-              <line x1="52%" y1="60%" x2="86%" y2="78%" />
-              <line x1="52%" y1="60%" x2="14%" y2="72%" />
-              <line x1="14%" y1="72%" x2="8%" y2="12%" />
-            </g>
-            <g fill="#08B9E8">
-              <circle cx="8%" cy="12%" r="3" fillOpacity="0.85" />
-              <circle cx="36%" cy="22%" r="4" fillOpacity="0.95" />
-              <circle cx="88%" cy="14%" r="3.2" fillOpacity="0.85" />
-              <circle cx="94%" cy="45%" r="2.5" fillOpacity="0.8" />
-              <circle cx="52%" cy="60%" r="4.5" fillOpacity="0.95" />
-              <circle cx="14%" cy="72%" r="3" fillOpacity="0.85" />
-              <circle cx="86%" cy="78%" r="3.5" fillOpacity="0.9" />
-            </g>
-          </svg>
-
-          <h3 className="text-2xl font-bold text-white tracking-tight relative z-10">
-            Recent Posts
-          </h3>
-
-          <div className="space-y-5 relative z-10">
-            {recentPosts.map((post) => (
-              <Link
-                key={post.id || post.slug}
-                to={`/blog/${post.slug}`}
-                className="flex items-start gap-4 group/item cursor-pointer"
-              >
-                <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 bg-[#0B223D] border border-[#1E4875]/80 shadow-md">
-                  <img
-                    src={getMediaUrl(post.featuredImage || (post as any).image)}
-                    alt={post.title}
-                    className="w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-300"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        '/images/digital_agency_office_1790576645354.jpg';
-                    }}
-                  />
-                </div>
-
-                <div className="flex-1 min-w-0 space-y-1">
-                  <h4 className="text-[15px] font-bold text-white group-hover/item:text-[#00c2ff] transition-colors duration-200 line-clamp-2 leading-snug">
-                    {post.title}
-                  </h4>
-                  <p className="text-xs text-slate-400 font-medium">
-                    {formatDate(post.publishedDate || post.createdAt)}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
         </div>
       )}
     </aside>

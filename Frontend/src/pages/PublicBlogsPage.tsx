@@ -32,34 +32,27 @@ export const PublicBlogsPage: React.FC = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const sortBlogList = (list: BlogItem[]) => {
+      return [...list].sort((a, b) => {
+        const dateA = new Date(a.publishedDate || a.createdAt || 0).getTime();
+        const dateB = new Date(b.publishedDate || b.createdAt || 0).getTime();
+        return dateB - dateA;
+      });
+    };
+
     const fetchBlogs = async () => {
       try {
         setLoading(true);
         const res = await blogService.getPublishedBlogs();
         if (res.data && res.data.length > 0) {
-          const sorted = [...res.data].sort((a, b) => {
-            const dateA = new Date(a.updatedAt || a.publishedDate || a.createdAt || 0).getTime();
-            const dateB = new Date(b.updatedAt || b.publishedDate || b.createdAt || 0).getTime();
-            return dateB - dateA;
-          });
-          setBlogs(sorted);
+          setBlogs(sortBlogList(res.data));
         } else {
           // Fallback to offline pre-populated real blogs from requinData
-          const sortedFallback = [...(REQUIN_BLOGS as unknown as BlogItem[])].sort((a, b) => {
-            const dateA = new Date(a.updatedAt || a.publishedDate || a.createdAt || 0).getTime();
-            const dateB = new Date(b.updatedAt || b.publishedDate || b.createdAt || 0).getTime();
-            return dateB - dateA;
-          });
-          setBlogs(sortedFallback);
+          setBlogs(sortBlogList(REQUIN_BLOGS as unknown as BlogItem[]));
         }
       } catch (err) {
         console.warn('Could not reach backend blogs API, using loaded publications fallback.', err);
-        const sortedFallback = [...(REQUIN_BLOGS as unknown as BlogItem[])].sort((a, b) => {
-          const dateA = new Date(a.updatedAt || a.publishedDate || a.createdAt || 0).getTime();
-          const dateB = new Date(b.updatedAt || b.publishedDate || b.createdAt || 0).getTime();
-          return dateB - dateA;
-        });
-        setBlogs(sortedFallback);
+        setBlogs(sortBlogList(REQUIN_BLOGS as unknown as BlogItem[]));
       } finally {
         setLoading(false);
       }
@@ -97,14 +90,7 @@ export const PublicBlogsPage: React.FC = () => {
     setCurrentPage(1);
   }, [searchTerm, selectedTag]);
 
-  // Paginated blogs list
-  const totalPages = Math.ceil(filteredBlogs.length / ITEMS_PER_PAGE) || 1;
-  const paginatedBlogs = useMemo(() => {
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredBlogs.slice(start, start + ITEMS_PER_PAGE);
-  }, [filteredBlogs, currentPage]);
-
-  // Featured top blog (shown full-width at top on page 1 when no strict filters are active)
+  // Automatic Cover Blog (Latest uploaded blog automatically becomes the top hero cover blog on page 1)
   const featuredBlog = useMemo(() => {
     if (currentPage === 1 && !searchTerm && selectedTag === 'All') {
       return filteredBlogs[0] || null;
@@ -112,13 +98,22 @@ export const PublicBlogsPage: React.FC = () => {
     return null;
   }, [filteredBlogs, currentPage, searchTerm, selectedTag]);
 
-  // Remaining blogs for the lower 2-column grid
-  const gridBlogs = useMemo(() => {
-    if (featuredBlog && currentPage === 1) {
-      return paginatedBlogs.slice(1);
+  // Paginated blogs list (1 cover + 6 grid cards = 7 blogs total on Page 1)
+  const remainingBlogs = useMemo(() => {
+    if (featuredBlog && currentPage === 1 && !searchTerm && selectedTag === 'All') {
+      return filteredBlogs.slice(1);
     }
-    return paginatedBlogs;
-  }, [paginatedBlogs, featuredBlog, currentPage]);
+    return filteredBlogs;
+  }, [filteredBlogs, featuredBlog, currentPage, searchTerm, selectedTag]);
+
+  const totalPages = Math.ceil(remainingBlogs.length / ITEMS_PER_PAGE) || 1;
+  const paginatedBlogs = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return remainingBlogs.slice(start, start + ITEMS_PER_PAGE);
+  }, [remainingBlogs, currentPage]);
+
+  // Grid blogs for the lower 2-column layout
+  const gridBlogs = paginatedBlogs;
 
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return 'Jul 3, 2025';
@@ -361,12 +356,12 @@ export const PublicBlogsPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Right Side: Image with corner circular arrow action button */}
-                <div className="lg:col-span-6 xl:col-span-5 relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[16/10] bg-slate-100 border border-slate-200/80 shadow-md">
+                {/* Right Side: Image with corner circular arrow action button (100% Fully Visible Without Cropping) */}
+                <div className="lg:col-span-6 xl:col-span-5 relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[16/10] bg-slate-50 border border-slate-200/80 shadow-md flex items-center justify-center p-2">
                   <img
                     src={getMediaUrl(featuredBlog.featuredImage || (featuredBlog as any).image)}
                     alt={featuredBlog.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-500 ease-out rounded-xl"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
                     }}
@@ -476,12 +471,12 @@ export const PublicBlogsPage: React.FC = () => {
                       <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#00c2ff]/10 rounded-full blur-2xl pointer-events-none group-hover:opacity-100 opacity-50 transition-opacity" />
 
                       <div className="space-y-4">
-                        {/* Card Thumbnail Frame (Image on top) */}
-                        <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/70">
+                        {/* Card Thumbnail Frame (Image on top - 100% Fully Visible) */}
+                        <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-50 border border-slate-200/70 flex items-center justify-center p-1.5">
                           <img
                             src={getMediaUrl(b.featuredImage || (b as any).image)}
                             alt={b.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out rounded-xl"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
                             }}
@@ -589,7 +584,7 @@ export const PublicBlogsPage: React.FC = () => {
 
             {/* ========================================================
                 RIGHT COLUMN (4 COLS): STICKY SIDEBAR
-                Search Input + Popular Tags (Filter) Card + Newsletter Card (Filter above Newsletter)
+                Search Input + Popular Tags (Filter) Card + Recent Posts Card + Newsletter Card
             ======================================================== */}
             <div className="lg:col-span-4">
               <BlogSidebar
@@ -600,7 +595,8 @@ export const PublicBlogsPage: React.FC = () => {
                 onSelectTag={setSelectedTag}
                 showNewsletter={true}
                 showPopularTags={true}
-                showRecentPosts={false}
+                showRecentPosts={true}
+                recentPosts={blogs}
               />
             </div>
 
