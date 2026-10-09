@@ -10,7 +10,8 @@ import {
   Clock,
   Calendar,
   Linkedin,
-  Instagram
+  Instagram,
+  MessageSquareText
 } from 'lucide-react';
 import { REQUIN_COMPANY_INFO, REQUIN_SERVICES } from '../data/requinData';
 
@@ -38,7 +39,7 @@ export const ContactSection: React.FC = () => {
   return (
     <section
       id="contact"
-      className="pt-12 sm:pt-16 md:pt-18 pb-20 sm:pb-24 md:pb-28 bg-[#F5FAFD] text-[#0B1726] relative overflow-hidden selection:bg-[#08B9E8]/20 selection:text-[#08B9E8]"
+      className="pt-14 sm:pt-18 md:pt-20 pb-20 sm:pb-24 md:pb-28 bg-[#F5FAFD] text-[#0B1726] relative overflow-hidden selection:bg-[#0088EE]/20 selection:text-[#0088EE]"
     >
       {/* Background Technology-Inspired Ambience & Keyframe Animations */}
       <style>{`
@@ -89,7 +90,7 @@ export const ContactSection: React.FC = () => {
       ======================================================== */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         {/* Top-Left Ambient Cyan Glow */}
-        <div className="absolute -top-24 -left-24 w-[650px] h-[500px] bg-[radial-gradient(circle_at_30%_30%,rgba(8,185,232,0.08),transparent_65%)] blur-3xl animate-contact-ambient-float" />
+        <div className="absolute -top-24 -left-24 w-[650px] h-[500px] bg-[radial-gradient(circle_at_30%_30%,rgba(0,136,238,0.08),transparent_65%)] blur-3xl animate-contact-ambient-float" />
         
         {/* Top-Right Soft Blue/Cyan Glow */}
         <div className="absolute -top-16 -right-16 w-[600px] h-[450px] bg-[radial-gradient(circle_at_70%_30%,rgba(0,194,255,0.07),transparent_65%)] blur-3xl animate-contact-ambient-float" style={{ animationDelay: '-6s' }} />
@@ -114,7 +115,7 @@ export const ContactSection: React.FC = () => {
       >
         <defs>
           <linearGradient id="contactNetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#08B9E8" stopOpacity="0.08" />
+            <stop offset="0%" stopColor="#0088EE" stopOpacity="0.08" />
             <stop offset="50%" stopColor="#00c2ff" stopOpacity="0.04" />
             <stop offset="100%" stopColor="#0284c7" stopOpacity="0.07" />
           </linearGradient>
@@ -136,7 +137,7 @@ export const ContactSection: React.FC = () => {
           <line x1="4%" y1="8%" x2="2%" y2="22%" />
           <line x1="2%" y1="22%" x2="7%" y2="28%" />
         </g>
-        <g fill="#08B9E8">
+        <g fill="#0088EE">
           <circle cx="4%" cy="8%" r="3" fillOpacity="0.3" />
           <circle cx="4%" cy="8%" r="1.5" fillOpacity="0.7" />
           <circle cx="11%" cy="16%" r="4" fillOpacity="0.25" filter="url(#contactNodeGlow)" />
@@ -180,7 +181,7 @@ export const ContactSection: React.FC = () => {
           <line x1="97%" y1="76%" x2="91%" y2="86%" />
           <line x1="91%" y1="86%" x2="83%" y2="80%" />
         </g>
-        <g fill="#08B9E8">
+        <g fill="#0088EE">
           <circle cx="3%" cy="78%" r="2.5" fillOpacity="0.3" />
           <circle cx="9%" cy="88%" r="3" fillOpacity="0.25" />
           <circle cx="16%" cy="82%" r="2" fillOpacity="0.4" />
@@ -202,7 +203,7 @@ export const ContactSection: React.FC = () => {
         >
           <path
             d="M-50,130 C220,70 540,170 880,100 C1180,40 1350,140 1500,90"
-            stroke="#08B9E8"
+            stroke="#0088EE"
             strokeWidth="1.2"
             strokeOpacity="0.07"
             strokeDasharray="5 7"
@@ -221,64 +222,65 @@ export const ContactSection: React.FC = () => {
       ======================================================== */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* TOP: Centered Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <div className="text-lg sm:text-xl md:text-2xl font-bold tracking-[0.2em] text-[#08B9E8] uppercase mb-3">
+        {/* TOP: Centered Header with Enhanced Badge */}
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0088EE]/10 border border-[#0088EE]/20 text-[#0088EE] text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0088EE] animate-pulse" />
             Connect With Us
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B1726] tracking-[-0.03em] leading-tight">
-            Let's Build Something Exceptional Together.
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B1726] tracking-tight leading-[1.15]">
+            Let's Build Something <span className="bg-gradient-to-r from-[#0088EE] via-[#00A3FF] to-[#08B9E8] bg-clip-text text-transparent">Exceptional</span> Together.
           </h2>
-          <p className="mt-4 text-base sm:text-lg text-slate-600 font-normal leading-[1.65]">
+          <p className="mt-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto">
             Whether you have an upcoming product launch, require enterprise software modernization, or wish to explore cloud infrastructure, our software architects are ready to collaborate.
           </p>
         </div>
 
-        {/* 3 INFO CARDS ROW */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-12 sm:mb-16 items-stretch">
+        {/* 3 INFO CARDS ROW: Balanced Spacing & Polished Hierarchy */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-10 sm:mb-12 items-stretch">
           
           {/* Card 1: Phone Consultation */}
-          <div className="bg-white rounded-3xl border border-slate-200/90 p-7 sm:p-8 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col justify-between text-left">
+          <div className="group bg-white rounded-3xl border border-slate-200/90 p-7 sm:p-8 shadow-md hover:shadow-xl hover:border-[#0088EE]/30 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between text-left">
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-[#E8F7FC] text-[#08B9E8] flex items-center justify-center mb-6 shadow-sm">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#E0F2FE] to-[#F0F9FF] text-[#0088EE] border border-[#0088EE]/15 flex items-center justify-center mb-5 shadow-sm group-hover:scale-110 transition-transform duration-300">
                 <Phone className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-[#0B1726] mb-2">
+              <h3 className="text-xl font-bold text-[#0B1726] mb-2 group-hover:text-[#0088EE] transition-colors">
                 Phone Consultation
               </h3>
               <p className="text-sm text-slate-500 mb-6 leading-relaxed">
                 Our support team is ready to assist you with any queries
               </p>
             </div>
-            <div className="pt-2 border-t border-slate-100">
+            <div className="pt-4 border-t border-slate-100">
               <a
                 href={`tel:${REQUIN_COMPANY_INFO.phones.primary}`}
-                className="inline-flex items-center gap-1.5 text-sm font-bold text-[#08B9E8] hover:text-[#0693ba] transition-colors group"
+                className="inline-flex items-center gap-2 text-sm font-bold text-[#0088EE] hover:text-[#0066CC] transition-colors"
               >
                 <span>{REQUIN_COMPANY_INFO.phones.primary}</span>
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
               </a>
             </div>
           </div>
 
           {/* Card 2: Direct Email */}
-          <div className="bg-white rounded-3xl border border-slate-200/90 p-7 sm:p-8 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col justify-between text-left">
+          <div className="group bg-white rounded-3xl border border-slate-200/90 p-7 sm:p-8 shadow-md hover:shadow-xl hover:border-[#0088EE]/30 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between text-left">
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-[#E8F7FC] text-[#08B9E8] flex items-center justify-center mb-6 shadow-sm">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#E0F2FE] to-[#F0F9FF] text-[#0088EE] border border-[#0088EE]/15 flex items-center justify-center mb-5 shadow-sm group-hover:scale-110 transition-transform duration-300">
                 <Mail className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-[#0B1726] mb-2">
+              <h3 className="text-xl font-bold text-[#0B1726] mb-2 group-hover:text-[#0088EE] transition-colors">
                 Direct Email
               </h3>
               <p className="text-sm text-slate-500 mb-6 leading-relaxed">
                 Get in touch via email for inquiries and collaborations
               </p>
             </div>
-            <div className="pt-2 border-t border-slate-100 space-y-1.5">
+            <div className="pt-4 border-t border-slate-100 space-y-1.5">
               <div>
                 <a
                   href={`mailto:${REQUIN_COMPANY_INFO.emails.general}`}
-                  className="text-sm font-semibold text-[#08B9E8] hover:text-[#0693ba] hover:underline transition-colors block"
+                  className="text-sm font-semibold text-[#0088EE] hover:text-[#0066CC] hover:underline transition-colors block"
                 >
                   {REQUIN_COMPANY_INFO.emails.general}
                 </a>
@@ -286,7 +288,7 @@ export const ContactSection: React.FC = () => {
               <div>
                 <a
                   href={`mailto:${REQUIN_COMPANY_INFO.emails.careers}`}
-                  className="text-sm font-semibold text-[#08B9E8] hover:text-[#0693ba] hover:underline transition-colors block"
+                  className="text-sm font-semibold text-[#0088EE] hover:text-[#0066CC] hover:underline transition-colors block"
                 >
                   {REQUIN_COMPANY_INFO.emails.careers}
                 </a>
@@ -295,19 +297,19 @@ export const ContactSection: React.FC = () => {
           </div>
 
           {/* Card 3: Jaipur Headquarters */}
-          <div className="bg-white rounded-3xl border border-slate-200/90 p-7 sm:p-8 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col justify-between text-left">
+          <div className="group bg-white rounded-3xl border border-slate-200/90 p-7 sm:p-8 shadow-md hover:shadow-xl hover:border-[#0088EE]/30 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between text-left">
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-[#E8F7FC] text-[#08B9E8] flex items-center justify-center mb-6 shadow-sm">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#E0F2FE] to-[#F0F9FF] text-[#0088EE] border border-[#0088EE]/15 flex items-center justify-center mb-5 shadow-sm group-hover:scale-110 transition-transform duration-300">
                 <MapPin className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-[#0B1726] mb-2">
+              <h3 className="text-xl font-bold text-[#0B1726] mb-2 group-hover:text-[#0088EE] transition-colors">
                 Jaipur Headquarters
               </h3>
               <p className="text-sm text-slate-500 mb-4 leading-relaxed">
                 Our headquarters is located at
               </p>
             </div>
-            <div className="pt-2 border-t border-slate-100">
+            <div className="pt-4 border-t border-slate-100">
               <p className="text-sm font-medium text-[#0B1726] leading-relaxed">
                 {REQUIN_COMPANY_INFO.headquarters}
               </p>
@@ -316,28 +318,40 @@ export const ContactSection: React.FC = () => {
 
         </div>
 
-        {/* BOTTOM: 2 COLUMNS (Contact Form on Left, Map & Business Hours on Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
+        {/* BOTTOM: 2 COLUMNS (Prominent Form on Left, Map & Hours on Right) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-stretch">
           
-          {/* LEFT: Contact Form Card */}
+          {/* LEFT: Prominent Consultation Form Card */}
           <div className="lg:col-span-7 flex flex-col h-full">
-            <div className="bg-white rounded-3xl border border-slate-200/90 p-8 sm:p-10 shadow-xl text-left h-full flex flex-col justify-between flex-1">
+            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-[0_20px_60px_-15px_rgba(0,136,238,0.12),0_10px_30px_-10px_rgba(15,23,42,0.06)] p-7 sm:p-10 text-left h-full flex flex-col justify-between flex-1 relative overflow-hidden">
+              
+              {/* Top vibrant brand gradient accent line */}
+              <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#0088EE] via-[#00C2FF] to-[#08B9E8]" />
+
               {!isSubmitted ? (
                 <form onSubmit={handleSubmit} className="flex-1 flex flex-col justify-between space-y-6">
+                  
+                  {/* Clean Form Header */}
                   <div className="border-b border-slate-100 pb-5">
-                    <h3 className="text-2xl sm:text-3xl font-bold text-[#0B1726]">
+                    <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0088EE] uppercase tracking-wider mb-2">
+                      <MessageSquareText className="w-3.5 h-3.5" />
+                      Direct Project Inquiry
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0B1726] tracking-tight">
                       Schedule a Consultation
                     </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 mt-1.5 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">
                       Fill out this quick form and our lead architect will reach out within 24 hours.
                     </p>
                   </div>
 
+                  {/* Form Inputs Container */}
                   <div className="space-y-5 flex-1 flex flex-col justify-between">
+                    
                     {/* Name Field */}
                     <div>
                       <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                        Your Full Name *
+                        Your Full Name <span className="text-[#0088EE]">*</span>
                       </label>
                       <input
                         type="text"
@@ -345,15 +359,15 @@ export const ContactSection: React.FC = () => {
                         placeholder="e.g. Alexander Vance"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-3.5 rounded-xl bg-[#F5F9FC] border border-slate-200 text-sm text-[#0B1726] placeholder:text-slate-400 focus:outline-none focus:border-[#08B9E8] focus:bg-white transition-all shadow-sm"
+                        className="w-full px-4 py-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 text-sm text-[#0B1726] font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-[#0088EE] focus:ring-4 focus:ring-[#0088EE]/10 focus:bg-white transition-all shadow-sm"
                       />
                     </div>
 
                     {/* Email & Phone Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                       <div>
                         <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                          Work Email *
+                          Work Email <span className="text-[#0088EE]">*</span>
                         </label>
                         <input
                           type="email"
@@ -361,7 +375,7 @@ export const ContactSection: React.FC = () => {
                           placeholder="alex@company.com"
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          className="w-full px-4 py-3.5 rounded-xl bg-[#F5F9FC] border border-slate-200 text-sm text-[#0B1726] placeholder:text-slate-400 focus:outline-none focus:border-[#08B9E8] focus:bg-white transition-all shadow-sm"
+                          className="w-full px-4 py-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 text-sm text-[#0B1726] font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-[#0088EE] focus:ring-4 focus:ring-[#0088EE]/10 focus:bg-white transition-all shadow-sm"
                         />
                       </div>
 
@@ -374,7 +388,7 @@ export const ContactSection: React.FC = () => {
                           placeholder="+91 / +1 ..."
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          className="w-full px-4 py-3.5 rounded-xl bg-[#F5F9FC] border border-slate-200 text-sm text-[#0B1726] placeholder:text-slate-400 focus:outline-none focus:border-[#08B9E8] focus:bg-white transition-all shadow-sm"
+                          className="w-full px-4 py-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 text-sm text-[#0B1726] font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-[#0088EE] focus:ring-4 focus:ring-[#0088EE]/10 focus:bg-white transition-all shadow-sm"
                         />
                       </div>
                     </div>
@@ -387,7 +401,7 @@ export const ContactSection: React.FC = () => {
                       <select
                         value={formData.service}
                         onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                        className="w-full px-4 py-3.5 rounded-xl bg-[#F5F9FC] border border-slate-200 text-sm text-[#0B1726] focus:outline-none focus:border-[#08B9E8] focus:bg-white transition-all shadow-sm"
+                        className="w-full px-4 py-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 text-sm text-[#0B1726] font-medium focus:outline-none focus:border-[#0088EE] focus:ring-4 focus:ring-[#0088EE]/10 focus:bg-white transition-all shadow-sm cursor-pointer"
                       >
                         {REQUIN_SERVICES.map((s) => (
                           <option key={s.id} value={s.title}>
@@ -402,7 +416,7 @@ export const ContactSection: React.FC = () => {
                     {/* Message Field */}
                     <div className="flex-1 flex flex-col">
                       <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                        Project Brief or Message *
+                        Project Brief or Message <span className="text-[#0088EE]">*</span>
                       </label>
                       <textarea
                         required
@@ -410,34 +424,49 @@ export const ContactSection: React.FC = () => {
                         placeholder="Briefly describe your objectives, timelines, or technology requirements..."
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        className="w-full flex-1 min-h-[120px] px-4 py-3.5 rounded-xl bg-[#F5F9FC] border border-slate-200 text-sm text-[#0B1726] placeholder:text-slate-400 focus:outline-none focus:border-[#08B9E8] focus:bg-white transition-all resize-none shadow-sm"
+                        className="w-full flex-1 min-h-[120px] px-4 py-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 text-sm text-[#0B1726] font-medium placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-[#0088EE] focus:ring-4 focus:ring-[#0088EE]/10 focus:bg-white transition-all resize-none shadow-sm"
                       />
                     </div>
                   </div>
 
-                  {/* Submit Button */}
-                  <div className="pt-2">
+                  {/* High-Impact Visual CTA Button */}
+                  <div className="pt-3">
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl font-semibold text-sm text-[#071827] bg-[#08B9E8] hover:bg-[#4DD4F5] transition-all duration-200 shadow-md shadow-[#08B9E8]/20 focus:outline-none active:scale-[0.99] disabled:opacity-50 hover:shadow-lg"
+                      className="group relative w-full inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-bold text-base text-white bg-gradient-to-r from-[#0088EE] via-[#0099FF] to-[#08B9E8] hover:from-[#0077CC] hover:via-[#0088EE] hover:to-[#00A8D8] shadow-[0_10px_25px_-5px_rgba(0,136,238,0.45)] hover:shadow-[0_15px_35px_-5px_rgba(0,136,238,0.6)] focus:outline-none focus:ring-4 focus:ring-[#0088EE]/30 active:scale-[0.99] disabled:opacity-60 transition-all duration-300 overflow-hidden cursor-pointer"
                     >
-                      <span>{isSubmitting ? 'Sending Request...' : 'Send Consultation Inquiry'}</span>
-                      <Send className="w-4 h-4" />
+                      {/* Subtle shimmer hover animation */}
+                      <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+                      
+                      {isSubmitting ? (
+                        <>
+                          <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span className="tracking-wide">Sending Request...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="tracking-wide">Send Consultation Inquiry</span>
+                          <Send className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-0.5" />
+                        </>
+                      )}
                     </button>
                   </div>
                 </form>
               ) : (
                 /* Success Confirmation State */
                 <div className="py-16 text-center space-y-5 my-auto">
-                  <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+                  <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
                     <CheckCircle2 className="w-9 h-9" />
                   </div>
-                  <h3 className="text-2xl sm:text-3xl font-bold text-[#0B1726]">
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0B1726]">
                     Thank You, {formData.name || 'Partner'}!
                   </h3>
                   <p className="text-sm sm:text-base text-slate-600 max-w-sm mx-auto leading-relaxed">
-                    Your inquiry has been routed to our lead engineering team. We will review your requirements and respond at <span className="font-semibold text-[#0B1726]">{formData.email}</span> within 24 hours.
+                    Your inquiry has been routed to our lead engineering team. We will review your requirements and respond at <span className="font-semibold text-[#0088EE]">{formData.email}</span> within 24 hours.
                   </p>
                   <div className="pt-4">
                     <button
@@ -445,9 +474,10 @@ export const ContactSection: React.FC = () => {
                         setIsSubmitted(false);
                         setFormData({ name: '', email: '', phone: '', service: 'Web Development', message: '' });
                       }}
-                      className="text-sm font-semibold text-[#08B9E8] hover:underline"
+                      className="inline-flex items-center gap-1.5 text-sm font-bold text-[#0088EE] hover:text-[#0066CC] hover:underline transition-colors"
                     >
-                      Send another message
+                      <span>Send another message</span>
+                      <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
@@ -455,9 +485,10 @@ export const ContactSection: React.FC = () => {
             </div>
           </div>
 
-          {/* RIGHT: Map, Business Hours & Socials Card */}
+          {/* RIGHT: Aligned Map, Business Hours & Socials Card */}
           <div className="lg:col-span-5 flex flex-col h-full">
-            <div className="rounded-3xl overflow-hidden bg-white border border-slate-200/90 shadow-xl text-left h-full flex flex-col justify-between">
+            <div className="rounded-3xl overflow-hidden bg-white border border-slate-200/90 shadow-md hover:shadow-xl transition-all duration-300 text-left h-full flex flex-col justify-between">
+              
               {/* Top Map Stage */}
               <div className="relative h-60 sm:h-64 w-full overflow-hidden bg-slate-100 shrink-0">
                 <iframe
@@ -473,7 +504,7 @@ export const ContactSection: React.FC = () => {
                   href="https://www.google.com/maps/search/?api=1&query=Requin+Solutions+Pvt+Ltd+Sector+6+Malviya+Nagar+Jaipur+Rajasthan+302017"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/95 backdrop-blur-md border border-slate-200 text-[#08B9E8] hover:text-[#0693ba] hover:bg-white text-xs font-bold shadow-md transition-all hover:scale-105"
+                  className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200 text-[#0088EE] hover:text-[#0066CC] hover:bg-white text-xs font-bold shadow-md transition-all hover:scale-105"
                 >
                   <span>Open in Maps</span>
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -497,7 +528,7 @@ export const ContactSection: React.FC = () => {
                   <div className="space-y-4">
                     {/* Weekdays */}
                     <div className="flex items-center gap-3.5">
-                      <div className="w-10 h-10 rounded-full bg-[#E8F7FC] text-[#08B9E8] flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#E0F2FE] to-[#F0F9FF] text-[#0088EE] border border-[#0088EE]/15 flex items-center justify-center shrink-0">
                         <Clock className="w-5 h-5" />
                       </div>
                       <div>
@@ -512,7 +543,7 @@ export const ContactSection: React.FC = () => {
 
                     {/* Weekends */}
                     <div className="flex items-center gap-3.5">
-                      <div className="w-10 h-10 rounded-full bg-[#E8F7FC] text-[#08B9E8] flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#E0F2FE] to-[#F0F9FF] text-[#0088EE] border border-[#0088EE]/15 flex items-center justify-center shrink-0">
                         <Calendar className="w-5 h-5" />
                       </div>
                       <div>
@@ -541,7 +572,7 @@ export const ContactSection: React.FC = () => {
                       rel="noopener noreferrer"
                       title="Justdial"
                       aria-label="View Requin Solutions on Justdial"
-                      className="w-10 h-10 rounded-full bg-[#E8F7FC] text-[#08B9E8] hover:bg-[#08B9E8] hover:text-white transition-all flex items-center justify-center shadow-sm hover:scale-105 font-black text-xs tracking-tighter"
+                      className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#E0F2FE] to-[#F0F9FF] text-[#0088EE] border border-[#0088EE]/15 hover:bg-[#0088EE] hover:text-white hover:border-[#0088EE] transition-all flex items-center justify-center shadow-sm hover:scale-105 font-black text-xs tracking-tighter"
                     >
                       JD
                     </a>
@@ -553,7 +584,7 @@ export const ContactSection: React.FC = () => {
                       rel="noopener noreferrer"
                       title="IndiaMART"
                       aria-label="View Requin Solutions on IndiaMART"
-                      className="w-10 h-10 rounded-full bg-[#E8F7FC] text-[#08B9E8] hover:bg-[#08B9E8] hover:text-white transition-all flex items-center justify-center shadow-sm hover:scale-105"
+                      className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#E0F2FE] to-[#F0F9FF] text-[#0088EE] border border-[#0088EE]/15 hover:bg-[#0088EE] hover:text-white hover:border-[#0088EE] transition-all flex items-center justify-center shadow-sm hover:scale-105"
                     >
                       <svg
                         viewBox="0 0 300 300"
@@ -573,7 +604,7 @@ export const ContactSection: React.FC = () => {
                       rel="noopener noreferrer"
                       title="LinkedIn"
                       aria-label="Follow Requin Solutions on LinkedIn"
-                      className="w-10 h-10 rounded-full bg-[#E8F7FC] text-[#08B9E8] hover:bg-[#08B9E8] hover:text-white transition-all flex items-center justify-center shadow-sm hover:scale-105"
+                      className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#E0F2FE] to-[#F0F9FF] text-[#0088EE] border border-[#0088EE]/15 hover:bg-[#0088EE] hover:text-white hover:border-[#0088EE] transition-all flex items-center justify-center shadow-sm hover:scale-105"
                     >
                       <Linkedin className="w-4 h-4" />
                     </a>
@@ -585,7 +616,7 @@ export const ContactSection: React.FC = () => {
                       rel="noopener noreferrer"
                       title="Instagram"
                       aria-label="Follow Requin Solutions on Instagram"
-                      className="w-10 h-10 rounded-full bg-[#E8F7FC] text-[#08B9E8] hover:bg-[#08B9E8] hover:text-white transition-all flex items-center justify-center shadow-sm hover:scale-105"
+                      className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#E0F2FE] to-[#F0F9FF] text-[#0088EE] border border-[#0088EE]/15 hover:bg-[#0088EE] hover:text-white hover:border-[#0088EE] transition-all flex items-center justify-center shadow-sm hover:scale-105"
                     >
                       <Instagram className="w-4 h-4" />
                     </a>
