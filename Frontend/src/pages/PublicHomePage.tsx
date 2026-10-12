@@ -64,26 +64,29 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ initialScrollTo 
           onViewProducts={() => scrollToSection('products')}
         />
 
-        {/* Services Section: Visually Rich White Cards with Subtle Hover */}
-        <ServicesSection onSelectService={(service) => setSelectedService(service)} />
+        {/* Light Sections Block 1: Services & Experience */}
+        <div className="bg-[#F5FAFD] w-full">
+          {/* Services Section: Visually Rich White Cards with Subtle Hover */}
+          <ServicesSection onSelectService={(service) => setSelectedService(service)} />
 
-        {/* Experience Section: Visual Storytelling Layout */}
-        <ExperienceSection onLearnMore={() => scrollToSection('our-story')} />
+          {/* Experience Section: Visual Storytelling Layout */}
+          <ExperienceSection onLearnMore={() => scrollToSection('our-story')} />
+        </div>
 
         {/* Products Section: High-Fidelity Software Suite Showcase */}
         <ProductsSection />
 
-        {/* Our Story: Editorial Timeline */}
-        <OurStorySection />
+        {/* Light Sections Block 2: Our Story, Life at Requin & Testimonials */}
+        <div className="bg-[#F5FAFD] w-full">
+          {/* Our Story: Editorial Timeline */}
+          <OurStorySection />
 
-        {/* Life at Requin: Prominent Photo Gallery */}
-        <LifeAtRequinSection />
+          {/* Life at Requin: Prominent Photo Gallery */}
+          <LifeAtRequinSection />
 
-        {/* Quiz CTA: Abstract Cyan/Blue Visual (Commented out) */}
-        {/* <QuizCTA onStartQuiz={() => setIsQuizOpen(true)} /> */}
-
-        {/* Our Clients Love Us: Moving Testimonials Carousel */}
-        <TestimonialsSection />
+          {/* Our Clients Love Us: Moving Testimonials Carousel */}
+          <TestimonialsSection />
+        </div>
 
         {/* Contact Section: Office Info & Beautiful Clean White Card Form */}
         <ContactSection />

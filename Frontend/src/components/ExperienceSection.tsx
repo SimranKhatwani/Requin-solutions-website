@@ -114,7 +114,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
     <section
       ref={sectionRef}
       id="experience"
-      className="py-6 sm:py-10 lg:py-14 bg-[#F5FAFD] text-[#061827] relative overflow-hidden font-sans select-none"
+      className="-mt-px py-6 sm:py-10 lg:py-14 bg-[#F5FAFD] text-[#061827] relative z-10 overflow-hidden font-sans select-none"
     >
       {/* ========================================================
           BACKGROUND LAYER 1: Soft Cyan Ambient Gradients

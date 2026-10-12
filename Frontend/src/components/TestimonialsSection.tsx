@@ -215,7 +215,7 @@ export const TestimonialsSection: React.FC = () => {
   return (
     <section
       id="testimonials"
-      className="pt-16 sm:pt-20 md:pt-24 pb-20 sm:pb-24 md:pb-28 bg-[#F5FAFD] text-[#0B1726] relative overflow-hidden selection:bg-[#0088EE]/20 selection:text-[#0088EE]"
+      className="-mt-px pt-16 sm:pt-20 md:pt-24 pb-20 sm:pb-24 md:pb-28 bg-[#F5FAFD] text-[#0B1726] relative z-10 overflow-hidden selection:bg-[#0088EE]/20 selection:text-[#0088EE]"
     >
       {/* Dynamic Keyframes for ambient lighting */}
       <style>{`

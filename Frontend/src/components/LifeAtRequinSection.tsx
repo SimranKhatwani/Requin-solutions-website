@@ -297,7 +297,7 @@ export const LifeAtRequinSection: React.FC = () => {
   return (
     <section
       id="life-at-requin"
-      className="pt-8 sm:pt-12 md:pt-14 pb-16 sm:pb-20 md:pb-24 bg-[#F5FAFD] text-[#071827] relative overflow-hidden selection:bg-[#08B9E8]/20 selection:text-[#08B9E8]"
+      className="-mt-px pt-8 sm:pt-12 md:pt-14 pb-16 sm:pb-20 md:pb-24 bg-[#F5FAFD] text-[#071827] relative z-10 overflow-hidden selection:bg-[#08B9E8]/20 selection:text-[#08B9E8]"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}

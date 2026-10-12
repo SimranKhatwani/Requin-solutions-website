@@ -161,12 +161,12 @@ export const OurStorySection: React.FC = () => {
       {/* ========================================================
           BACKGROUND LAYER 3: Subtle Flowing Wave Curves (Near Bottom)
       ======================================================== */}
-      <div className="absolute inset-x-0 bottom-0 h-44 pointer-events-none z-0 overflow-hidden opacity-60 animate-wave-float-story">
+      <div className="absolute inset-x-0 bottom-2 h-44 pointer-events-none z-0 overflow-hidden opacity-60 animate-wave-float-story">
         <svg
           viewBox="0 0 1440 200"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full preserve-3d"
+          className="w-full h-full"
         >
           <path
             d="M-50,130 C220,70 540,170 880,100 C1180,40 1350,140 1500,90"
