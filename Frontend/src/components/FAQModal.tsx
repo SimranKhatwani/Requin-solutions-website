@@ -55,7 +55,7 @@ export const FAQModal: React.FC<FAQModalProps> = ({ isOpen, onClose }) => {
       role="dialog"
     >
       <div
-        className="bg-white rounded-2xl sm:rounded-3xl max-w-4xl w-full p-6 sm:p-10 lg:p-12 shadow-2xl relative text-left animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto"
+        className="bg-white rounded-2xl sm:rounded-3xl max-w-4xl w-full p-4 sm:p-8 lg:p-12 shadow-2xl relative text-left animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}

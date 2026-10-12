@@ -111,6 +111,31 @@ export const TestimonialsSection: React.FC = () => {
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
   const [isFading, setIsFading] = useState(false);
 
+  // Mobile touch swipe gestures
+  const touchStartXRef = React.useRef<number | null>(null);
+  const touchEndXRef = React.useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndXRef.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartXRef.current !== null && touchEndXRef.current !== null) {
+      const distance = touchStartXRef.current - touchEndXRef.current;
+      if (distance > 45) {
+        handleNext();
+      } else if (distance < -45) {
+        handlePrev();
+      }
+    }
+    touchStartXRef.current = null;
+    touchEndXRef.current = null;
+  };
+
   // Fetch dynamic testimonials from CMS API (falls back gracefully to DEFAULT_TESTIMONIALS)
   useEffect(() => {
     testimonialService
@@ -342,12 +367,15 @@ export const TestimonialsSection: React.FC = () => {
         <div
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
           className="relative bg-white rounded-3xl sm:rounded-[36px] border border-slate-200/90 shadow-[0_25px_65px_-15px_rgba(0,136,238,0.14),0_10px_25px_-5px_rgba(11,23,38,0.04)] overflow-hidden transition-all duration-300"
         >
           {/* Top Brand Radiant Accent Line */}
           <div className="h-1.5 w-full bg-gradient-to-r from-[#0088EE] via-[#00C2FF] to-[#08B9E8]" />
 
-          <div className="p-6 sm:p-10 lg:p-12">
+          <div className="p-5 sm:p-10 lg:p-12">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               
               {/* LEFT COLUMN: Client Visual Anchor (35% width on large screens) */}
@@ -355,7 +383,7 @@ export const TestimonialsSection: React.FC = () => {
                 
                 {/* Portrait Container with Ambient Ring & Floating Verified Badge */}
                 <div className="relative mb-5 group">
-                  <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-3xl overflow-hidden shadow-xl border-4 border-white ring-4 ring-[#0088EE]/15 bg-slate-100 transition-all duration-500">
+                  <div className="w-32 h-32 sm:w-44 sm:h-44 rounded-3xl overflow-hidden shadow-xl border-4 border-white ring-4 ring-[#0088EE]/15 bg-slate-100 transition-all duration-500">
                     <img
                       src={current.image}
                       alt={current.name}
@@ -415,7 +443,7 @@ export const TestimonialsSection: React.FC = () => {
                 </div>
 
                 {/* Large, Readable, Impactful Quote */}
-                <blockquote className="text-lg sm:text-xl lg:text-[22px] text-[#0B1726] font-medium leading-[1.65] sm:leading-[1.6] italic my-5 select-text">
+                <blockquote className="text-base sm:text-xl lg:text-[22px] text-[#0B1726] font-medium leading-[1.65] sm:leading-[1.6] italic my-4 sm:my-5 select-text">
                   "{current.quote}"
                 </blockquote>
 
@@ -440,7 +468,7 @@ export const TestimonialsSection: React.FC = () => {
                   </div>
 
                   {/* Prominent Navigation Arrow Buttons */}
-                  <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
+                  <div className="flex items-center justify-center sm:justify-start gap-2.5 shrink-0 self-center sm:self-auto pt-2 sm:pt-0">
                     <button
                       onClick={handlePrev}
                       aria-label="Previous testimonial"

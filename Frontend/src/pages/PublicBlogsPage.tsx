@@ -301,7 +301,7 @@ export const PublicBlogsPage: React.FC = () => {
               <span>REQUIN INSIGHTS & EDITORIAL PUBLICATIONS</span>
             </span>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#0B1726] tracking-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#0B1726] tracking-tight">
               Insights, Architecture & <span className="text-[#0284c7]">Technology Trends.</span>
             </h1>
 
@@ -317,7 +317,7 @@ export const PublicBlogsPage: React.FC = () => {
           {featuredBlog && (
             <div
               onClick={() => navigate(`/blog/${featuredBlog.slug}`)}
-              className="w-full bg-white rounded-3xl border border-slate-200/90 shadow-lg hover:shadow-2xl hover:border-[#08B9E8]/60 transition-all duration-300 p-6 sm:p-10 cursor-pointer group relative overflow-hidden mb-12 sm:mb-14"
+              className="w-full bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-lg hover:shadow-2xl hover:border-[#08B9E8]/60 transition-all duration-300 p-5 sm:p-10 cursor-pointer group relative overflow-hidden mb-10 sm:mb-14"
             >
               {/* Subtle ambient cyan glow */}
               <div className="absolute -top-16 -right-16 w-64 h-64 bg-[#00c2ff]/10 rounded-full blur-3xl pointer-events-none group-hover:opacity-100 opacity-60 transition-opacity" />

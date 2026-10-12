@@ -73,6 +73,15 @@ export const LifeAtRequinSection: React.FC = () => {
   const [modalActiveIndex, setModalActiveIndex] = useState<number>(0);
   const [modalSelectedYear, setModalSelectedYear] = useState<string>('All');
   const [modalPhotoIndex, setModalPhotoIndex] = useState<number>(0);
+  const [isMobileScreen, setIsMobileScreen] = useState<boolean>(false);
+
+  // Responsive mobile screen detection
+  useEffect(() => {
+    const checkMobile = () => setIsMobileScreen(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Fetch dynamic CMS data
   useEffect(() => {
@@ -91,9 +100,13 @@ export const LifeAtRequinSection: React.FC = () => {
     };
   }, []);
 
-  // Touch swipe support
+  // Touch swipe support for main carousel
   const touchStartXRef = useRef<number | null>(null);
   const touchEndXRef = useRef<number | null>(null);
+
+  // Touch swipe support for modal lightbox
+  const modalTouchStartXRef = useRef<number | null>(null);
+  const modalTouchEndXRef = useRef<number | null>(null);
 
   const filteredList: GalleryImage[] = galleries.length > 0 ? galleries : LIFE_AT_REQUIN_GALLERY;
 
@@ -250,6 +263,28 @@ export const LifeAtRequinSection: React.FC = () => {
     touchEndXRef.current = null;
   };
 
+  // Modal touch handlers
+  const handleModalTouchStart = (e: React.TouchEvent) => {
+    modalTouchStartXRef.current = e.targetTouches[0].clientX;
+  };
+
+  const handleModalTouchMove = (e: React.TouchEvent) => {
+    modalTouchEndXRef.current = e.targetTouches[0].clientX;
+  };
+
+  const handleModalTouchEnd = () => {
+    if (modalTouchStartXRef.current !== null && modalTouchEndXRef.current !== null) {
+      const distance = modalTouchStartXRef.current - modalTouchEndXRef.current;
+      if (distance > 45) {
+        handleModalNext();
+      } else if (distance < -45) {
+        handleModalPrev();
+      }
+    }
+    modalTouchStartXRef.current = null;
+    modalTouchEndXRef.current = null;
+  };
+
   // Card click behavior
   const handleCardClick = (index: number) => {
     if (index === activeIndex) {
@@ -369,18 +404,18 @@ export const LifeAtRequinSection: React.FC = () => {
           <button
             onClick={handlePrev}
             aria-label="Previous event"
-            className="absolute left-1 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 z-40 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/95 backdrop-blur-md border border-[#D8E5EC] text-[#071827] shadow-lg hover:border-[#08B9E8] hover:text-[#08B9E8] hover:shadow-[0_0_25px_rgba(8,185,232,0.35)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8] cursor-pointer"
+            className="absolute left-1 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 z-40 w-9 h-9 sm:w-13 sm:h-13 rounded-full bg-white/95 backdrop-blur-md border border-[#D8E5EC] text-[#071827] shadow-lg hover:border-[#08B9E8] hover:text-[#08B9E8] hover:shadow-[0_0_25px_rgba(8,185,232,0.35)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8] cursor-pointer"
           >
-            <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7" />
+            <ChevronLeft className="w-5 h-5 sm:w-7 sm:h-7" />
           </button>
 
           {/* Right Arrow Control */}
           <button
             onClick={handleNext}
             aria-label="Next event"
-            className="absolute right-1 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 z-40 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/95 backdrop-blur-md border border-[#D8E5EC] text-[#071827] shadow-lg hover:border-[#08B9E8] hover:text-[#08B9E8] hover:shadow-[0_0_25px_rgba(8,185,232,0.35)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8] cursor-pointer"
+            className="absolute right-1 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 z-40 w-9 h-9 sm:w-13 sm:h-13 rounded-full bg-white/95 backdrop-blur-md border border-[#D8E5EC] text-[#071827] shadow-lg hover:border-[#08B9E8] hover:text-[#08B9E8] hover:shadow-[0_0_25px_rgba(8,185,232,0.35)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8] cursor-pointer"
           >
-            <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7" />
+            <ChevronRight className="w-5 h-5 sm:w-7 sm:h-7" />
           </button>
 
           {/* 3D Coverflow Stage Cards */}
@@ -413,20 +448,20 @@ export const LifeAtRequinSection: React.FC = () => {
                 blur = 0;
                 zIndex = 30;
               } else if (diff === -1 || (total <= 2 && !isCenter && idx < activeIndex)) {
-                translateX = '-65%';
-                scale = 0.82;
-                opacity = 0.65;
-                blur = 2.5;
+                translateX = isMobileScreen ? '-74%' : '-65%';
+                scale = isMobileScreen ? 0.76 : 0.82;
+                opacity = isMobileScreen ? 0.35 : 0.65;
+                blur = isMobileScreen ? 2 : 2.5;
                 zIndex = 10;
               } else if (diff === 1 || (total <= 2 && !isCenter && idx > activeIndex)) {
-                translateX = '65%';
-                scale = 0.82;
-                opacity = 0.65;
-                blur = 2.5;
+                translateX = isMobileScreen ? '74%' : '65%';
+                scale = isMobileScreen ? 0.76 : 0.82;
+                opacity = isMobileScreen ? 0.35 : 0.65;
+                blur = isMobileScreen ? 2 : 2.5;
                 zIndex = 10;
               } else {
                 // Offstage cards
-                translateX = diff > 0 ? '130%' : '-130%';
+                translateX = diff > 0 ? (isMobileScreen ? '140%' : '130%') : (isMobileScreen ? '-140%' : '-130%');
                 scale = 0.7;
                 opacity = 0;
                 blur = 4;
@@ -614,8 +649,13 @@ export const LifeAtRequinSection: React.FC = () => {
 
             {/* Modal Scrollable Content Area */}
             <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-thin min-h-0 flex flex-col">
-              {/* Full Cover Image Stage with Auto-Fit (No cutting/cropping) */}
-              <div className="relative w-full h-[320px] sm:h-[400px] md:h-[460px] lg:h-[520px] max-h-[65vh] overflow-hidden bg-[#050e18] flex items-center justify-center shrink-0 group">
+              {/* Full Cover Image Stage with Auto-Fit (No cutting/cropping) and touch swipe navigation */}
+              <div
+                onTouchStart={handleModalTouchStart}
+                onTouchMove={handleModalTouchMove}
+                onTouchEnd={handleModalTouchEnd}
+                className="relative w-full h-[320px] sm:h-[400px] md:h-[460px] lg:h-[520px] max-h-[65vh] overflow-hidden bg-[#050e18] flex items-center justify-center shrink-0 group"
+              >
                 {/* Ambient Blurred Backdrop for Cinematic Letterbox */}
                 <div
                   className="absolute inset-0 bg-cover bg-center blur-2xl opacity-20 scale-110 pointer-events-none"

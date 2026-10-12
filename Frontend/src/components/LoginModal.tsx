@@ -44,19 +44,19 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#071827]/85 backdrop-blur-md">
-      <div className="rounded-3xl max-w-4xl w-full shadow-2xl border border-white/10 overflow-hidden relative grid grid-cols-1 md:grid-cols-12 animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#071827]/85 backdrop-blur-md overflow-y-auto">
+      <div className="rounded-3xl max-w-4xl w-full shadow-2xl border border-white/10 overflow-hidden relative grid grid-cols-1 md:grid-cols-12 animate-in fade-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto my-auto">
         {/* Modal Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 z-20 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 z-20 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors focus:outline-none cursor-pointer"
           aria-label="Close Login Modal"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* LEFT COLUMN: Requin Branding, Dark Navy */}
-        <div className="md:col-span-5 bg-[#061523] text-white p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden text-left border-r border-white/10">
+        <div className="md:col-span-5 bg-[#061523] text-white p-6 sm:p-10 flex flex-col justify-between relative overflow-hidden text-left border-r border-white/10">
           <div
             className="absolute -top-20 -left-20 w-60 h-60 bg-[#00c2ff]/15 blur-3xl rounded-full pointer-events-none"
             aria-hidden="true"

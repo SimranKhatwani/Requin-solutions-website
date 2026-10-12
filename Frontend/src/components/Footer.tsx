@@ -123,7 +123,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
               <img
                 src="/images/logo.png"
                 alt="Requin Solutions Pvt Ltd"
-                className="h-14 sm:h-16 md:h-19 w-auto object-contain block transition-opacity duration-200 hover:opacity-90"
+                className="h-11 sm:h-16 md:h-19 w-auto object-contain block transition-opacity duration-200 hover:opacity-90"
               />
             </div>
 
@@ -400,7 +400,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
           BOTTOM COPYRIGHT BAR 
       ======================================================== */}
       <div className="border-t border-white/10 bg-[#05131F]/90 py-5 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-7xl mx-auto flex items-center justify-between text-xs text-slate-400">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400 text-center sm:text-left">
           <p>© 2026 Requin Solutions Pvt Ltd. All rights reserved.</p>
         </div>
       </div>

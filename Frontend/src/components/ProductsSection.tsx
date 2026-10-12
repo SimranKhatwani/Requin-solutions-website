@@ -284,15 +284,15 @@ export const ProductsSection: React.FC<ProductsSectionProps> = () => {
         {/* ========================================================
             2. PRODUCT TABS (Horizontal Pill Switcher)
         ======================================================== */}
-        <div className="flex justify-center mb-10 sm:mb-12">
-          <div className="inline-flex items-center p-1.5 rounded-full bg-[#061827]/90 border border-[#08B9E8]/30 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.4)] max-w-full overflow-x-auto scrollbar-none">
+        <div className="w-full flex justify-start sm:justify-center mb-8 sm:mb-12 overflow-x-auto scrollbar-none px-1 py-1">
+          <div className="inline-flex items-center p-1 sm:p-1.5 rounded-full bg-[#061827]/90 border border-[#08B9E8]/30 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.4)] shrink-0 mx-auto">
             {SHOWCASE_PRODUCTS.map((product) => {
               const isActive = product.id === activeProduct.id;
               return (
                 <button
                   key={product.id}
                   onClick={() => handleTabChange(product.id)}
-                  className={`px-5 sm:px-7 py-2.5 rounded-full text-sm sm:text-base font-semibold transition-all duration-300 whitespace-nowrap cursor-pointer focus:outline-none ${
+                  className={`px-3.5 sm:px-7 py-2 sm:py-2.5 rounded-full text-xs sm:text-base font-semibold transition-all duration-300 whitespace-nowrap cursor-pointer focus:outline-none ${
                     isActive
                       ? 'bg-[#08B9E8] text-[#061827] font-bold shadow-[0_0_24px_rgba(8,185,232,0.5)]'
                       : 'text-[#A9C8DA] hover:text-white hover:bg-white/[0.04]'
@@ -308,7 +308,7 @@ export const ProductsSection: React.FC<ProductsSectionProps> = () => {
         {/* ========================================================
             3. MAIN PRODUCT PRESENTATION CARD
         ======================================================== */}
-        <div className="rounded-[32px] bg-[#0A1B2D]/85 border border-[#08B9E8]/20 p-6 sm:p-10 lg:p-12 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-[#08B9E8]/45 relative overflow-hidden">
+        <div className="rounded-[24px] sm:rounded-[32px] bg-[#0A1B2D]/85 border border-[#08B9E8]/20 p-5 sm:p-10 lg:p-12 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-[#08B9E8]/45 relative overflow-hidden">
           
           {/* Ambient Soft Glow inside card */}
           <div
@@ -334,7 +334,7 @@ export const ProductsSection: React.FC<ProductsSectionProps> = () => {
         {/* ========================================================
             4. RIGHT BOTTOM "SEE MORE PRODUCTS" BUTTON
         ======================================================== */}
-        <div className="flex justify-end mt-8 sm:mt-10">
+        <div className="flex justify-center sm:justify-end mt-8 sm:mt-10">
           <button
             onClick={() => navigate('/products')}
             className="inline-flex items-center gap-3 px-6 sm:px-8 py-3.5 rounded-full bg-[#071F33]/90 hover:bg-[#08B9E8] border border-[#08B9E8]/40 hover:border-[#08B9E8] text-[#08B9E8] hover:text-[#061827] font-bold text-sm sm:text-base transition-all duration-300 shadow-lg shadow-black/30 hover:shadow-[0_0_30px_rgba(8,185,232,0.45)] group cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#08B9E8]/50 active:scale-95"

@@ -99,7 +99,7 @@ export const PublicQuizPage: React.FC = () => {
           {/* ========================================================
               QUIZ CARD CONTAINER (Matching user screenshot)
           ======================================================== */}
-          <div className="rounded-3xl bg-gradient-to-b from-[#0B2235]/95 to-[#071827]/95 border border-white/15 p-6 sm:p-10 md:p-16 text-center shadow-[0_25px_70px_rgba(0,0,0,0.6),0_0_40px_rgba(8,185,232,0.12)] backdrop-blur-xl relative overflow-hidden transition-all duration-500">
+          <div className="rounded-3xl bg-gradient-to-b from-[#0B2235]/95 to-[#071827]/95 border border-white/15 p-4 sm:p-10 md:p-16 text-center shadow-[0_25px_70px_rgba(0,0,0,0.6),0_0_40px_rgba(8,185,232,0.12)] backdrop-blur-xl relative overflow-hidden transition-all duration-500">
             {/* Ambient Cyan Corner Glow */}
             <div
               className="absolute top-0 right-0 w-64 h-64 bg-[#08B9E8]/10 blur-3xl pointer-events-none"

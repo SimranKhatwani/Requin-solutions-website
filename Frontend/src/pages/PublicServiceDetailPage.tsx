@@ -312,7 +312,7 @@ export const PublicServiceDetailPage: React.FC = () => {
           {/* Deliverables & Capabilities Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
             {/* Left: Key Capabilities */}
-            <div className="lg:col-span-8 bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-10 space-y-6 shadow-sm">
+            <div className="lg:col-span-8 bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-10 space-y-6 shadow-sm">
               <div className="flex items-center gap-2 text-[#08B9E8] text-xs font-bold uppercase tracking-widest">
                 <Layers className="w-4 h-4" />
                 <span>Engineering Capabilities</span>
@@ -344,7 +344,7 @@ export const PublicServiceDetailPage: React.FC = () => {
             {/* Right: Technology Stack & Fast Contact */}
             <div className="lg:col-span-4 space-y-6">
               {/* Tech Stack Card */}
-              <div className="bg-white border border-slate-200/90 rounded-3xl p-8 space-y-4 shadow-sm">
+              <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-8 space-y-4 shadow-sm">
                 <div className="text-xs font-bold text-[#08B9E8] uppercase tracking-widest">
                   Core Tech Stack
                 </div>
@@ -364,7 +364,7 @@ export const PublicServiceDetailPage: React.FC = () => {
               </div>
 
               {/* Consultation CTA Card */}
-              <div className="bg-gradient-to-br from-[#E8F7FC] via-white to-white border border-[#08B9E8]/30 rounded-3xl p-8 space-y-4 text-left shadow-sm">
+              <div className="bg-gradient-to-br from-[#E8F7FC] via-white to-white border border-[#08B9E8]/30 rounded-3xl p-5 sm:p-8 space-y-4 text-left shadow-sm">
                 <div className="inline-flex items-center px-3.5 py-1 rounded-full bg-[#E8F7FC] text-[#08B9E8] text-xs font-bold">
                   <span>Expert Advisory</span>
                 </div>

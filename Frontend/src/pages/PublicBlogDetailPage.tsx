@@ -15,6 +15,8 @@ import {
   Clock,
   ChevronRight,
   Check,
+  List,
+  ChevronDown,
 } from 'lucide-react';
 
 export const PublicBlogDetailPage: React.FC = () => {
@@ -24,6 +26,7 @@ export const PublicBlogDetailPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [activeTocId, setActiveTocId] = useState<string>('');
+  const [mobileTocOpen, setMobileTocOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -446,12 +449,49 @@ export const PublicBlogDetailPage: React.FC = () => {
                     />
                   </div>
 
+                  {/* Mobile Collapsible Table of Contents */}
+                  {tocItems.length > 0 && (
+                    <div className="block lg:hidden bg-white rounded-2xl border border-slate-200 shadow-sm p-4 text-left">
+                      <button
+                        onClick={() => setMobileTocOpen(!mobileTocOpen)}
+                        className="w-full flex items-center justify-between font-bold text-sm text-[#0284c7] cursor-pointer"
+                      >
+                        <span className="flex items-center gap-2">
+                          <List className="w-4 h-4 text-[#08B9E8]" />
+                          Table of Contents ({tocItems.length} sections)
+                        </span>
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileTocOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      {mobileTocOpen && (
+                        <div className="mt-3 pt-3 border-t border-slate-100 space-y-1.5 max-h-60 overflow-y-auto">
+                          {tocItems.map((item) => (
+                            <button
+                              key={item.id}
+                              onClick={() => {
+                                scrollToHeading(item.id);
+                                setMobileTocOpen(false);
+                              }}
+                              className={`block w-full text-left text-xs py-1.5 px-2.5 rounded-lg transition-colors cursor-pointer ${
+                                activeTocId === item.id
+                                  ? 'bg-[#E0F7FE] text-[#0284c7] font-bold'
+                                  : 'text-slate-600 hover:text-[#0284c7]'
+                              }`}
+                              style={{ paddingLeft: `${Math.max(8, (item.level - 1) * 12 + 8)}px` }}
+                            >
+                              {item.text}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* Main Article Content (Starts Directly with Introduction - No Extra Intro Paragraphs) */}
                   <article className="space-y-8 pt-2">
                     {/* HTML Rich Text Body */}
                     <div
                       id="blog-detail-content"
-                      className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-10 md:p-12 shadow-sm text-slate-700 text-base sm:text-[17px] leading-relaxed space-y-6"
+                      className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-10 md:p-12 shadow-sm text-slate-700 text-base sm:text-[17px] leading-relaxed space-y-6 overflow-hidden"
                       dangerouslySetInnerHTML={{ __html: blog.content }}
                     />
 

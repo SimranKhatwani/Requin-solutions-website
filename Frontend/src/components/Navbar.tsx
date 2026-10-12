@@ -26,6 +26,23 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [location.pathname]);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
+  // Close mobile menu on location change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
   const handleNavClick = (sectionId: string) => {
     if (location.pathname !== '/') {
       navigate(`/#${sectionId}`);
@@ -57,7 +74,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <img
               src="/images/logo.png"
               alt="Requin Solutions"
-              className="h-12 sm:h-14 md:h-19 w-auto object-contain block transition-opacity duration-200 hover:opacity-90"
+              className="h-10 sm:h-14 md:h-19 w-auto object-contain block transition-opacity duration-200 hover:opacity-90"
             />
           </button>
 
@@ -108,13 +125,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               Contact
             </button>
 
-            {/* Solid Get Started CTA Button */}
+            {/* Get Started CTA Button (matches See More Products UI) */}
             <button
               onClick={() => handleNavClick('quiz')}
-              className="inline-flex items-center gap-1.5 px-4.5 py-2 text-md font-semibold text-[#05131f] bg-[#00c2ff] hover:bg-[#38d4ff] rounded-lg transition-all duration-200 shadow-sm hover:shadow-md hover:shadow-[#00c2ff]/25 focus:outline-none active:scale-[0.98] cursor-pointer ml-2"
+              className="inline-flex items-center gap-2 px-5 py-2 text-sm sm:text-[15px] font-bold text-[#08B9E8] hover:text-[#061827] bg-[#071F33]/90 hover:bg-[#08B9E8] border border-[#08B9E8]/40 hover:border-[#08B9E8] rounded-full transition-all duration-300 shadow-md shadow-black/20 hover:shadow-[0_0_25px_rgba(8,185,232,0.4)] focus:outline-none active:scale-[0.98] cursor-pointer ml-2 group"
             >
               <span>Get Started</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </button>
           </nav>
 
@@ -122,7 +139,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex lg:hidden items-center gap-2 sm:gap-3">
             <button
               onClick={() => handleNavClick('quiz')}
-              className="px-3.5 py-1.5 bg-[#00c2ff] hover:bg-[#38d4ff] text-[#05131f] rounded-lg text-xs font-semibold shadow-xs"
+              className="px-3.5 py-1.5 rounded-full bg-[#071F33]/90 hover:bg-[#08B9E8] border border-[#08B9E8]/40 hover:border-[#08B9E8] text-[#08B9E8] hover:text-[#061827] text-xs font-bold transition-all duration-200"
             >
               Get Started
             </button>
@@ -139,7 +156,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#061523]/98 border-b border-white/10 px-6 pt-4 pb-6 mt-3 space-y-4 shadow-2xl backdrop-blur-xl">
+        <div className="lg:hidden bg-[#061523]/98 border-b border-white/10 px-6 pt-4 pb-6 mt-3 space-y-4 shadow-2xl backdrop-blur-xl max-h-[calc(100vh-80px)] overflow-y-auto">
           <button
             onClick={() => handleNavClick('services')}
             className="block w-full text-left py-2 text-base font-semibold text-white hover:text-[#00c2ff]"
@@ -185,10 +202,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 setMobileMenuOpen(false);
                 handleNavClick('quiz');
               }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-[#05131f] bg-[#00c2ff] hover:bg-[#38d4ff] rounded-lg shadow-sm"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-[#08B9E8] hover:text-[#061827] bg-[#071F33]/90 hover:bg-[#08B9E8] border border-[#08B9E8]/40 hover:border-[#08B9E8] rounded-full transition-all duration-200 shadow-sm group"
             >
               <span>Get Started</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </button>
           </div>
         </div>

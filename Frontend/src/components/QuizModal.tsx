@@ -45,8 +45,8 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, onSelectS
     REQUIN_SERVICES.find((s) => s.id === targetServiceId) || REQUIN_SERVICES[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#071827]/85 backdrop-blur-md">
-      <div className="bg-[#0B2235] text-white rounded-3xl max-w-2xl w-full p-6 sm:p-10 shadow-2xl border border-white/15 relative overflow-hidden text-left">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#071827]/85 backdrop-blur-md">
+      <div className="bg-[#0B2235] text-white rounded-2xl sm:rounded-3xl max-w-2xl w-full p-4 sm:p-8 md:p-10 shadow-2xl border border-white/15 relative overflow-y-auto max-h-[92vh] text-left">
         {/* Subtle Ambient Glow */}
         <div
           className="absolute top-0 right-0 w-64 h-64 bg-[#08B9E8]/10 blur-3xl pointer-events-none"
@@ -56,7 +56,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose, onSelectS
         {/* Modal Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors focus:outline-none"
+          className="absolute top-3.5 right-3.5 sm:top-6 sm:right-6 p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors focus:outline-none cursor-pointer"
           aria-label="Close Quiz"
         >
           <X className="w-5 h-5" />

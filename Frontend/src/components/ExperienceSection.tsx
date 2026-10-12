@@ -267,11 +267,11 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             />
 
             {/* Main Rounded Image Container with Smooth Curved Ends */}
-            <div className="relative rounded-[32px] overflow-hidden bg-white border border-white/90 shadow-[0_24px_54px_rgba(8,185,232,0.18)] group">
+            <div className="relative rounded-[24px] sm:rounded-[32px] overflow-hidden bg-white border border-white/90 shadow-[0_24px_54px_rgba(8,185,232,0.18)] group">
               <img
                 src="/images/experience-team-collaboration.jpg"
                 alt="Requin Solutions Engineering Team Collaborating"
-                className="w-full h-[360px] sm:h-[430px] md:h-[470px] lg:h-[450px] xl:h-[480px] object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                className="w-full h-[280px] xs:h-[340px] sm:h-[430px] md:h-[470px] lg:h-[450px] xl:h-[480px] object-cover transition-transform duration-700 group-hover:scale-[1.02]"
               />
               {/* Soft cyan bottom atmospheric gradient matching reference */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#08B9E8]/25 via-transparent to-transparent pointer-events-none" />
@@ -280,16 +280,16 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             {/* ----------------------------------------------------
                 FLOATING CALLOUT 1: Top-Left ("Clean Code / Better Solutions")
             ---------------------------------------------------- */}
-            <div className="absolute -top-4 -left-3 sm:-top-6 sm:-left-6 z-20 animate-float-gentle">
-              <div className="bg-white/95 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/90 shadow-[0_12px_32px_rgba(8,185,232,0.18)] flex items-center gap-3 transition-transform duration-300 hover:scale-105">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#E1F7FD] flex items-center justify-center text-[#08B9E8] shadow-inner shrink-0">
-                  <Code2 className="w-5 h-5 sm:w-5.5 sm:h-5.5 stroke-[2.2]" />
+            <div className="absolute -top-3 -left-2 sm:-top-6 sm:-left-6 z-20 animate-float-gentle scale-[0.82] sm:scale-100 origin-top-left">
+              <div className="bg-white/95 backdrop-blur-md rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 border border-white/90 shadow-[0_12px_32px_rgba(8,185,232,0.18)] flex items-center gap-2.5 sm:gap-3 transition-transform duration-300 hover:scale-105">
+                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#E1F7FD] flex items-center justify-center text-[#08B9E8] shadow-inner shrink-0">
+                  <Code2 className="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5 stroke-[2.2]" />
                 </div>
                 <div>
                   <div className="text-xs sm:text-sm font-bold text-[#061827] leading-tight">
                     Clean Code
                   </div>
-                  <div className="text-[11px] sm:text-xs text-slate-500 font-medium mt-0.5">
+                  <div className="text-[10px] sm:text-xs text-slate-500 font-medium mt-0.5">
                     Better Solutions
                   </div>
                 </div>
@@ -299,10 +299,10 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             {/* ----------------------------------------------------
                 FLOATING CALLOUT 2: Top-Right (Chart Graphic + Plan / Build / Launch)
             ---------------------------------------------------- */}
-            <div className="absolute -top-4 -right-3 sm:-top-6 sm:-right-6 z-20 animate-float-gentle-alt">
-              <div className="bg-[#EBF8FD]/95 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/90 shadow-[0_12px_32px_rgba(8,185,232,0.18)] flex items-center gap-3.5 transition-transform duration-300 hover:scale-105">
+            <div className="absolute -top-3 -right-2 sm:-top-6 sm:-right-6 z-20 animate-float-gentle-alt scale-[0.82] sm:scale-100 origin-top-right">
+              <div className="bg-[#EBF8FD]/95 backdrop-blur-md rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 border border-white/90 shadow-[0_12px_32px_rgba(8,185,232,0.18)] flex items-center gap-2.5 sm:gap-3.5 transition-transform duration-300 hover:scale-105">
                 {/* Mini upward line chart box */}
-                <div className="w-12 h-11 rounded-xl bg-white/90 p-1.5 flex items-center justify-center shrink-0 shadow-sm">
+                <div className="w-10 h-9 sm:w-12 sm:h-11 rounded-xl bg-white/90 p-1 sm:p-1.5 flex items-center justify-center shrink-0 shadow-sm">
                   <svg
                     viewBox="0 0 36 26"
                     fill="none"
@@ -324,17 +324,17 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
                   </svg>
                 </div>
                 {/* 3 Step Checklist: Plan, Build, Launch */}
-                <div className="space-y-1">
-                  <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-[#061827]">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#08B9E8] fill-[#08B9E8]/15 shrink-0" />
+                <div className="space-y-0.5 sm:space-y-1">
+                  <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs font-semibold text-[#061827]">
+                    <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#08B9E8] fill-[#08B9E8]/15 shrink-0" />
                     <span>Plan</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-[#061827]">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#08B9E8] fill-[#08B9E8]/15 shrink-0" />
+                  <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs font-semibold text-[#061827]">
+                    <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#08B9E8] fill-[#08B9E8]/15 shrink-0" />
                     <span>Build</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-[#061827]">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#08B9E8] fill-[#08B9E8]/15 shrink-0" />
+                  <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs font-semibold text-[#061827]">
+                    <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#08B9E8] fill-[#08B9E8]/15 shrink-0" />
                     <span>Launch</span>
                   </div>
                 </div>
@@ -344,16 +344,16 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             {/* ----------------------------------------------------
                 FLOATING CALLOUT 3: Bottom-Left ("Turning Ideas into Scalable Products")
             ---------------------------------------------------- */}
-            <div className="absolute -bottom-4 -left-3 sm:-bottom-6 sm:-left-6 z-20 animate-float-gentle">
-              <div className="bg-white/95 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/90 shadow-[0_12px_32px_rgba(8,185,232,0.18)] flex items-center gap-3 transition-transform duration-300 hover:scale-105">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#E1F7FD] flex items-center justify-center text-[#08B9E8] shadow-inner shrink-0">
-                  <BarChart3 className="w-5 h-5 sm:w-5.5 sm:h-5.5 stroke-[2.2]" />
+            <div className="absolute -bottom-3 -left-2 sm:-bottom-6 sm:-left-6 z-20 animate-float-gentle scale-[0.82] sm:scale-100 origin-bottom-left">
+              <div className="bg-white/95 backdrop-blur-md rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 border border-white/90 shadow-[0_12px_32px_rgba(8,185,232,0.18)] flex items-center gap-2.5 sm:gap-3 transition-transform duration-300 hover:scale-105">
+                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#E1F7FD] flex items-center justify-center text-[#08B9E8] shadow-inner shrink-0">
+                  <BarChart3 className="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5 stroke-[2.2]" />
                 </div>
                 <div>
                   <div className="text-xs sm:text-sm font-bold text-[#061827] leading-tight">
                     Turning Ideas
                   </div>
-                  <div className="text-[11px] sm:text-xs text-slate-500 font-medium mt-0.5">
+                  <div className="text-[10px] sm:text-xs text-slate-500 font-medium mt-0.5">
                     into Scalable Products
                   </div>
                 </div>

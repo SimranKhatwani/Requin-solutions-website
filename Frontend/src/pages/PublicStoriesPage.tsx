@@ -51,7 +51,7 @@ export const PublicStoriesPage: React.FC = () => {
         onNavigateSection={(sec) => navigate(`/#${sec}`)}
       />
 
-      <main className="flex-1 pt-32 pb-24 text-left">
+      <main className="flex-1 pt-24 sm:pt-32 pb-16 sm:pb-24 text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-6">
@@ -63,7 +63,7 @@ export const PublicStoriesPage: React.FC = () => {
           </div>
 
           {/* Page Hero Header */}
-          <div className="max-w-3xl mb-16">
+          <div className="max-w-3xl mb-12 sm:mb-16">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs font-medium text-[#08B9E8] mb-4">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Jaipur Roots to Global Impact</span>
@@ -77,8 +77,8 @@ export const PublicStoriesPage: React.FC = () => {
           </div>
 
           {/* Key Facts Pill Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-            <div className="bg-[#0B2235]/70 border border-white/10 rounded-2xl p-5 backdrop-blur-md">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-12 sm:mb-16">
+            <div className="bg-[#0B2235]/70 border border-white/10 rounded-2xl p-3.5 sm:p-5 backdrop-blur-md">
               <span className="text-2xl sm:text-3xl font-bold text-[#08B9E8] block mb-1">
                 2,000+
               </span>
@@ -86,7 +86,7 @@ export const PublicStoriesPage: React.FC = () => {
                 Software Solutions Built
               </span>
             </div>
-            <div className="bg-[#0B2235]/70 border border-white/10 rounded-2xl p-5 backdrop-blur-md">
+            <div className="bg-[#0B2235]/70 border border-white/10 rounded-2xl p-3.5 sm:p-5 backdrop-blur-md">
               <span className="text-2xl sm:text-3xl font-bold text-[#08B9E8] block mb-1">
                 40+
               </span>
@@ -94,7 +94,7 @@ export const PublicStoriesPage: React.FC = () => {
                 Full-Time Consultants
               </span>
             </div>
-            <div className="bg-[#0B2235]/70 border border-white/10 rounded-2xl p-5 backdrop-blur-md">
+            <div className="bg-[#0B2235]/70 border border-white/10 rounded-2xl p-3.5 sm:p-5 backdrop-blur-md">
               <span className="text-2xl sm:text-3xl font-bold text-[#08B9E8] block mb-1">
                 12
               </span>
@@ -102,7 +102,7 @@ export const PublicStoriesPage: React.FC = () => {
                 Industry Excellence Awards
               </span>
             </div>
-            <div className="bg-[#0B2235]/70 border border-white/10 rounded-2xl p-5 backdrop-blur-md">
+            <div className="bg-[#0B2235]/70 border border-white/10 rounded-2xl p-3.5 sm:p-5 backdrop-blur-md">
               <span className="text-2xl sm:text-3xl font-bold text-[#08B9E8] block mb-1">
                 99.4%
               </span>
@@ -128,11 +128,11 @@ export const PublicStoriesPage: React.FC = () => {
               <p className="text-base font-bold text-white">No milestones published yet</p>
             </div>
           ) : (
-            <div className="space-y-12">
+            <div className="space-y-8 sm:space-y-12">
               {stories.map((story, idx) => (
                 <div
                   key={story.id}
-                  className={`flex flex-col lg:flex-row items-center gap-8 lg:gap-12 bg-[#0B2235]/60 border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl ${
+                  className={`flex flex-col lg:flex-row items-center gap-6 sm:gap-8 lg:gap-12 bg-[#0B2235]/60 border border-white/10 rounded-3xl p-4 sm:p-8 md:p-10 shadow-2xl ${
                     idx % 2 === 1 ? 'lg:flex-row-reverse' : ''
                   }`}
                 >

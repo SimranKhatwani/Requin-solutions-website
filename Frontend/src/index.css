@@ -5,19 +5,57 @@
     --font-sans: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
+  html {
+    overflow-x: hidden;
+    max-width: 100vw;
+    scroll-behavior: smooth;
+  }
+
   body {
     font-family: var(--font-sans);
     background-color: #071827;
     color: #FFFFFF;
     overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
     line-height: 1.6;
     letter-spacing: normal;
+    -webkit-tap-highlight-color: transparent;
   }
 
   h1, h2, h3, h4, h5, h6, .font-display {
     font-family: var(--font-sans);
     letter-spacing: -0.03em;
   }
+}
+
+/* Responsive Rich Content (Blogs, terms, wysiwyg renders) */
+#blog-detail-content img,
+.rich-text-content img {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 0.5rem;
+}
+
+#blog-detail-content table,
+.rich-text-content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+#blog-detail-content pre,
+.rich-text-content pre {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#blog-detail-content iframe,
+.rich-text-content iframe {
+  max-width: 100%;
 }
 
 /* Glass and subtle cyan accent effects */

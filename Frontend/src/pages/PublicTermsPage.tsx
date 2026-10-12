@@ -145,11 +145,11 @@ export const PublicTermsPage: React.FC = () => {
       <Navbar onNavigateSection={() => navigate('/')} />
 
       {/* Main Legal Content */}
-      <main className="flex-1 pt-32 pb-24 relative z-10 text-left">
+      <main className="flex-1 pt-24 sm:pt-32 pb-16 sm:pb-24 relative z-10 text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Breadcrumb Navigation */}
-          <div className="flex items-center gap-2 text-sm sm:text-base font-semibold text-slate-400 mb-8">
+          <div className="flex items-center gap-2 text-sm sm:text-base font-semibold text-slate-400 mb-6 sm:mb-8">
             <Link to="/" className="hover:text-white transition-colors">
               Home
             </Link>
@@ -158,23 +158,23 @@ export const PublicTermsPage: React.FC = () => {
           </div>
 
           {/* Top Hero Header Title */}
-          <div className="text-center py-6 sm:py-10 relative mb-12">
+          <div className="text-center py-4 sm:py-10 relative mb-8 sm:mb-12">
             {/* Ambient Cyan Radial Bloom directly behind header */}
             <div
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#08B9E8]/15 blur-[130px] rounded-full pointer-events-none -z-10"
               aria-hidden="true"
             />
 
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#08B9E8]/10 border border-[#08B9E8]/25 text-[#00c2ff] text-xs sm:text-sm font-bold uppercase tracking-wider mb-4">
+            <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#08B9E8]/10 border border-[#08B9E8]/25 text-[#00c2ff] text-xs sm:text-sm font-bold uppercase tracking-wider mb-4">
               <Scale className="w-4 h-4" />
               <span>REQUIN SOLUTIONS LEGAL DOCUMENTATION</span>
             </span>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight">
               Legal Information & <span className="text-[#00c2ff]">Policies.</span>
             </h1>
 
-            <p className="text-slate-300 text-lg sm:text-xl mt-5 max-w-3xl mx-auto leading-relaxed font-normal">
+            <p className="text-slate-300 text-base sm:text-xl mt-4 sm:mt-5 max-w-3xl mx-auto leading-relaxed font-normal px-2">
               Please review these important documents regarding your use of our services and your rights.
             </p>
           </div>
@@ -186,7 +186,7 @@ export const PublicTermsPage: React.FC = () => {
                 LEFT COLUMN: Sticky Contents Navigation Box 
             ======================================================== */}
             <aside className="w-full lg:w-80 shrink-0 lg:sticky lg:top-28">
-              <div className="bg-[#0B1B2B] border border-slate-700/80 backdrop-blur-md rounded-3xl p-6 sm:p-7 shadow-xl space-y-6">
+              <div className="bg-[#0B1B2B] border border-slate-700/80 backdrop-blur-md rounded-3xl p-4 sm:p-7 shadow-xl space-y-6">
                 <div>
                   <h3 className="text-xl font-bold text-white tracking-wide pb-3 border-b border-white/10">
                     Contents
@@ -235,7 +235,7 @@ export const PublicTermsPage: React.FC = () => {
                 </nav>
 
                 {/* Support Help Card */}
-                <div className="p-5 rounded-2xl bg-[#061523] border border-white/10 text-sm text-slate-300 space-y-2.5">
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#061523] border border-white/10 text-sm text-slate-300 space-y-2.5">
                   <p className="leading-relaxed font-normal">
                     Need help understanding these terms? Contact our support team at:
                   </p>
@@ -261,7 +261,7 @@ export const PublicTermsPage: React.FC = () => {
                 className="bg-[#0B1B2B] border border-slate-700/80 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-md"
               >
                 {/* Banner Header */}
-                <div className="bg-gradient-to-r from-[#0e3557] to-[#124d7d] p-6 sm:p-8 text-white relative overflow-hidden border-b border-white/10">
+                <div className="bg-gradient-to-r from-[#0e3557] to-[#124d7d] p-5 sm:p-8 text-white relative overflow-hidden border-b border-white/10">
                   <div className="absolute -right-10 -top-10 w-40 h-40 bg-[#08B9E8]/20 rounded-full blur-2xl pointer-events-none" />
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight relative z-10">
                     Terms & Conditions
@@ -272,9 +272,9 @@ export const PublicTermsPage: React.FC = () => {
                 </div>
 
                 {/* Body Content */}
-                <div className="p-6 sm:p-9 space-y-8 text-slate-300 text-base sm:text-lg leading-relaxed">
+                <div className="p-4 sm:p-7 md:p-9 space-y-6 sm:space-y-8 text-slate-300 text-base sm:text-lg leading-relaxed">
                   {/* Recruitment Notice */}
-                  <div className="p-6 sm:p-7 rounded-2xl bg-[#082035]/90 border border-[#08B9E8]/30 space-y-3.5">
+                  <div className="p-4 sm:p-7 rounded-2xl bg-[#082035]/90 border border-[#08B9E8]/30 space-y-3.5">
                     <h3 className="text-lg sm:text-xl font-bold text-white">
                       Recruitment Notice
                     </h3>
@@ -391,7 +391,7 @@ export const PublicTermsPage: React.FC = () => {
                 className="bg-[#0B1B2B] border border-slate-700/80 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-md"
               >
                 {/* Banner Header */}
-                <div className="bg-gradient-to-r from-[#173052] to-[#1e4475] p-6 sm:p-8 text-white relative overflow-hidden border-b border-white/10">
+                <div className="bg-gradient-to-r from-[#173052] to-[#1e4475] p-5 sm:p-8 text-white relative overflow-hidden border-b border-white/10">
                   <div className="absolute -right-10 -top-10 w-40 h-40 bg-[#08B9E8]/20 rounded-full blur-2xl pointer-events-none" />
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight relative z-10">
                     Privacy Policy
@@ -402,7 +402,7 @@ export const PublicTermsPage: React.FC = () => {
                 </div>
 
                 {/* Body Content */}
-                <div className="p-6 sm:p-9 space-y-8 text-slate-300 text-base sm:text-lg leading-relaxed">
+                <div className="p-4 sm:p-7 md:p-9 space-y-6 sm:space-y-8 text-slate-300 text-base sm:text-lg leading-relaxed">
                   <p className="text-slate-200">
                     This Privacy Statement outlines the privacy and data protection principles followed by Requin Solutions Private Limited and its entities worldwide, concerning the personal information of customers, partners, employees, contractors, prospects, and vendors.
                   </p>
@@ -511,7 +511,7 @@ export const PublicTermsPage: React.FC = () => {
                 className="bg-[#0B1B2B] border border-slate-700/80 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-md"
               >
                 {/* Banner Header */}
-                <div className="bg-gradient-to-r from-[#0b3844] to-[#12586b] p-6 sm:p-8 text-white relative overflow-hidden border-b border-white/10">
+                <div className="bg-gradient-to-r from-[#0b3844] to-[#12586b] p-5 sm:p-8 text-white relative overflow-hidden border-b border-white/10">
                   <div className="absolute -right-10 -top-10 w-40 h-40 bg-[#08B9E8]/20 rounded-full blur-2xl pointer-events-none" />
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight relative z-10">
                     Refund Policy
@@ -522,12 +522,12 @@ export const PublicTermsPage: React.FC = () => {
                 </div>
 
                 {/* Body Content */}
-                <div className="p-6 sm:p-9 space-y-8 text-slate-300 text-base sm:text-lg leading-relaxed">
+                <div className="p-4 sm:p-7 md:p-9 space-y-6 sm:space-y-8 text-slate-300 text-base sm:text-lg leading-relaxed">
                   <p className="text-slate-200">
                     Thank you for using our services at <span className="text-[#00c2ff] font-mono underline">www.requingroup.com</span> by Requin Solutions Private Limited.
                   </p>
 
-                  <div className="p-6 sm:p-7 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3.5">
+                  <div className="p-4 sm:p-7 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3.5">
                     <h3 className="text-lg sm:text-xl font-bold text-white">Refund Policy Overview</h3>
                     <p className="text-slate-200">
                       Requin Solutions is committed to providing top-quality services. However, in the event of a service failure or unmet requirements, our refund policy may apply under specific conditions:

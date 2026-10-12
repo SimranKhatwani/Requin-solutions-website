@@ -358,7 +358,7 @@ export const ChatWidget: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 max-w-[calc(100vw-2rem)]">
       {/* Floating Action Button: Navy Circle with Cyan Outline/Icon */}
       {!isOpen && (
         <button
@@ -366,7 +366,7 @@ export const ChatWidget: React.FC = () => {
             setIsOpen(true);
             setCurrentView('chat');
           }}
-          className="w-14 h-14 rounded-full bg-[#071827] border-2 border-[#08B9E8] shadow-2xl flex items-center justify-center text-[#08B9E8] hover:bg-[#0B2235] hover:scale-105 transition-all duration-200 focus:outline-none cyan-glow-sm group cursor-pointer"
+          className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#071827] border-2 border-[#08B9E8] shadow-2xl flex items-center justify-center text-[#08B9E8] hover:bg-[#0B2235] hover:scale-105 transition-all duration-200 focus:outline-none cyan-glow-sm group cursor-pointer"
           aria-label="Open Requin Support Chat"
         >
           <MessageSquare className="w-6 h-6 transition-transform duration-200 group-hover:scale-110" />
@@ -377,7 +377,7 @@ export const ChatWidget: React.FC = () => {
 
       {/* Elegant Requin Brand Chat Window */}
       {isOpen && (
-        <div className="w-[360px] sm:w-[400px] h-[540px] rounded-3xl bg-[#071827] border border-white/15 shadow-2xl flex flex-col overflow-hidden backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200 text-left">
+        <div className="w-[calc(100vw-2rem)] max-w-[360px] sm:max-w-[400px] h-[min(540px,calc(100vh-100px))] rounded-3xl bg-[#071827] border border-white/15 shadow-2xl flex flex-col overflow-hidden backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200 text-left">
           {/* ========================================================
               VIEW 1: AI CHAT VIEW
           ======================================================== */}

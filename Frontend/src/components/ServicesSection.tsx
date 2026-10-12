@@ -30,6 +30,12 @@ const SERVICE_ICONS: Record<string, React.ReactNode> = {
 export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectService }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [activeDot, setActiveDot] = useState(0);
+  const [mobileIndex, setMobileIndex] = useState(0);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchDeltaX, setTouchDeltaX] = useState<number>(0);
+  const [isMobileInteracting, setIsMobileInteracting] = useState(false);
+  const mobileInteractTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const sectionRef = useRef<HTMLElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isHoveredRef = useRef(false);
@@ -55,7 +61,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
   const isNavigatingRef = useRef(false);
   const navTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Continuous Seamless Infinite Auto-Scroll with Gapless Wrapping
+  // Continuous Seamless Infinite Auto-Scroll with Gapless Wrapping (Desktop/Tablet)
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -71,7 +77,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
 
     let animId: number;
     const autoScroll = () => {
-      if (!isHoveredRef.current && !isNavigatingRef.current && container) {
+      if (!isHoveredRef.current && !isNavigatingRef.current && container && container.offsetWidth > 0) {
         container.scrollLeft += 0.75;
         const setWidth = container.scrollWidth / 4;
         if (setWidth > 0 && container.scrollLeft >= setWidth * 2) {
@@ -90,7 +96,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
     };
   }, []);
 
-  // Interval to update active pagination indicator dot when auto-scrolling
+  // Interval to update active pagination indicator dot when auto-scrolling on desktop
   useEffect(() => {
     const dotInterval = setInterval(() => {
       if (!isNavigatingRef.current) {
@@ -99,6 +105,61 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
     }, 4500);
     return () => clearInterval(dotInterval);
   }, []);
+
+  // Mark user interaction on mobile to pause auto-advance temporarily
+  const markMobileInteraction = () => {
+    setIsMobileInteracting(true);
+    if (mobileInteractTimeoutRef.current) {
+      clearTimeout(mobileInteractTimeoutRef.current);
+    }
+    mobileInteractTimeoutRef.current = setTimeout(() => {
+      setIsMobileInteracting(false);
+    }, 8000);
+  };
+
+  // Mobile Single-Card Auto Advance (pauses during user touch interaction)
+  useEffect(() => {
+    const mobileTimer = setInterval(() => {
+      if (!isMobileInteracting) {
+        setMobileIndex((prev) => (prev + 1) % REQUIN_SERVICES.length);
+      }
+    }, 4500);
+    return () => clearInterval(mobileTimer);
+  }, [isMobileInteracting]);
+
+  const handleMobileNext = () => {
+    setMobileIndex((prev) => (prev + 1) % REQUIN_SERVICES.length);
+    markMobileInteraction();
+  };
+
+  const handleMobilePrev = () => {
+    setMobileIndex((prev) => (prev <= 0 ? REQUIN_SERVICES.length - 1 : prev - 1));
+    markMobileInteraction();
+  };
+
+  // Touch Swipe Handlers for Mobile Card
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+    setTouchDeltaX(0);
+    markMobileInteraction();
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    setTouchDeltaX(e.touches[0].clientX - touchStartX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX === null) return;
+    const threshold = 40;
+    if (touchDeltaX < -threshold) {
+      handleMobileNext();
+    } else if (touchDeltaX > threshold) {
+      handleMobilePrev();
+    }
+    setTouchStartX(null);
+    setTouchDeltaX(0);
+  };
 
   const handleCardClick = (service: ServiceItem) => {
     if (onSelectService) {
@@ -196,7 +257,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
             handleCardClick(service);
           }
         }}
-        className="group w-[350px] sm:w-[410px] lg:w-[450px] xl:w-[470px] min-h-[460px] sm:min-h-[480px] flex-shrink-0 bg-gradient-to-br from-white via-[#FCFDFE] to-[#F0F9FF]/95 rounded-[28px] border border-slate-200/90 hover:border-[#0088EE]/50 p-8 sm:p-9 flex flex-col justify-between text-left shadow-[0_4px_24px_-4px_rgba(0,136,238,0.06),0_2px_8px_-2px_rgba(11,23,38,0.04)] hover:shadow-[0_20px_45px_-10px_rgba(0,136,238,0.18),0_10px_20px_-4px_rgba(11,23,38,0.04)] transition-all duration-300 ease-out hover:-translate-y-2 relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#0088EE]/40 cursor-pointer select-none"
+        className="group sm:w-[410px] lg:w-[450px] xl:w-[470px] min-h-[480px] flex-shrink-0 bg-gradient-to-br from-white via-[#FCFDFE] to-[#F0F9FF]/95 rounded-[24px] sm:rounded-[28px] border border-slate-200/90 hover:border-[#0088EE]/50 p-6 sm:p-9 flex flex-col justify-between text-left shadow-[0_4px_24px_-4px_rgba(0,136,238,0.06),0_2px_8px_-2px_rgba(11,23,38,0.04)] hover:shadow-[0_20px_45px_-10px_rgba(0,136,238,0.18),0_10px_20px_-4px_rgba(11,23,38,0.04)] transition-all duration-300 ease-out hover:-translate-y-2 relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#0088EE]/40 cursor-pointer select-none"
       >
         {/* Soft subtle ambient cyan glow in upper-right corner */}
         <div className="absolute -top-10 -right-10 w-44 h-44 bg-gradient-to-br from-[#0088EE]/10 to-[#08B9E8]/05 rounded-full blur-2xl pointer-events-none transition-all duration-500 group-hover:scale-110 group-hover:opacity-70 opacity-30" />
@@ -457,13 +518,136 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         </div>
       </div>
 
-      {/* Full-width Conveyor Belt Track Container with Navigation Controls */}
-      <div className="relative w-full overflow-hidden py-6 sm:py-8 z-10">
+      {/* ========================================================
+          MOBILE VIEW (<640px): Exactly One Full Card Visible at a Time
+          with Touch Swipe & Clean Non-Overlapping Navigation
+      ======================================================== */}
+      {(() => {
+        const mobileService = REQUIN_SERVICES[mobileIndex] || REQUIN_SERVICES[0];
+        const mobileIcon = SERVICE_ICONS[mobileService.id] || <Monitor className="w-8 h-8 stroke-[1.8]" />;
+
+        return (
+          <div className="block sm:hidden px-4 z-10 relative mb-2">
+            {/* The Single Fully-Visible Service Card */}
+            <div
+              key={mobileService.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => handleCardClick(mobileService)}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className="group w-full max-w-[340px] xs:max-w-[360px] mx-auto min-h-[440px] bg-gradient-to-br from-white via-[#FCFDFE] to-[#F0F9FF]/95 rounded-[26px] border border-slate-200/90 hover:border-[#0088EE]/50 p-6 flex flex-col justify-between text-left shadow-[0_8px_30px_rgba(0,136,238,0.1)] transition-all duration-300 relative overflow-hidden select-none cursor-pointer"
+            >
+              {/* Soft subtle ambient cyan glow in upper-right corner */}
+              <div className="absolute -top-10 -right-10 w-44 h-44 bg-gradient-to-br from-[#0088EE]/10 to-[#08B9E8]/05 rounded-full blur-2xl pointer-events-none opacity-40" />
+
+              {/* Card Content Top */}
+              <div className="relative z-10">
+                {/* Top Row: Icon Container + Counter Badge */}
+                <div className="flex items-center justify-between">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#E0F7FE] via-[#EAF8FE] to-[#BAE6FD]/90 border border-[#0088EE]/20 flex items-center justify-center text-[#0284c7] shadow-sm">
+                    {mobileIcon}
+                  </div>
+                  <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-[#EBF7FD] text-[#0088EE] border border-[#0088EE]/20">
+                    {String(mobileIndex + 1).padStart(2, '0')} / {String(REQUIN_SERVICES.length).padStart(2, '0')}
+                  </span>
+                </div>
+
+                {/* Service Title */}
+                <h3 className="text-2xl font-extrabold text-[#0088EE] mt-5 tracking-tight leading-snug">
+                  {mobileService.title}
+                </h3>
+
+                {/* Description */}
+                <p className="mt-3 text-slate-600 text-sm leading-relaxed line-clamp-3 font-normal">
+                  {mobileService.description}
+                </p>
+
+                {/* Technology Badges */}
+                {mobileService.technologies && mobileService.technologies.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-4">
+                    {mobileService.technologies.slice(0, 4).map((tech, idx) => (
+                      <span
+                        key={idx}
+                        className="px-2.5 py-1 rounded-lg bg-[#EBF7FD] border border-[#0088EE]/15 text-[11px] font-semibold text-[#0284c7]"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Card Footer */}
+              <div className="pt-6 mt-auto relative z-10">
+                <div className="border-t border-slate-100/90 pt-4 flex items-center justify-between">
+                  <div className="inline-flex items-center gap-1.5 text-sm font-bold text-[#0284c7]">
+                    <span>Explore Service</span>
+                    <ArrowRight className="w-4 h-4 text-[#0088EE]" />
+                  </div>
+                  <span className="text-xs font-semibold text-slate-400">
+                    Learn more →
+                  </span>
+                </div>
+
+                {/* Animated Bottom Progress Line */}
+                <div className="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-full w-full bg-gradient-to-r from-[#0088EE] via-[#0099FF] to-[#08B9E8]" />
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Navigation Controls: Clean Buttons and Dots Below Card (No overlap!) */}
+            <div className="flex items-center justify-center gap-4 mt-6">
+              <button
+                onClick={handleMobilePrev}
+                aria-label="Previous service"
+                className="w-10 h-10 rounded-xl bg-white border border-slate-200/90 text-slate-700 active:scale-95 transition-transform flex items-center justify-center shadow-xs cursor-pointer"
+              >
+                <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+              </button>
+
+              {/* Dots Indicator for all 6 services */}
+              <div className="flex items-center gap-1.5">
+                {REQUIN_SERVICES.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setMobileIndex(idx);
+                      markMobileInteraction();
+                    }}
+                    aria-label={`Go to service ${idx + 1}`}
+                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                      mobileIndex === idx
+                        ? 'w-7 bg-[#08B9E8] shadow-sm shadow-[#08B9E8]/30'
+                        : 'w-2 bg-[#BAE6FD]/70 hover:bg-[#BAE6FD]'
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <button
+                onClick={handleMobileNext}
+                aria-label="Next service"
+                className="w-10 h-10 rounded-xl bg-white border border-slate-200/90 text-slate-700 active:scale-95 transition-transform flex items-center justify-center shadow-xs cursor-pointer"
+              >
+                <ChevronRight className="w-5 h-5 stroke-[2.5]" />
+              </button>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ========================================================
+          DESKTOP & TABLET VIEW (>=640px): Seamless Infinite Conveyor Belt
+      ======================================================== */}
+      <div className="hidden sm:block relative w-full overflow-hidden py-8 z-10">
         {/* Left Side Circular Navigation Control */}
         <button
           onClick={() => handleNudge('left')}
           aria-label="Previous service"
-          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-2xl bg-white/95 border border-slate-200/90 text-slate-700 hover:text-[#0088EE] hover:bg-white hover:border-[#0088EE]/40 hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0088EE]/40 shadow-sm"
+          className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-2xl bg-white/95 border border-slate-200/90 text-slate-700 hover:text-[#0088EE] hover:bg-white hover:border-[#0088EE]/40 hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0088EE]/40 shadow-sm"
         >
           <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
         </button>
@@ -472,53 +656,51 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         <button
           onClick={() => handleNudge('right')}
           aria-label="Next service"
-          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-2xl bg-white/95 border border-slate-200/90 text-slate-700 hover:text-[#0088EE] hover:bg-white hover:border-[#0088EE]/40 hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0088EE]/40 shadow-sm"
+          className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-2xl bg-white/95 border border-slate-200/90 text-slate-700 hover:text-[#0088EE] hover:bg-white hover:border-[#0088EE]/40 hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0088EE]/40 shadow-sm"
         >
           <ChevronRight className="w-6 h-6 stroke-[2.5]" />
         </button>
 
         {/* Seamless Edge Gradient Fades for Conveyor Belt Effect */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-28 md:w-40 bg-gradient-to-r from-[#F5FAFD] via-[#F5FAFD]/80 to-transparent z-20" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-28 md:w-40 bg-gradient-to-l from-[#F5FAFD] via-[#F5FAFD]/80 to-transparent z-20" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-24 md:w-40 bg-gradient-to-r from-[#F5FAFD] via-[#F5FAFD]/80 to-transparent z-20" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-24 md:w-40 bg-gradient-to-l from-[#F5FAFD] via-[#F5FAFD]/80 to-transparent z-20" />
 
         {/* Continuous Seamless Infinite Moving Track with 4 Sets (No Empty Space) */}
         <div
           ref={scrollContainerRef}
           onMouseEnter={() => { isHoveredRef.current = true; }}
           onMouseLeave={() => { isHoveredRef.current = false; }}
-          onTouchStart={() => { isHoveredRef.current = true; }}
-          onTouchEnd={() => { isHoveredRef.current = false; }}
           className="overflow-x-auto scrollbar-none select-none flex scroll-smooth"
         >
-          <div className="flex shrink-0 gap-6 sm:gap-8 pr-6 sm:pr-8">
+          <div className="flex shrink-0 gap-8 pr-8">
             {REQUIN_SERVICES.map((service) => renderServiceCard(service, 'set1'))}
           </div>
-          <div className="flex shrink-0 gap-6 sm:gap-8 pr-6 sm:pr-8">
+          <div className="flex shrink-0 gap-8 pr-8">
             {REQUIN_SERVICES.map((service) => renderServiceCard(service, 'set2'))}
           </div>
-          <div className="flex shrink-0 gap-6 sm:gap-8 pr-6 sm:pr-8">
+          <div className="flex shrink-0 gap-8 pr-8">
             {REQUIN_SERVICES.map((service) => renderServiceCard(service, 'set3'))}
           </div>
-          <div className="flex shrink-0 gap-6 sm:gap-8 pr-6 sm:pr-8">
+          <div className="flex shrink-0 gap-8 pr-8">
             {REQUIN_SERVICES.map((service) => renderServiceCard(service, 'set4'))}
           </div>
         </div>
-      </div>
 
-      {/* Bottom Pagination Indicator Pills */}
-      <div className="flex items-center justify-center gap-2 mt-8 z-10 relative">
-        {[0, 1, 2, 3].map((dotIndex) => (
-          <button
-            key={dotIndex}
-            onClick={() => handleDotClick(dotIndex)}
-            aria-label={`Go to slide page ${dotIndex + 1}`}
-            className={`h-2 rounded-full transition-all duration-300 cursor-pointer focus:outline-none ${
-              activeDot === dotIndex
-                ? 'w-8 bg-[#08B9E8] shadow-sm shadow-[#08B9E8]/30'
-                : 'w-6 bg-[#BAE6FD]/60 hover:bg-[#BAE6FD]'
-            }`}
-          />
-        ))}
+        {/* Bottom Pagination Indicator Pills (Desktop) */}
+        <div className="flex items-center justify-center gap-2 mt-8 z-10 relative">
+          {[0, 1, 2, 3].map((dotIndex) => (
+            <button
+              key={dotIndex}
+              onClick={() => handleDotClick(dotIndex)}
+              aria-label={`Go to slide page ${dotIndex + 1}`}
+              className={`h-2 rounded-full transition-all duration-300 cursor-pointer focus:outline-none ${
+                activeDot === dotIndex
+                  ? 'w-8 bg-[#08B9E8] shadow-sm shadow-[#08B9E8]/30'
+                  : 'w-6 bg-[#BAE6FD]/60 hover:bg-[#BAE6FD]'
+              }`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

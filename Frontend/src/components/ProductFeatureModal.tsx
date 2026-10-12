@@ -73,32 +73,32 @@ export const ProductFeatureModal: React.FC<ProductFeatureModalProps> = ({
         }}
       >
         <div
-          className="relative w-full max-w-5xl bg-gradient-to-b from-[#EDF7FC] via-[#F4F9FD] to-[#FFFFFF] border border-[#BAE6FD] rounded-[32px] shadow-[0_24px_70px_rgba(8,185,232,0.22)] overflow-hidden flex flex-col my-auto max-h-[92vh]"
+          className="relative w-full max-w-5xl bg-gradient-to-b from-[#EDF7FC] via-[#F4F9FD] to-[#FFFFFF] border border-[#BAE6FD] rounded-2xl sm:rounded-[32px] shadow-[0_24px_70px_rgba(8,185,232,0.22)] overflow-hidden flex flex-col my-auto max-h-[92vh]"
           onClick={(e) => e.stopPropagation()}
         >
           {/* MODAL HEADER BAR */}
-          <div className="px-6 sm:px-8 py-5 bg-[#E0F2FE]/80 border-b border-[#BAE6FD]/80 flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-3 text-left">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#08B9E8]/15 border border-[#08B9E8]/40 text-[#0284C7] text-xs font-bold tracking-wide">
+          <div className="px-4 sm:px-8 py-3.5 sm:py-5 bg-[#E0F2FE]/80 border-b border-[#BAE6FD]/80 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2.5 sm:gap-3 text-left min-w-0 pr-2">
+              <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-[#08B9E8]/15 border border-[#08B9E8]/40 text-[#0284C7] text-[11px] sm:text-xs font-bold tracking-wide shrink-0">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>{product.category}</span>
               </span>
-              <h3 className="text-xl sm:text-2xl font-extrabold text-[#082842] tracking-tight">
+              <h3 className="text-lg sm:text-2xl font-extrabold text-[#082842] tracking-tight truncate">
                 {product.title}
               </h3>
             </div>
 
             <button
               onClick={onClose}
-              className="w-10 h-10 rounded-full bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-900 border border-slate-200/80 shadow-sm flex items-center justify-center transition-all duration-200 hover:scale-105 cursor-pointer focus:outline-none"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-900 border border-slate-200/80 shadow-sm flex items-center justify-center transition-all duration-200 hover:scale-105 cursor-pointer focus:outline-none shrink-0"
               aria-label="Close modal"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
 
           {/* SCROLLABLE CONTENT BODY */}
-          <div className="p-6 sm:p-8 overflow-y-auto space-y-8 text-left scrollbar-thin scrollbar-thumb-slate-300">
+          <div className="p-4 sm:p-8 overflow-y-auto space-y-6 sm:space-y-8 text-left scrollbar-thin scrollbar-thumb-slate-300">
             
             {/* TOP SECTION: Description & Key Features */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
@@ -214,7 +214,7 @@ export const ProductFeatureModal: React.FC<ProductFeatureModalProps> = ({
           </div>
 
           {/* MODAL FOOTER ACTION BAR */}
-          <div className="px-6 sm:px-8 py-4 bg-[#E0F2FE]/60 border-t border-[#BAE6FD]/80 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
+          <div className="px-4 sm:px-8 py-3.5 sm:py-4 bg-[#E0F2FE]/60 border-t border-[#BAE6FD]/80 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 shrink-0">
             <div className="text-xs sm:text-sm text-slate-600 text-left font-medium">
               Ready to deploy <span className="text-[#082842] font-bold">{product.title}</span> in your organization?
             </div>

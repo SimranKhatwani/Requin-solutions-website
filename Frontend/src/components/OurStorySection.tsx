@@ -200,7 +200,7 @@ export const OurStorySection: React.FC = () => {
         </div>
 
         {/* Elegant Editorial Timeline with Perfect Node Alignment */}
-        <div className="relative ml-4 sm:ml-8 md:ml-64 space-y-10 sm:space-y-14">
+        <div className="relative ml-2 sm:ml-8 md:ml-64 space-y-8 sm:space-y-14">
           {/* Continuous Timeline Connecting Line (Starts at first dot center, ends at last dot center) */}
           <div
             className="absolute left-0 top-2.5 bottom-8 w-[2px] bg-[#BAE6FD]"
@@ -208,7 +208,7 @@ export const OurStorySection: React.FC = () => {
           />
 
           {OUR_STORY_MILESTONES.map((milestone, idx) => (
-            <div key={idx} className="relative pl-7 sm:pl-10 group">
+            <div key={idx} className="relative pl-5 sm:pl-10 group">
               {/* Timeline Accent Node */}
               <div className="absolute -left-[7px] top-1.5 w-4 h-4 rounded-full bg-white border-2 border-[#0284c7] group-hover:bg-[#0284c7] transition-colors duration-200 shadow-sm z-10" />
 
@@ -223,7 +223,7 @@ export const OurStorySection: React.FC = () => {
               </div>
 
               {/* Milestone Content Container */}
-              <div className="bg-white/95 rounded-2xl border border-slate-200/90 hover:border-[#00c2ff]/60 p-6 sm:p-8 shadow-[0_4px_20px_-4px_rgba(8,185,232,0.08),0_2px_8px_-2px_rgba(11,23,38,0.04)] hover:shadow-[0_16px_35px_-8px_rgba(0,194,255,0.22)] transition-all duration-300 hover:-translate-y-1 text-left max-w-3xl backdrop-blur-md">
+              <div className="bg-white/95 rounded-2xl border border-slate-200/90 hover:border-[#00c2ff]/60 p-4 sm:p-8 shadow-[0_4px_20px_-4px_rgba(8,185,232,0.08),0_2px_8px_-2px_rgba(11,23,38,0.04)] hover:shadow-[0_16px_35px_-8px_rgba(0,194,255,0.22)] transition-all duration-300 hover:-translate-y-1 text-left max-w-3xl backdrop-blur-md">
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
                   <h3 className="text-xl sm:text-2xl font-bold text-[#0B1726] group-hover:text-[#0284c7] transition-colors">
                     {milestone.title}

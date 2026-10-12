@@ -22,6 +22,23 @@ export const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Close mobile sidebar on route change
+  React.useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
+
+  // Lock body scroll when mobile sidebar is open
+  React.useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [sidebarOpen]);
+
   const handleLogout = async () => {
     if (window.confirm('Are you sure you want to log out of the Admin Panel?')) {
       await adminAuthService.logout();
@@ -203,7 +220,7 @@ export const AdminLayout: React.FC = () => {
         </header>
 
         {/* Nested Page Route Content */}
-        <main className="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto overflow-y-auto">
+        <main className="flex-1 p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto overflow-y-auto">
           <Outlet />
         </main>
       </div>

@@ -240,7 +240,7 @@ export const ContactSection: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-10 sm:mb-12 items-stretch">
           
           {/* Card 1: Phone Consultation */}
-          <div className="group bg-white rounded-3xl border border-slate-200/90 p-7 sm:p-8 shadow-md hover:shadow-xl hover:border-[#0088EE]/30 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between text-left">
+          <div className="group bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-8 shadow-md hover:shadow-xl hover:border-[#0088EE]/30 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between text-left">
             <div>
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#E0F2FE] to-[#F0F9FF] text-[#0088EE] border border-[#0088EE]/15 flex items-center justify-center mb-5 shadow-sm group-hover:scale-110 transition-transform duration-300">
                 <Phone className="w-6 h-6" />
@@ -264,7 +264,7 @@ export const ContactSection: React.FC = () => {
           </div>
 
           {/* Card 2: Direct Email */}
-          <div className="group bg-white rounded-3xl border border-slate-200/90 p-7 sm:p-8 shadow-md hover:shadow-xl hover:border-[#0088EE]/30 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between text-left">
+          <div className="group bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-8 shadow-md hover:shadow-xl hover:border-[#0088EE]/30 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between text-left">
             <div>
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#E0F2FE] to-[#F0F9FF] text-[#0088EE] border border-[#0088EE]/15 flex items-center justify-center mb-5 shadow-sm group-hover:scale-110 transition-transform duration-300">
                 <Mail className="w-6 h-6" />
@@ -297,7 +297,7 @@ export const ContactSection: React.FC = () => {
           </div>
 
           {/* Card 3: Jaipur Headquarters */}
-          <div className="group bg-white rounded-3xl border border-slate-200/90 p-7 sm:p-8 shadow-md hover:shadow-xl hover:border-[#0088EE]/30 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between text-left">
+          <div className="group bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-8 shadow-md hover:shadow-xl hover:border-[#0088EE]/30 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between text-left">
             <div>
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#E0F2FE] to-[#F0F9FF] text-[#0088EE] border border-[#0088EE]/15 flex items-center justify-center mb-5 shadow-sm group-hover:scale-110 transition-transform duration-300">
                 <MapPin className="w-6 h-6" />
@@ -323,7 +323,7 @@ export const ContactSection: React.FC = () => {
           
           {/* LEFT: Prominent Consultation Form Card */}
           <div className="lg:col-span-7 flex flex-col h-full">
-            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-[0_20px_60px_-15px_rgba(0,136,238,0.12),0_10px_30px_-10px_rgba(15,23,42,0.06)] p-7 sm:p-10 text-left h-full flex flex-col justify-between flex-1 relative overflow-hidden">
+            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-[0_20px_60px_-15px_rgba(0,136,238,0.12),0_10px_30px_-10px_rgba(15,23,42,0.06)] p-5 sm:p-8 md:p-10 text-left h-full flex flex-col justify-between flex-1 relative overflow-hidden">
               
               {/* Top vibrant brand gradient accent line */}
               <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#0088EE] via-[#00C2FF] to-[#08B9E8]" />

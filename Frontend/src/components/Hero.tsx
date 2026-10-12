@@ -8,50 +8,53 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onExploreServices, onViewProducts }) => {
   return (
-    <section id="hero" className="relative min-h-[92vh] pt-32 pb-16 md:pt-36 md:pb-20 flex flex-col justify-between overflow-hidden bg-[#061523]">
+    <section
+      id="hero"
+      className="relative min-h-0 xl:min-h-[86vh] 2xl:min-h-[88vh] pt-24 sm:pt-28 md:pt-32 lg:pt-34 xl:pt-38 pb-10 sm:pb-12 md:pb-14 lg:pb-16 xl:pb-20 flex flex-col justify-start xl:justify-between overflow-hidden bg-[#061523]"
+    >
       {/* Background Image Composition with Deep Navy Gradients */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Desk Workspace Photo positioned cleanly on the right with full clarity and visibility */}
+        {/* Desk Workspace Photo - calibrated opacity across screen sizes */}
         <img
           src="/images/hero-developer-desk.jpg?v=3"
           alt="Software Development Workspace"
-          className="absolute inset-0 w-full h-full object-cover object-right opacity-85 sm:opacity-95 lg:opacity-100"
+          className="absolute inset-0 w-full h-full object-cover object-right md:object-[right_center] opacity-35 sm:opacity-45 md:opacity-55 lg:opacity-70 xl:opacity-90 2xl:opacity-100 transition-opacity duration-300"
         />
-        {/* Left gradient specifically protecting text readability while leaving workspace objects 100% clear */}
-        <div className="absolute inset-y-0 left-0 w-full lg:w-[58%] xl:w-[52%] bg-gradient-to-r from-[#061523] via-[#061523]/95 via-70% to-transparent" />
+        {/* Protective deep navy gradient specifically shielding text readability across medium, tablet, and portrait displays */}
+        <div className="absolute inset-y-0 left-0 w-full md:w-[85%] lg:w-[80%] xl:w-[62%] 2xl:w-[54%] bg-gradient-to-r from-[#061523] via-[#061523]/95 via-65% to-transparent" />
         {/* Subtle top/bottom edge blend */}
-        <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-b from-[#061523] to-transparent opacity-70" />
-        <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#061523] to-transparent opacity-60" />
+        <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-b from-[#061523] to-transparent opacity-80" />
+        <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#061523] to-transparent opacity-70" />
         {/* Radial Cyan Lighting behind headline */}
         <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[450px] bg-[#00c2ff]/10 blur-[130px] rounded-full" />
       </div>
 
       {/* Main Hero Content */}
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 relative z-10 my-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 relative z-10 xl:my-auto">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-center">
           {/* LEFT: Headline & Value Proposition */}
-          <div className="lg:col-span-7 xl:col-span-6 space-y-6 text-left">
+          <div className="xl:col-span-7 2xl:col-span-6 space-y-4 sm:space-y-5 md:space-y-6 text-left max-w-2xl lg:max-w-3xl xl:max-w-none">
             {/* Small Top Branded Label */}
-            <div className="text-xs sm:text-sm font-bold tracking-widest text-[#00c2ff] uppercase">
+            <div className="text-xs sm:text-[13px] md:text-sm font-bold tracking-widest text-[#00c2ff] uppercase">
               DIGITAL SOLUTIONS • SOFTWARE • CLOUD
             </div>
 
-            {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[62px] xl:text-[68px] font-[800] tracking-[-0.03em] text-white leading-[1.08] max-w-2xl">
+            {/* Main Headline with Systematic Responsive Typography */}
+            <h1 className="text-3xl xs:text-[34px] sm:text-4xl md:text-[44px] lg:text-[48px] xl:text-[56px] 2xl:text-[64px] font-[800] tracking-[-0.03em] text-white leading-[1.12] sm:leading-[1.1] md:leading-[1.08] max-w-xl sm:max-w-2xl lg:max-w-3xl">
               Building Digital Solutions That Move Businesses{' '}
               <span className="text-[#00c2ff]">Forward.</span>
             </h1>
 
             {/* Sub-headline Description */}
-            <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-xl font-normal">
+            <p className="text-sm sm:text-base md:text-[17px] lg:text-lg text-slate-300 leading-relaxed max-w-xl lg:max-w-2xl font-normal">
               At Requin Solutions Pvt Ltd , we build modern software, cloud and digital solutions that help businesses operate, grow and transform.
             </p>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            <div className="flex flex-col xs:flex-row sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2 sm:pt-3">
               <button
                 onClick={onExploreServices}
-                className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-xl font-semibold text-sm sm:text-base text-[#05131f] bg-[#00c2ff] hover:bg-[#38d4ff] transition-all duration-200 shadow-lg shadow-[#00c2ff]/25 hover:shadow-[#00c2ff]/40 focus:outline-none active:scale-[0.98] cursor-pointer"
+                className="inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-xl font-semibold text-sm sm:text-base text-[#05131f] bg-[#00c2ff] hover:bg-[#38d4ff] transition-all duration-200 shadow-lg shadow-[#00c2ff]/25 hover:shadow-[#00c2ff]/40 focus:outline-none active:scale-[0.98] cursor-pointer"
               >
                 <span>Explore Our Services</span>
                 <ArrowRight className="w-4 h-4" />
@@ -59,7 +62,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreServices, onViewProducts })
 
               <button
                 onClick={onViewProducts}
-                className="inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 rounded-xl font-semibold text-sm sm:text-base text-white bg-transparent hover:bg-white/5 border border-[#00c2ff]/50 hover:border-[#00c2ff] transition-all duration-200 focus:outline-none cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3.5 rounded-xl font-semibold text-sm sm:text-base text-white bg-transparent hover:bg-white/5 border border-[#00c2ff]/50 hover:border-[#00c2ff] transition-all duration-200 focus:outline-none cursor-pointer"
               >
                 <span>View Our Products</span>
               </button>
@@ -68,39 +71,39 @@ export const Hero: React.FC<HeroProps> = ({ onExploreServices, onViewProducts })
         </div>
       </div>
 
-      {/* BOTTOM: 4-Icon Feature Strip */}
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 relative z-10 pt-12">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 max-w-4xl">
+      {/* BOTTOM: 4-Icon Feature Strip with Controlled Systematic Spacing */}
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 relative z-10 mt-10 sm:mt-12 md:mt-14 lg:mt-16 xl:mt-0 xl:pt-12">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 md:gap-8 pt-2 sm:pt-4 max-w-4xl">
           {/* 1. Web Development */}
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left group cursor-pointer" onClick={onExploreServices}>
             <div className="w-10 h-10 rounded-lg flex items-center justify-center text-[#00c2ff] group-hover:scale-110 transition-transform">
-              <Monitor className="w-6 h-6 stroke-[1.75]" />
+              <Monitor className="w-5 h-5 sm:w-6 sm:h-6 stroke-[1.75]" />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-slate-200 mt-1">Web Development</span>
+            <span className="text-xs sm:text-sm md:text-[14px] font-medium text-slate-200 mt-1">Web Development</span>
           </div>
 
           {/* 2. Mobile Apps */}
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left group cursor-pointer" onClick={onExploreServices}>
             <div className="w-10 h-10 rounded-lg flex items-center justify-center text-[#00c2ff] group-hover:scale-110 transition-transform">
-              <Smartphone className="w-6 h-6 stroke-[1.75]" />
+              <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 stroke-[1.75]" />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-slate-200 mt-1">Mobile Apps</span>
+            <span className="text-xs sm:text-sm md:text-[14px] font-medium text-slate-200 mt-1">Mobile Apps</span>
           </div>
 
           {/* 3. Cloud Solutions */}
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left group cursor-pointer" onClick={onExploreServices}>
             <div className="w-10 h-10 rounded-lg flex items-center justify-center text-[#00c2ff] group-hover:scale-110 transition-transform">
-              <Cloud className="w-6 h-6 stroke-[1.75]" />
+              <Cloud className="w-5 h-5 sm:w-6 sm:h-6 stroke-[1.75]" />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-slate-200 mt-1">Cloud Solutions</span>
+            <span className="text-xs sm:text-sm md:text-[14px] font-medium text-slate-200 mt-1">Cloud Solutions</span>
           </div>
 
           {/* 4. Software Solutions */}
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left group cursor-pointer" onClick={onExploreServices}>
             <div className="w-10 h-10 rounded-lg flex items-center justify-center text-[#00c2ff] group-hover:scale-110 transition-transform">
-              <Cpu className="w-6 h-6 stroke-[1.75]" />
+              <Cpu className="w-5 h-5 sm:w-6 sm:h-6 stroke-[1.75]" />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-slate-200 mt-1">Software Solutions</span>
+            <span className="text-xs sm:text-sm md:text-[14px] font-medium text-slate-200 mt-1">Software Solutions</span>
           </div>
         </div>
       </div>

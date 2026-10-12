@@ -206,7 +206,7 @@ export const PublicProductsPage: React.FC = () => {
             />
 
             {/* Header Cyber Waves & Constellation Nodes */}
-            <div className="absolute inset-0 -inset-x-8 sm:-inset-x-16 pointer-events-none -z-10 overflow-visible">
+            <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
               <svg
                 className="w-full h-full min-h-[300px] pointer-events-none opacity-85"
                 viewBox="0 0 1440 300"
@@ -426,7 +426,7 @@ export const PublicProductsPage: React.FC = () => {
                   {/* ========================================================
                       ROW-LEVEL CYBER WAVES & CONSTELLATION NODES (Guaranteed Full Coverage for EVERY Project)
                   ======================================================== */}
-                  <div className="absolute inset-0 -inset-x-8 sm:-inset-x-16 pointer-events-none -z-10 overflow-visible">
+                  <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
                     {/* Ambient Glows behind each product */}
                     <div
                       className={`absolute top-1/2 ${
@@ -503,7 +503,7 @@ export const PublicProductsPage: React.FC = () => {
                   </div>
 
                   {/* Main Product Card */}
-                  <div className="rounded-[32px] bg-[#0A1B2D]/85 border border-[#08B9E8]/20 p-6 sm:p-10 lg:p-12 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-[#08B9E8]/45 relative overflow-hidden">
+                  <div className="rounded-[24px] sm:rounded-[32px] bg-[#0A1B2D]/85 border border-[#08B9E8]/20 p-5 sm:p-10 lg:p-12 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-[#08B9E8]/45 relative overflow-hidden">
                     {/* Ambient Soft Glow inside card */}
                     <div
                       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-[#08B9E8]/10 blur-[120px] rounded-full pointer-events-none"

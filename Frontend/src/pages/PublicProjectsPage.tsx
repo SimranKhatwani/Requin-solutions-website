@@ -427,7 +427,7 @@ export const PublicProjectsPage: React.FC = () => {
         onNavigateSection={(sec) => navigate(`/#${sec}`)}
       />
 
-      <main className="flex-1 pt-28 sm:pt-36 pb-24 text-left relative overflow-hidden">
+      <main className="flex-1 pt-24 sm:pt-32 pb-16 sm:pb-24 text-left relative overflow-hidden">
         {/* Soft Background Ambient Glows */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
           <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[500px] bg-[radial-gradient(circle,rgba(8,185,232,0.12),transparent_70%)] blur-[120px]" />
@@ -446,26 +446,26 @@ export const PublicProjectsPage: React.FC = () => {
           </div>
 
           {/* Page Hero Header */}
-          <div className="max-w-4xl mb-12">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs font-bold text-[#08B9E8] mb-4 uppercase tracking-wider">
+          <div className="max-w-4xl mb-8 sm:mb-12">
+            <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs font-bold text-[#08B9E8] mb-4 uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Proven Systems & Deployments</span>
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-4 leading-tight">
               Engineered Solutions & Client Showcase
             </h1>
-            <p className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-3xl font-normal">
+            <p className="text-slate-300 text-sm sm:text-base lg:text-lg leading-relaxed max-w-3xl font-normal">
               Explore real-world software platforms, cloud infrastructure pipelines, and enterprise ERP systems architected and delivered by Requin Solutions Pvt Ltd.
             </p>
           </div>
 
           {/* Category Filter Pills */}
-          <div className="flex items-center gap-2.5 overflow-x-auto pb-4 mb-12 scrollbar-none">
+          <div className="flex items-center gap-2.5 overflow-x-auto pb-4 mb-8 sm:mb-12 scrollbar-none">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                   selectedCategory === cat
                     ? 'bg-[#00c2ff] text-[#05131f] shadow-lg shadow-[#00c2ff]/30 font-extrabold scale-105'
                     : 'bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 border border-white/10'
@@ -492,7 +492,7 @@ export const PublicProjectsPage: React.FC = () => {
               <p className="text-base font-bold text-white">No projects found in this category</p>
             </div>
           ) : (
-            <div className="space-y-12 sm:space-y-16 lg:space-y-20">
+            <div className="space-y-8 sm:space-y-16 lg:space-y-20">
               {filteredProjects.map((project) => {
                 const sc = getProjectShowcaseData(
                   project.slug,
@@ -504,26 +504,26 @@ export const PublicProjectsPage: React.FC = () => {
                   /* Outer Tablet/Device Bezel Frame (Matching Requin Apps Showcase UI) */
                   <div
                     key={project.id || project.slug}
-                    className="p-3 sm:p-5 lg:p-6 rounded-[32px] sm:rounded-[44px] bg-[#020B14] border-2 border-[#00C2FF]/30 shadow-[0_25px_80px_rgba(0,0,0,0.85),0_0_45px_rgba(0,194,255,0.15)] group transition-all duration-500 hover:border-[#00C2FF]/60 hover:shadow-[0_30px_90px_rgba(0,0,0,0.95),0_0_60px_rgba(0,194,255,0.25)]"
+                    className="p-2 sm:p-5 lg:p-6 rounded-3xl sm:rounded-[44px] bg-[#020B14] border-2 border-[#00C2FF]/30 shadow-[0_25px_80px_rgba(0,0,0,0.85),0_0_45px_rgba(0,194,255,0.15)] group transition-all duration-500 hover:border-[#00C2FF]/60 hover:shadow-[0_30px_90px_rgba(0,0,0,0.95),0_0_60px_rgba(0,194,255,0.25)]"
                   >
                     {/* Inner Screen Surface */}
-                    <div className="relative rounded-[24px] sm:rounded-[36px] bg-gradient-to-br from-[#061828] via-[#071F34] to-[#041220] border border-[#08B9E8]/25 p-6 sm:p-10 lg:p-12 overflow-hidden">
+                    <div className="relative rounded-2xl sm:rounded-[36px] bg-gradient-to-br from-[#061828] via-[#071F34] to-[#041220] border border-[#08B9E8]/25 p-4 sm:p-8 lg:p-12 overflow-hidden">
                       {/* Subtle Dot Mesh Grid Pattern */}
                       <div className="absolute inset-0 bg-[radial-gradient(#08b9e8_1px,transparent_1px)] [background-size:26px_26px] opacity-15 pointer-events-none" />
 
-                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center relative z-10">
+                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 items-center relative z-10">
                         {/* ========================================================
                             LEFT COLUMN: REQUIN APPS TYPOGRAPHY & SPECS
                         ======================================================== */}
-                        <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
+                        <div className="lg:col-span-5 flex flex-col justify-between space-y-4 sm:space-y-6">
                           {/* Category Badge */}
-                          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#08B9E8]/15 border border-[#08B9E8]/40 text-xs font-extrabold tracking-wider text-[#00c2ff] uppercase w-fit shadow-sm">
+                          <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-[#08B9E8]/15 border border-[#08B9E8]/40 text-xs font-extrabold tracking-wider text-[#00c2ff] uppercase w-fit shadow-sm">
                             <Sparkles className="w-3.5 h-3.5" />
                             <span>{project.category}</span>
                           </div>
 
                           {/* Punchy 3-Line Title (Line 1 Cyan, Line 2 & 3 White) */}
-                          <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold tracking-tight leading-[1.12]">
+                          <h2 className="text-2xl sm:text-4xl lg:text-[42px] font-extrabold tracking-tight leading-[1.15]">
                             <span className="text-[#00c2ff] block">{sc.line1}</span>
                             <span className="text-white block">{sc.line2}</span>
                             <span className="text-white block">{sc.line3}</span>
