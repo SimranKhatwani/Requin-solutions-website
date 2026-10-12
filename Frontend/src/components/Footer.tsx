@@ -360,7 +360,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
 
               {subscribed && (
                 <p className="text-[11px] text-emerald-400 font-medium text-center animate-in fade-in duration-300">
-                  ✓ Details sent to requingroupsolutions@gmail.com
+                  ✓ Thank you for subscribing to Requin Technology updates!
                 </p>
               )}
             </form>

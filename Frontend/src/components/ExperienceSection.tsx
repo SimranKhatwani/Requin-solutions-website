@@ -105,6 +105,10 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
     const contactEl = document.getElementById('contact');
     if (contactEl) {
       contactEl.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => {
+        const input = document.getElementById('consultation-name-input') || contactEl.querySelector('input');
+        if (input) (input as HTMLElement).focus();
+      }, 500);
     } else if (onLearnMore) {
       onLearnMore();
     }

@@ -104,6 +104,8 @@ export interface SupportInquiryDoc {
   id: string;
   name: string;
   email: string;
+  phone?: string;
+  service?: string;
   message: string;
   targetEmail: string;
   createdAt: string;

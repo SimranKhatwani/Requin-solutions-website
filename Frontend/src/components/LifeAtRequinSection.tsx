@@ -74,6 +74,7 @@ export const LifeAtRequinSection: React.FC = () => {
   const [modalSelectedYear, setModalSelectedYear] = useState<string>('All');
   const [modalPhotoIndex, setModalPhotoIndex] = useState<number>(0);
   const [isMobileScreen, setIsMobileScreen] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
 
   // Responsive mobile screen detection
   useEffect(() => {
@@ -121,16 +122,16 @@ export const LifeAtRequinSection: React.FC = () => {
     setActiveIndex((prev) => (prev === filteredList.length - 1 ? 0 : prev + 1));
   }, [filteredList.length]);
 
-  // Continuous Auto-Advancing Moving State (Auto-slides every 2 seconds)
+  // Continuous Auto-Advancing Moving State (Auto-slides every 4 seconds, pauses on hover)
   useEffect(() => {
-    if (isModalOpen || filteredList.length <= 1) return;
+    if (isModalOpen || isPaused || filteredList.length <= 1) return;
 
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % filteredList.length);
-    }, 2000);
+    }, 4000);
 
     return () => clearInterval(interval);
-  }, [isModalOpen, filteredList.length, activeIndex]);
+  }, [isModalOpen, isPaused, filteredList.length]);
 
   const activeModalItem = filteredList[modalActiveIndex] || filteredList[0];
 
@@ -399,7 +400,11 @@ export const LifeAtRequinSection: React.FC = () => {
         {/* ========================================================
             CENTER-FOCUSED 3D COVERFLOW MOVING CAROUSEL
         ======================================================== */}
-        <div className="relative w-full max-w-6xl mx-auto h-[380px] sm:h-[440px] md:h-[480px] lg:h-[500px] flex items-center justify-center my-2 sm:my-3">
+        <div
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          className="relative w-full max-w-6xl mx-auto h-[380px] sm:h-[440px] md:h-[480px] lg:h-[500px] flex items-center justify-center my-2 sm:my-3"
+        >
           {/* Left Arrow Control */}
           <button
             onClick={handlePrev}

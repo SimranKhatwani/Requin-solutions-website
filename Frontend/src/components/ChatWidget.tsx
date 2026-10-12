@@ -11,6 +11,7 @@ import {
   AlertCircle,
   Bot
 } from 'lucide-react';
+import { API_BASE_URL } from '../utils/mediaUrl';
 
 interface ChatMessage {
   id: string;
@@ -203,75 +204,23 @@ export const ChatWidget: React.FC = () => {
 
     let botReplyText = '';
 
-    // Gemini API key from environment variable
-    const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
-
-    const GEMINI_MODELS = [
-      'gemini-flash-lite-latest',
-      'gemini-3.5-flash-lite',
-      'gemini-flash-latest',
-      'gemini-3.7-flash',
-      'gemini-3.8-flash',
-    ];
-
     try {
-      if (geminiApiKey) {
-        // Direct Google Gemini API call with model cascade
-        for (const model of GEMINI_MODELS) {
-          try {
-            const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiApiKey}`;
-            const res = await fetch(geminiUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [
-                  {
-                    role: 'user',
-                    parts: [{ text: `${SYSTEM_PROMPT}\n\nUser Inquiring: ${messageText}` }],
-                  },
-                ],
-                generationConfig: {
-                  temperature: 0.7,
-                  maxOutputTokens: 600,
-                },
-              }),
-            });
+      // 1. Secure AI query proxy through backend API (protects API keys from client exposure)
+      const chatUrl = `${API_BASE_URL}/api/chat`;
+      const backendRes = await fetch(chatUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: messageText }),
+      });
 
-            if (res.ok) {
-              const geminiData = await res.json();
-              const reply = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
-              if (reply && reply.trim()) {
-                botReplyText = reply.trim();
-                console.log(`[Gemini AI] Response generated successfully via ${model}`);
-                break;
-              }
-            }
-          } catch (modelErr) {
-            console.warn(`Gemini model ${model} attempt failed:`, modelErr);
-          }
-        }
-      }
-
-      // If direct key call failed, attempt backend /api/chat proxy
-      if (!botReplyText) {
-        try {
-          const backendRes = await fetch('/api/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: messageText }),
-          });
-          if (backendRes.ok) {
-            const data = await backendRes.json();
-            if (data.reply) {
-              botReplyText = data.reply;
-            }
-          }
-        } catch {
-          // Backend offline or unreachable
+      if (backendRes.ok) {
+        const data = await backendRes.json();
+        if (data && data.reply && typeof data.reply === 'string' && data.reply.trim()) {
+          botReplyText = data.reply.trim();
         }
       }
     } catch (err) {
-      console.log('Gemini API call notice:', err);
+      console.warn('Backend chat assistant notice:', err);
     }
 
     // Fallback to Requin intelligent knowledge engine

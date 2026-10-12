@@ -48,6 +48,12 @@ export const Navbar: React.FC<NavbarProps> = ({
       navigate(`/#${sectionId}`);
     } else {
       onNavigateSection(sectionId);
+      if (sectionId === 'contact') {
+        setTimeout(() => {
+          const input = document.getElementById('consultation-name-input') || document.querySelector('#contact input');
+          if (input) (input as HTMLElement).focus();
+        }, 500);
+      }
     }
     setMobileMenuOpen(false);
   };
@@ -127,7 +133,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* Get Started CTA Button (matches See More Products UI) */}
             <button
-              onClick={() => handleNavClick('quiz')}
+              onClick={() => handleNavClick('contact')}
               className="inline-flex items-center gap-2 px-5 py-2 text-sm sm:text-[15px] font-bold text-[#08B9E8] hover:text-[#061827] bg-[#071F33]/90 hover:bg-[#08B9E8] border border-[#08B9E8]/40 hover:border-[#08B9E8] rounded-full transition-all duration-300 shadow-md shadow-black/20 hover:shadow-[0_0_25px_rgba(8,185,232,0.4)] focus:outline-none active:scale-[0.98] cursor-pointer ml-2 group"
             >
               <span>Get Started</span>
@@ -138,7 +144,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Menu Trigger */}
           <div className="flex lg:hidden items-center gap-2 sm:gap-3">
             <button
-              onClick={() => handleNavClick('quiz')}
+              onClick={() => handleNavClick('contact')}
               className="px-3.5 py-1.5 rounded-full bg-[#071F33]/90 hover:bg-[#08B9E8] border border-[#08B9E8]/40 hover:border-[#08B9E8] text-[#08B9E8] hover:text-[#061827] text-xs font-bold transition-all duration-200"
             >
               Get Started
@@ -200,7 +206,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
-                handleNavClick('quiz');
+                handleNavClick('contact');
               }}
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-[#08B9E8] hover:text-[#061827] bg-[#071F33]/90 hover:bg-[#08B9E8] border border-[#08B9E8]/40 hover:border-[#08B9E8] rounded-full transition-all duration-200 shadow-sm group"
             >

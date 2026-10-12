@@ -3,8 +3,8 @@ import { generateGeminiReply } from '../utils/gemini';
 import { SubscriberDoc, SupportInquiryDoc } from '../types';
 
 export const NotificationService = {
-  submitSupportInquiry(data: { name: string; email: string; message: string }): SupportInquiryDoc | { error: string; status: number } {
-    const { name, email, message } = data;
+  submitSupportInquiry(data: { name: string; email: string; message: string; phone?: string; service?: string }): SupportInquiryDoc | { error: string; status: number } {
+    const { name, email, message, phone, service } = data;
     if (!name || !email || !message) {
       return { error: 'Name, email, and message are required.', status: 400 };
     }
@@ -13,13 +13,15 @@ export const NotificationService = {
       id: `inquiry-${Date.now()}`,
       name: String(name).trim(),
       email: String(email).trim(),
+      phone: phone ? String(phone).trim() : undefined,
+      service: service ? String(service).trim() : undefined,
       message: String(message).trim(),
       targetEmail: 'requingroupsolutions@gmail.com',
       createdAt: new Date().toISOString(),
     };
 
     InquiryModel.createSupportInquiry(inquiry);
-    console.log(`[Support Request Logged] Forwarding to: requingroupsolutions@gmail.com | From: ${name} (${email}) | Message: ${message}`);
+    console.log(`[Support / Consultation Request Logged] Forwarding to: requingroupsolutions@gmail.com | From: ${name} (${email}) | Phone: ${phone || 'N/A'} | Service: ${service || 'General'} | Message: ${message}`);
     return inquiry;
   },
 
