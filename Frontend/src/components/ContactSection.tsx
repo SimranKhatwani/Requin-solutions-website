@@ -449,7 +449,7 @@ export const ContactSection: React.FC = () => {
                         </>
                       ) : (
                         <>
-                          <span className="tracking-wide">Send Consultation Inquiry</span>
+                          <span className="tracking-wide">Send Inquiry</span>
                           <Send className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-0.5" />
                         </>
                       )}
