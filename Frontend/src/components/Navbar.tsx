@@ -21,9 +21,10 @@ export const Navbar: React.FC<NavbarProps> = ({
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [location.pathname]);
 
   const handleNavClick = (sectionId: string) => {
     if (location.pathname !== '/') {
@@ -34,10 +35,15 @@ export const Navbar: React.FC<NavbarProps> = ({
     setMobileMenuOpen(false);
   };
 
+  const isHomePage = location.pathname === '/';
+  const isSolid = isScrolled || mobileMenuOpen || !isHomePage;
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 bg-[#061523]/95 backdrop-blur-md border-b border-white/5 transition-all duration-300 shadow-xl shadow-black/25 ${
-        isScrolled ? 'py-2.5 sm:py-3' : 'py-3 sm:py-3.5'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isSolid
+          ? 'bg-[#061523]/95 backdrop-blur-md border-b border-white/5 shadow-xl shadow-black/25 py-2.5 sm:py-3'
+          : 'bg-transparent backdrop-blur-none border-b border-transparent shadow-none py-3 sm:py-3.5'
       }`}
     >
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16">
