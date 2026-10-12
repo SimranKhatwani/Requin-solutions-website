@@ -25,10 +25,41 @@ export const PublicBlogDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const [activeTocId, setActiveTocId] = useState<string>('');
   const [mobileTocOpen, setMobileTocOpen] = useState(false);
 
   const navigate = useNavigate();
+
+  // Dynamic estimated read time based on word count
+  const estimatedReadTime = useMemo(() => {
+    if (!blog?.content) return '5 min read';
+    const text = blog.content.replace(/<[^>]*>/g, '').trim();
+    const wordCount = text.split(/\s+/).filter(Boolean).length;
+    const minutes = Math.max(1, Math.ceil(wordCount / 200));
+    return `${minutes} min read`;
+  }, [blog?.content]);
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
+  const shareOnTwitter = () => {
+    const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(blog?.title || 'Requin Tech Article')}`;
+    window.open(url, '_blank', 'noopener,noreferrer,width=600,height=400');
+  };
+
+  const shareOnLinkedIn = () => {
+    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`;
+    window.open(url, '_blank', 'noopener,noreferrer,width=600,height=500');
+  };
+
+  const shareOnWhatsApp = () => {
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${blog?.title || 'Requin Tech Article'}: ${window.location.href}`)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -156,11 +187,6 @@ export const PublicBlogDetailPage: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [tocItems]);
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
-  };
 
   const scrollToHeading = (id: string) => {
     setActiveTocId(id);
@@ -357,22 +383,57 @@ export const PublicBlogDetailPage: React.FC = () => {
               <span className="text-[#0284c7] truncate">{blog?.title || 'Article'}</span>
             </div>
 
-            <div className="flex items-center gap-2.5">
+            {/* Social Share & Navigation Toolbar */}
+            <div className="flex flex-wrap items-center gap-2">
               <Link
                 to="/blog"
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:text-[#0284c7] hover:bg-[#E8F7FC] shadow-2xs transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:text-[#0284c7] hover:bg-[#E8F7FC] shadow-2xs transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>All Articles</span>
               </Link>
 
-              <button
-                onClick={handleShare}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:text-[#0284c7] hover:bg-[#E8F7FC] shadow-2xs transition-colors cursor-pointer"
-              >
-                {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
-                <span>{copied ? 'Link Copied!' : 'Share'}</span>
-              </button>
+              {/* Social Share Group */}
+              <div className="flex items-center gap-1.5 bg-white border border-slate-200 p-1 rounded-full shadow-2xs">
+                <button
+                  onClick={shareOnLinkedIn}
+                  title="Share on LinkedIn"
+                  className="p-1.5 rounded-full text-slate-600 hover:text-[#0077B5] hover:bg-[#0077B5]/10 transition-colors cursor-pointer"
+                >
+                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2z" />
+                  </svg>
+                </button>
+
+                <button
+                  onClick={shareOnTwitter}
+                  title="Share on X (Twitter)"
+                  className="p-1.5 rounded-full text-slate-600 hover:text-black hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </button>
+
+                <button
+                  onClick={shareOnWhatsApp}
+                  title="Share on WhatsApp"
+                  className="p-1.5 rounded-full text-slate-600 hover:text-[#25D366] hover:bg-[#25D366]/10 transition-colors cursor-pointer"
+                >
+                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                    <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.49-.4-.42-.56-.43h-.47c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.77 2.7 4.29 3.79.6.26 1.07.41 1.44.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z" />
+                  </svg>
+                </button>
+
+                <button
+                  onClick={handleShare}
+                  title="Copy Article Link"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-slate-700 hover:text-[#0284c7] hover:bg-[#E8F7FC] transition-colors cursor-pointer"
+                >
+                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
+                  <span>{copied ? 'Copied!' : 'Copy Link'}</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -411,7 +472,7 @@ export const PublicBlogDetailPage: React.FC = () => {
                   {blog.title}
                 </h1>
 
-                {/* Meta line: Date · Author · Read time */}
+                {/* Meta line: Date · Author · Dynamic Read time */}
                 <div className="flex items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm text-slate-500 font-medium pt-2 flex-wrap">
                   <span className="flex items-center gap-1.5">
                     <Calendar className="w-4 h-4 text-[#08B9E8]" />
@@ -425,7 +486,7 @@ export const PublicBlogDetailPage: React.FC = () => {
                   <span className="text-slate-300">·</span>
                   <span className="flex items-center gap-1.5">
                     <Clock className="w-4 h-4 text-[#08B9E8]" />
-                    <span>{(blog as any).readTime || '8 min read'}</span>
+                    <span>{estimatedReadTime}</span>
                   </span>
                 </div>
               </div>
@@ -442,14 +503,24 @@ export const PublicBlogDetailPage: React.FC = () => {
                 ======================================================== */}
                 <div className="lg:col-span-8 space-y-6 min-w-0">
                   
-                  {/* Featured Image on Left (Compact & Clean) */}
-                  <div className="relative rounded-2xl overflow-hidden max-h-[360px] w-full bg-slate-100 border border-slate-200/90 shadow-md">
+                  {/* Featured Image on Left with Skeleton Loader & Lazy Loading */}
+                  <div className="relative rounded-2xl overflow-hidden max-h-[380px] w-full bg-slate-200 border border-slate-200/90 shadow-md">
+                    {!imageLoaded && (
+                      <div className="absolute inset-0 bg-slate-200 animate-pulse flex items-center justify-center">
+                        <span className="text-xs font-semibold text-slate-400">Loading publication visual...</span>
+                      </div>
+                    )}
                     <img
                       src={getMediaUrl(blog.featuredImage || (blog as any).image)}
                       alt={blog.title}
-                      className="w-full h-full max-h-[360px] object-cover object-center"
+                      loading="lazy"
+                      onLoad={() => setImageLoaded(true)}
+                      className={`w-full h-full max-h-[380px] object-cover object-center transition-opacity duration-500 ${
+                        imageLoaded ? 'opacity-100' : 'opacity-0'
+                      }`}
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
+                        setImageLoaded(true);
                       }}
                     />
                   </div>
@@ -491,12 +562,12 @@ export const PublicBlogDetailPage: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Main Article Content (Starts Directly with Introduction - No Extra Intro Paragraphs) */}
+                  {/* Main Article Content (Constrained to max-w-3xl for optimal 65-75 chars/line ergonomics) */}
                   <article className="space-y-8 pt-2">
                     {/* HTML Rich Text Body */}
                     <div
                       id="blog-detail-content"
-                      className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-10 md:p-12 shadow-sm text-slate-700 text-base sm:text-[17px] leading-relaxed space-y-6 overflow-hidden"
+                      className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-10 md:p-12 shadow-sm text-slate-700 text-base sm:text-[17px] leading-[1.75] max-w-3xl mx-auto space-y-6 overflow-hidden"
                       dangerouslySetInnerHTML={{ __html: sanitizedContent }}
                     />
 

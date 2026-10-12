@@ -522,7 +522,7 @@ export const ContactSection: React.FC = () => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="group relative w-full inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-bold text-base text-white bg-gradient-to-r from-[#0088EE] via-[#0099FF] to-[#08B9E8] hover:from-[#0077CC] hover:via-[#0088EE] hover:to-[#00A8D8] shadow-[0_10px_25px_-5px_rgba(0,136,238,0.45)] hover:shadow-[0_15px_35px_-5px_rgba(0,136,238,0.6)] focus:outline-none focus:ring-4 focus:ring-[#0088EE]/30 active:scale-[0.99] disabled:opacity-60 transition-all duration-300 overflow-hidden cursor-pointer"
+                      className="group relative w-full inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full font-bold text-base text-white bg-gradient-to-r from-[#0088EE] via-[#0099FF] to-[#08B9E8] hover:from-[#0077CC] hover:via-[#0088EE] hover:to-[#00A8D8] shadow-[0_10px_25px_-5px_rgba(0,136,238,0.45)] hover:shadow-[0_15px_35px_-5px_rgba(0,136,238,0.6)] focus:outline-none focus:ring-4 focus:ring-[#0088EE]/30 active:scale-[0.99] disabled:opacity-60 transition-all duration-300 overflow-hidden cursor-pointer"
                     >
                       {/* Subtle shimmer hover animation */}
                       <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />

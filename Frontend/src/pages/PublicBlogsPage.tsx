@@ -361,6 +361,7 @@ export const PublicBlogsPage: React.FC = () => {
                   <img
                     src={getMediaUrl(featuredBlog.featuredImage || (featuredBlog as any).image)}
                     alt={featuredBlog.title}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
@@ -465,17 +466,18 @@ export const PublicBlogsPage: React.FC = () => {
                     <article
                       key={b.id || b.slug}
                       onClick={() => navigate(`/blog/${b.slug}`)}
-                      className="bg-white rounded-3xl border border-slate-200/90 shadow-md hover:shadow-2xl hover:border-[#08B9E8]/60 transition-all duration-300 group cursor-pointer flex flex-col justify-between relative overflow-hidden text-left p-5"
+                      className="bg-white rounded-2xl border border-slate-200/90 shadow-md hover:shadow-2xl hover:border-[#08B9E8]/60 transition-all duration-300 group cursor-pointer flex flex-col justify-between relative overflow-hidden text-left p-5"
                     >
                       {/* Subtle top-right ambient glow */}
                       <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#00c2ff]/10 rounded-full blur-2xl pointer-events-none group-hover:opacity-100 opacity-50 transition-opacity" />
 
                       <div className="space-y-4">
                         {/* Card Thumbnail Frame (Image on top) */}
-                        <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-200/70">
+                        <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-100 border border-slate-200/70">
                           <img
                             src={getMediaUrl(b.featuredImage || (b as any).image)}
                             alt={b.title}
+                            loading="lazy"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = '/images/digital_agency_office_1790576645354.jpg';
@@ -483,14 +485,19 @@ export const PublicBlogsPage: React.FC = () => {
                           />
                         </div>
 
-                        {/* Meta: Category Badge + Publication Date */}
-                        <div className="flex items-center justify-between text-xs pt-1">
+                        {/* Meta: Category Badge + Publication Date + Read Time */}
+                        <div className="flex items-center justify-between text-xs pt-1 flex-wrap gap-2">
                           <span className="px-3 py-1 rounded-full bg-[#E0F7FE] border border-[#08B9E8]/30 text-[#0284c7] font-bold">
                             {b.category || 'Article'}
                           </span>
-                          <span className="text-slate-500 font-medium">
-                            {formatDate(b.publishedDate || b.createdAt)}
-                          </span>
+                          <div className="flex items-center gap-2 text-slate-500 font-medium">
+                            <span>{formatDate(b.publishedDate || b.createdAt)}</span>
+                            <span>·</span>
+                            <span className="flex items-center gap-1 text-slate-400">
+                              <Clock className="w-3.5 h-3.5 text-[#08B9E8]" />
+                              {Math.max(1, Math.ceil((b.content || b.shortDescription || '').replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length / 200))}m read
+                            </span>
+                          </div>
                         </div>
 
                         {/* Title (In Blue) */}

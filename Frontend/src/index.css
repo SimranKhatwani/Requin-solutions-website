@@ -2,7 +2,8 @@
 
 @layer base {
   :root {
-    --font-sans: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-sans: 'Inter', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
 
   html {
@@ -18,15 +19,74 @@
     overflow-x: hidden;
     max-width: 100vw;
     width: 100%;
-    line-height: 1.6;
+    line-height: 1.65;
     letter-spacing: normal;
     -webkit-tap-highlight-color: transparent;
   }
 
   h1, h2, h3, h4, h5, h6, .font-display {
     font-family: var(--font-sans);
-    letter-spacing: -0.03em;
+    letter-spacing: -0.025em;
   }
+}
+
+/* ========================================================
+   2026 DESIGN SYSTEM TOKENS: TYPOGRAPHY, SPACING, CARDS & BORDERS
+======================================================== */
+.font-mono-badge {
+  font-family: var(--font-mono);
+}
+
+/* Display / Hero: clamp(2.5rem, 5vw, 4.25rem) | Weight: 700 | Line-height: 1.1 | Tracking: -0.025em */
+.hero-display-heading {
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+/* H2 / Section Title: clamp(1.85rem, 3.5vw, 2.75rem) | Weight: 700 | Line-height: 1.2 | Tracking: -0.02em */
+.section-title-heading {
+  font-size: clamp(1.85rem, 3.5vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+/* H3 / Card Title: 1.25rem to 1.5rem | Weight: 600 | Line-height: 1.3 */
+.card-title-heading {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Body: 1rem (16px) | Weight: 400 | Line-height: 1.65 */
+.body-prose-text {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.65;
+}
+
+/* Micro / Overline: 0.75rem (12px) | Weight: 600 | Tracking: 0.08em uppercase */
+.micro-badge-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Standard 2026 Card: rounded-2xl, border-white/[0.08], shadow-lg shadow-black/20 */
+.standard-card-surface {
+  border-radius: 1rem;
+  border-width: 1px;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+  transition-property: border-color, box-shadow, transform;
+  transition-duration: 300ms;
+}
+.standard-card-surface:hover {
+  border-color: rgba(8, 185, 232, 0.3);
+  box-shadow: 0 15px 30px -5px rgba(8, 185, 232, 0.15);
 }
 
 /* Responsive Rich Content (Blogs, terms, wysiwyg renders) */
