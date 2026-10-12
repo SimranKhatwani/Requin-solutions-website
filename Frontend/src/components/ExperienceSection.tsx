@@ -456,10 +456,10 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             <div className="pt-2">
               <button
                 onClick={handleContactAction}
-                className="group inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-[#0088EE] via-[#0099FF] to-[#08B9E8] hover:from-[#0077CC] hover:via-[#0088EE] hover:to-[#00A8D8] shadow-md shadow-[#0088EE]/25 hover:shadow-lg hover:shadow-[#0088EE]/40 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0088EE]/40"
+                className="group inline-flex items-center gap-2.5 px-6 sm:px-7 py-2.5 sm:py-3 rounded-full bg-transparent hover:bg-[#00c2ff] border-2 border-[#00c2ff] text-[#00c2ff] hover:text-white font-bold text-sm sm:text-base transition-all duration-300 shadow-sm hover:shadow-[0_0_25px_rgba(0,194,255,0.45)] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#00c2ff]/50 active:scale-95"
               >
                 <span>Get in Touch</span>
-                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1 stroke-[2.2]" />
               </button>
             </div>
           </div>
