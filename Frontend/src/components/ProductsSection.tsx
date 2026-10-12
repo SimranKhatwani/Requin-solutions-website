@@ -161,10 +161,10 @@ export const ProductsSection: React.FC<ProductsSectionProps> = () => {
       <div className="pt-3">
         <button
           onClick={() => handleOpenFeatures(activeProduct)}
-          className="inline-flex items-center gap-2.5 px-7 py-3 rounded-full bg-gradient-to-r from-[#08B9E8] to-[#00c2ff] text-[#061827] font-bold text-sm sm:text-base shadow-lg shadow-[#08B9E8]/25 hover:shadow-[#08B9E8]/40 hover:scale-105 transition-all duration-300 cursor-pointer focus:outline-none"
+          className="group inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#0088EE] via-[#0099FF] to-[#08B9E8] hover:from-[#0077CC] hover:via-[#0088EE] hover:to-[#00A8D8] text-white font-bold text-sm sm:text-base shadow-lg shadow-[#0088EE]/25 hover:shadow-xl hover:shadow-[#0088EE]/40 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0088EE]/40"
         >
           <span>Explore Features</span>
-          <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+          <ArrowRight className="w-4 h-4 stroke-[2.5] transition-transform duration-200 group-hover:translate-x-1" />
         </button>
       </div>
     </div>
@@ -265,15 +265,16 @@ export const ProductsSection: React.FC<ProductsSectionProps> = () => {
           }`}
         >
           {/* Eyebrow */}
-          <div className="text-lg sm:text-2xl lg:text-3xl font-extrabold tracking-[0.2em] text-[#08B9E8] uppercase mb-4 sm:mb-5">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0088EE]/15 border border-[#0088EE]/30 text-[#00C2FF] text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00C2FF] animate-pulse" />
             OUR PRODUCTS
           </div>
           {/* Main Heading */}
-          <h2 className="text-3xl sm:text-4xl lg:text-[46px] font-extrabold text-white tracking-[-0.03em] leading-tight">
-            Powerful Solutions for Your Business
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.15]">
+            Powerful Solutions for <span className="bg-gradient-to-r from-[#00C2FF] via-[#08B9E8] to-[#60A5FA] bg-clip-text text-transparent">Your Business</span>
           </h2>
           {/* Subtitle / Description */}
-          <p className="mt-6 sm:mt-7 text-sm sm:text-base text-[#A9C8DA] font-normal leading-relaxed max-w-2xl mx-auto">
+          <p className="mt-4 text-base sm:text-lg text-[#A9C8DA] font-normal leading-relaxed max-w-2xl mx-auto">
             Our digital solutions empower businesses with cutting-edge web applications,
             leveraging modern technologies to create seamless, scalable, and secure
             experiences.

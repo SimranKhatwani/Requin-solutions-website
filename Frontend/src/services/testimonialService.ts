@@ -4,12 +4,14 @@ export interface TestimonialItem {
   id: string;
   name: string;
   role: string;
+  company?: string;
   location?: string;
   quote: string;
   image: string;
   isHighlighted?: boolean;
   status?: 'DRAFT' | 'PUBLISHED';
   displayOrder?: number;
+  rating?: number;
   createdAt?: string;
   updatedAt?: string;
 }

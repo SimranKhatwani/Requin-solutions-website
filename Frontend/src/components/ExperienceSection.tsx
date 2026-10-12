@@ -371,18 +371,19 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
           >
             {/* 1. Rounded Pale-Cyan Eyebrow Pill */}
             <div>
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E1F7FD] border border-[#08B9E8]/30 text-[#08B9E8] text-xs sm:text-sm font-bold tracking-wide">
-                <span>5+ Years of Excellence</span>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0088EE]/10 border border-[#0088EE]/20 text-[#0088EE] text-xs font-bold uppercase tracking-widest mb-2 shadow-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0088EE] animate-pulse" />
+                5+ YEARS OF EXCELLENCE
               </div>
             </div>
 
             {/* 2. Main Large Dark Navy Headline */}
-            <h2 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-extrabold text-[#061827] leading-[1.14] tracking-[-0.03em]">
-              Requin Solutions: Crafting Innovative Software for Your Business
+            <h2 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-extrabold text-[#0B1726] leading-[1.15] tracking-tight">
+              Crafting <span className="bg-gradient-to-r from-[#0088EE] via-[#00A3FF] to-[#08B9E8] bg-clip-text text-transparent">Innovative Software</span> for Modern Business
             </h2>
 
             {/* 3. Professional Description */}
-            <p className="text-slate-600 text-base sm:text-[17px] leading-relaxed max-w-xl font-normal">
+            <p className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-xl font-normal">
               With a strong track record of delivering high-quality, scalable, and
               innovative solutions, we have helped businesses across industries turn
               their ideas into powerful digital products.
@@ -455,10 +456,10 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             <div className="pt-2">
               <button
                 onClick={handleContactAction}
-                className="inline-flex items-center gap-2.5 px-7 py-3 rounded-full border-2 border-[#08B9E8] text-[#08B9E8] font-semibold text-sm hover:bg-[#08B9E8] hover:text-white transition-all duration-300 shadow-sm hover:shadow-[0_8px_24px_rgba(8,185,232,0.3)] group cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#08B9E8]/50 active:scale-95"
+                className="group inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-[#0088EE] via-[#0099FF] to-[#08B9E8] hover:from-[#0077CC] hover:via-[#0088EE] hover:to-[#00A8D8] shadow-md shadow-[#0088EE]/25 hover:shadow-lg hover:shadow-[#0088EE]/40 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0088EE]/40"
               >
                 <span>Get in Touch</span>
-                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
               </button>
             </div>
           </div>

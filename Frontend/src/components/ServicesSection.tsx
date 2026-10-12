@@ -196,22 +196,22 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
             handleCardClick(service);
           }
         }}
-        className="group w-[350px] sm:w-[410px] lg:w-[450px] xl:w-[470px] min-h-[460px] sm:min-h-[480px] flex-shrink-0 bg-gradient-to-br from-white via-[#FCFDFE] to-[#F0F9FF]/95 rounded-[28px] border border-slate-200/90 hover:border-[#00c2ff]/70 p-8 sm:p-9 flex flex-col justify-between text-left shadow-[0_4px_24px_-4px_rgba(8,185,232,0.08),0_2px_8px_-2px_rgba(11,23,38,0.04)] hover:shadow-[0_24px_55px_-10px_rgba(0,194,255,0.28),0_10px_20px_-4px_rgba(11,23,38,0.06)] transition-all duration-400 ease-out hover:-translate-y-2.5 relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#08B9E8]/50 cursor-pointer select-none"
+        className="group w-[350px] sm:w-[410px] lg:w-[450px] xl:w-[470px] min-h-[460px] sm:min-h-[480px] flex-shrink-0 bg-gradient-to-br from-white via-[#FCFDFE] to-[#F0F9FF]/95 rounded-[28px] border border-slate-200/90 hover:border-[#0088EE]/50 p-8 sm:p-9 flex flex-col justify-between text-left shadow-[0_4px_24px_-4px_rgba(0,136,238,0.06),0_2px_8px_-2px_rgba(11,23,38,0.04)] hover:shadow-[0_20px_45px_-10px_rgba(0,136,238,0.18),0_10px_20px_-4px_rgba(11,23,38,0.04)] transition-all duration-300 ease-out hover:-translate-y-2 relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#0088EE]/40 cursor-pointer select-none"
       >
         {/* Soft subtle ambient cyan glow in upper-right corner */}
-        <div className="absolute -top-10 -right-10 w-48 h-48 bg-gradient-to-br from-[#00c2ff]/15 to-[#08B9E8]/10 rounded-full blur-3xl pointer-events-none transition-all duration-500 group-hover:scale-125 group-hover:opacity-100 opacity-40" />
+        <div className="absolute -top-10 -right-10 w-44 h-44 bg-gradient-to-br from-[#0088EE]/10 to-[#08B9E8]/05 rounded-full blur-2xl pointer-events-none transition-all duration-500 group-hover:scale-110 group-hover:opacity-70 opacity-30" />
 
         {/* Card Content Top */}
         <div className="relative z-10">
           {/* Top Row: Icon Container with Pale Cyan/Blue Gradient */}
-          <div className="w-16 h-16 sm:w-[70px] sm:h-[70px] rounded-2xl bg-gradient-to-br from-[#E0F7FE] via-[#EAF8FE] to-[#BAE6FD]/90 border border-[#08B9E8]/30 flex items-center justify-center text-[#0284c7] group-hover:text-[#0088EE] group-hover:scale-105 group-hover:border-[#00c2ff]/60 group-hover:shadow-lg group-hover:shadow-[#00c2ff]/25 transition-all duration-300">
+          <div className="w-16 h-16 sm:w-[70px] sm:h-[70px] rounded-2xl bg-gradient-to-br from-[#E0F7FE] via-[#EAF8FE] to-[#BAE6FD]/90 border border-[#0088EE]/20 flex items-center justify-center text-[#0284c7] group-hover:text-[#0088EE] group-hover:scale-105 group-hover:border-[#0088EE]/40 group-hover:shadow-md group-hover:shadow-[#0088EE]/15 transition-all duration-300">
             <div className="transition-transform duration-300 group-hover:rotate-3">
               {icon}
             </div>
           </div>
 
           {/* Service Title */}
-          <h3 className="text-2xl sm:text-[26px] font-extrabold text-[#0088EE] group-hover:text-[#0099FF] transition-colors duration-200 mt-6 tracking-tight leading-snug">
+          <h3 className="text-2xl sm:text-[26px] font-extrabold text-[#0088EE] group-hover:text-[#0077CC] transition-colors duration-200 mt-6 tracking-tight leading-snug">
             {service.title}
           </h3>
 
@@ -226,7 +226,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
               {service.technologies.slice(0, 4).map((tech, idx) => (
                 <span
                   key={idx}
-                  className="px-3 py-1 rounded-lg bg-[#EBF7FD] border border-[#08B9E8]/20 text-[11px] sm:text-xs font-semibold text-[#0284c7] group-hover:border-[#08B9E8]/40 group-hover:bg-[#E0F4FE] transition-colors"
+                  className="px-3 py-1 rounded-lg bg-[#EBF7FD] border border-[#0088EE]/15 text-[11px] sm:text-xs font-semibold text-[#0284c7] group-hover:border-[#0088EE]/30 group-hover:bg-[#E0F4FE] transition-colors"
                 >
                   {tech}
                 </span>
@@ -240,16 +240,16 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
           <div className="border-t border-slate-100/90 pt-5 flex items-center justify-between">
             <div className="inline-flex items-center gap-2 text-sm sm:text-base font-bold text-[#0284c7] group-hover:text-[#0088EE] transition-colors duration-200">
               <span>Explore Service</span>
-              <ArrowRight className="w-4 h-4 text-[#08B9E8] transition-transform duration-300 group-hover:translate-x-2" />
+              <ArrowRight className="w-4 h-4 text-[#0088EE] transition-transform duration-300 group-hover:translate-x-2" />
             </div>
-            <span className="text-xs font-semibold text-slate-400 group-hover:text-[#08B9E8] transition-colors">
+            <span className="text-xs font-semibold text-slate-400 group-hover:text-[#0088EE] transition-colors">
               Learn more →
             </span>
           </div>
 
           {/* Animated Bottom Cyan Progress Line */}
           <div className="mt-4 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-            <div className="h-full w-0 bg-gradient-to-r from-[#08B9E8] via-[#0088EE] to-[#00c2ff] transition-all duration-500 ease-out group-hover:w-full" />
+            <div className="h-full w-0 bg-gradient-to-r from-[#0088EE] via-[#0099FF] to-[#08B9E8] transition-all duration-500 ease-out group-hover:w-full" />
           </div>
         </div>
       </div>
@@ -442,15 +442,16 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
           }`}
         >
           {/* Eyebrow */}
-          <div className="text-lg sm:text-xl md:text-2xl font-bold tracking-[0.2em] text-[#08B9E8] uppercase mb-3">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0088EE]/10 border border-[#0088EE]/20 text-[#0088EE] text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0088EE] animate-pulse" />
             WHAT WE DO
           </div>
           {/* Main Heading */}
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B1726] tracking-[-0.03em] leading-tight">
-            Our Services
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B1726] tracking-tight leading-[1.15]">
+            Our <span className="bg-gradient-to-r from-[#0088EE] via-[#00A3FF] to-[#08B9E8] bg-clip-text text-transparent">Services</span>
           </h2>
           {/* Description */}
-          <p className="mt-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
+          <p className="mt-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl">
             End-to-end technology solutions that help businesses build, transform, and grow in a digital-first world.
           </p>
         </div>
@@ -462,7 +463,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         <button
           onClick={() => handleNudge('left')}
           aria-label="Previous service"
-          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/95 border border-slate-200/90 text-[#08B9E8] hover:text-[#0088EE] hover:border-[#08B9E8] hover:scale-110 transition-all duration-200 shadow-xl shadow-black/10 flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#08B9E8]/50 active:scale-95"
+          className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-2xl bg-white/95 border border-slate-200/90 text-slate-700 hover:text-[#0088EE] hover:bg-white hover:border-[#0088EE]/40 hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0088EE]/40 shadow-sm"
         >
           <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
         </button>
@@ -471,7 +472,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         <button
           onClick={() => handleNudge('right')}
           aria-label="Next service"
-          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/95 border border-slate-200/90 text-[#08B9E8] hover:text-[#0088EE] hover:border-[#08B9E8] hover:scale-110 transition-all duration-200 shadow-xl shadow-black/10 flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#08B9E8]/50 active:scale-95"
+          className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-2xl bg-white/95 border border-slate-200/90 text-slate-700 hover:text-[#0088EE] hover:bg-white hover:border-[#0088EE]/40 hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0088EE]/40 shadow-sm"
         >
           <ChevronRight className="w-6 h-6 stroke-[2.5]" />
         </button>

@@ -297,14 +297,14 @@ export const LifeAtRequinSection: React.FC = () => {
           BACKGROUND LAYER 1: Ambient Glows
       ======================================================== */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute -top-24 -left-20 w-[750px] h-[550px] bg-[radial-gradient(circle_at_30%_30%,rgba(8,185,232,0.18),transparent_65%)] blur-[100px] animate-ambient-life" />
+        <div className="absolute -top-24 -left-20 w-[750px] h-[550px] bg-[radial-gradient(circle_at_30%_30%,rgba(0,136,238,0.08),transparent_65%)] blur-[100px] animate-ambient-life" />
         <div
-          className="absolute -top-20 -right-20 w-[700px] h-[520px] bg-[radial-gradient(circle_at_70%_30%,rgba(0,194,255,0.16),transparent_65%)] blur-[100px] animate-ambient-life"
+          className="absolute -top-20 -right-20 w-[700px] h-[520px] bg-[radial-gradient(circle_at_70%_30%,rgba(0,194,255,0.07),transparent_65%)] blur-[100px] animate-ambient-life"
           style={{ animationDelay: '-5s' }}
         />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-[radial-gradient(circle,rgba(8,185,232,0.12),transparent_70%)] blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-[radial-gradient(circle,rgba(0,136,238,0.06),transparent_70%)] blur-[120px] pointer-events-none" />
         <div
-          className="absolute -bottom-24 -right-16 w-[720px] h-[540px] bg-[radial-gradient(circle_at_70%_70%,rgba(2,132,199,0.14),transparent_65%)] blur-[100px] animate-ambient-life"
+          className="absolute -bottom-24 -right-16 w-[720px] h-[540px] bg-[radial-gradient(circle_at_70%_70%,rgba(2,132,199,0.06),transparent_65%)] blur-[100px] animate-ambient-life"
           style={{ animationDelay: '-3s' }}
         />
       </div>
@@ -319,9 +319,9 @@ export const LifeAtRequinSection: React.FC = () => {
       >
         <defs>
           <linearGradient id="netGradLife" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#08B9E8" stopOpacity="0.14" />
-            <stop offset="50%" stopColor="#00c2ff" stopOpacity="0.08" />
-            <stop offset="100%" stopColor="#0284c7" stopOpacity="0.12" />
+            <stop offset="0%" stopColor="#0088EE" stopOpacity="0.1" />
+            <stop offset="50%" stopColor="#00c2ff" stopOpacity="0.05" />
+            <stop offset="100%" stopColor="#0284c7" stopOpacity="0.08" />
           </linearGradient>
         </defs>
 
@@ -332,7 +332,7 @@ export const LifeAtRequinSection: React.FC = () => {
           <line x1="95%" y1="14%" x2="88%" y2="24%" />
           <line x1="88%" y1="24%" x2="92%" y2="38%" />
         </g>
-        <g fill="#08B9E8">
+        <g fill="#0088EE">
           <circle cx="5%" cy="12%" r="3" fillOpacity="0.4" />
           <circle cx="12%" cy="22%" r="2" fillOpacity="0.85" />
           <circle cx="8%" cy="35%" r="2.5" fillOpacity="0.4" />
@@ -348,16 +348,16 @@ export const LifeAtRequinSection: React.FC = () => {
       ======================================================== */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="max-w-3xl mb-6 sm:mb-8 md:mb-10 text-left">
-          <div className="text-sm sm:text-base font-bold tracking-[0.2em] text-[#08B9E8] uppercase mb-2 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[#08B9E8]" />
+        <div className="max-w-3xl mb-8 sm:mb-10 md:mb-12 text-left">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0088EE]/10 border border-[#0088EE]/20 text-[#0088EE] text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0088EE] animate-pulse" />
             TEAM & CULTURE
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#071827] tracking-[-0.03em] leading-tight">
-            Life at <span className="text-[#08B9E8]">Requin</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B1726] tracking-tight leading-[1.15]">
+            Life at <span className="bg-gradient-to-r from-[#0088EE] via-[#00A3FF] to-[#08B9E8] bg-clip-text text-transparent">Requin</span>
           </h2>
-          <p className="mt-3 text-base sm:text-lg text-slate-600 font-normal leading-[1.6]">
-            Where people, ideas, and technology come together. Glimpse into our company celebrations and collaborative culture.
+          <p className="mt-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl">
+            Where people, ideas, and technology come together. Glimpse into our company celebrations, team achievements, and collaborative culture.
           </p>
         </div>
 

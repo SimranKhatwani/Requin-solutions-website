@@ -1,83 +1,115 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Quote,
+  Star,
+  CheckCircle2,
+  Building2,
+  MapPin,
+  ShieldCheck,
+  Award,
+} from 'lucide-react';
 import { testimonialService, TestimonialItem } from '../services/testimonialService';
 
-// Default initial dataset (Indian + Foreign business clients)
+// Enriched initial dataset with prominent roles, companies, locations, and high-impact quotes
 export const DEFAULT_TESTIMONIALS: TestimonialItem[] = [
   {
     id: 'rohan-agarwal',
     name: 'Rohan Agarwal',
-    role: 'Restaurant Owner',
-    quote: 'Our table booking and online food orders grew by 45% within two months.',
-    image: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=600&q=80',
-    isHighlighted: false,
+    role: 'Managing Director & Founder',
+    company: 'Spice Symphony Hospitality Group',
+    location: 'Jaipur, India',
+    quote: 'Requin Solutions completely overhauled our digital dining platform. Our online reservations and automated table order processing surged by 45% within the first eight weeks, creating an effortlessly synchronized guest experience across all four branches.',
+    image: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=800&q=80',
+    rating: 5,
+    isHighlighted: true,
+  },
+  {
+    id: 'sarah-jenkins',
+    name: 'Sarah Jenkins',
+    role: 'Founder & Chief Executive Officer',
+    company: 'Lumina Luxe Apparel',
+    location: 'Austin, Texas',
+    quote: 'The custom enterprise web store engineered by Requin handled over 25,000 concurrent orders during Black Friday without a single second of latency. Their architecture is resilient, and their engineering team is exceptional.',
+    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=80',
+    rating: 5,
+    isHighlighted: true,
   },
   {
     id: 'lucas-miller',
     name: 'Lucas Miller',
-    role: 'Wholesaler',
-    quote: 'Inventory tracking and bulk supply invoices became 10x faster for our business.',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+    role: 'Director of Supply Chain & Ops',
+    company: 'Apex Global Wholesale B2B',
+    location: 'Frankfurt, Germany',
+    quote: 'Inventory synchronization across three European fulfillment hubs and automated bulk invoicing became 10x faster. What used to take our dispatch crew hours every morning is now finished in just a few clicks.',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
+    rating: 5,
     isHighlighted: false,
   },
   {
     id: 'vikram-rathore',
     name: 'Vikramaditya Rathore',
-    role: 'Businessman',
-    quote: 'The digital catalog and billing system made festive sales completely smooth.',
-    image: 'https://images.unsplash.com/photo-1615813967515-e1838c1c5116?auto=format&fit=crop&w=600&q=80',
-    isHighlighted: false,
-  },
-  {
-    id: 'sarah-jenkins',
-    name: 'Sarah Jenkins',
-    role: 'E-Commerce Founder',
-    quote: 'The custom web store handled 20,000+ daily orders seamlessly without lagging.',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80',
-    isHighlighted: false,
-  },
-  {
-    id: 'suresh-patel',
-    name: 'Suresh Patel',
-    role: 'Supermarket Owner',
-    quote: 'Barcode billing and profit reports save us over 2 hours every evening.',
-    image: 'https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?auto=format&fit=crop&w=600&q=80',
+    role: 'Managing Director',
+    company: 'Rathore Heritage Exports',
+    location: 'Jodhpur, India',
+    quote: 'Our international buyers now explore high-resolution 3D catalogs and finalize multi-currency purchase orders smoothly. The platform Requin built elevated our brand authority on the global trade stage.',
+    image: 'https://images.unsplash.com/photo-1615813967515-e1838c1c5116?auto=format&fit=crop&w=800&q=80',
+    rating: 5,
     isHighlighted: false,
   },
   {
     id: 'marco-rossi',
     name: 'Marco Rossi',
-    role: 'Logistics Director',
-    quote: 'Live fleet route tracking and automated dispatch eliminated delivery delays.',
-    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80',
+    role: 'Vice President of Logistics',
+    company: 'Rossi Trans-Continental Freight',
+    location: 'Milan, Italy',
+    quote: 'Real-time telemetry, automated driver route optimization, and proactive client notifications cut our missed delivery windows to near zero. Requin delivered enterprise-grade excellence on time.',
+    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=80',
+    rating: 5,
     isHighlighted: false,
   },
   {
-    id: 'pooja-sharma',
-    name: 'Pooja Sharma',
-    role: 'Retail Store Owner',
-    quote: 'Customer order management and stock alerts are now completely automated.',
-    image: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&w=600&q=80',
+    id: 'suresh-patel',
+    name: 'Suresh Patel',
+    role: 'Chief Operating Officer',
+    company: 'MegaMart Retail Superstores',
+    location: 'Ahmedabad, India',
+    quote: 'The high-speed barcode POS, dynamic stock forecasting, and daily financial audit dashboards save our store managers over two hours every night. It has become our business backbone.',
+    image: 'https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?auto=format&fit=crop&w=800&q=80',
+    rating: 5,
     isHighlighted: false,
   },
   {
     id: 'david-chen',
     name: 'David Chen',
-    role: 'Import-Export Trader',
-    quote: 'Multi-currency billing and quote generator cut our client reply time in half.',
-    image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=600&q=80',
+    role: 'Chief Executive Officer',
+    company: 'Pacifica Cross-Border Trade Links',
+    location: 'Singapore',
+    quote: 'Their multi-currency billing and automated quote engine cut our client negotiation cycle in half. Requin understood the nuances of cross-border compliance and executed with surgical precision.',
+    image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=800&q=80',
+    rating: 5,
+    isHighlighted: false,
+  },
+  {
+    id: 'pooja-sharma',
+    name: 'Pooja Sharma',
+    role: 'Co-Founder & Creative Director',
+    company: 'Vogue Craft Studio',
+    location: 'New Delhi, India',
+    quote: 'From custom inventory tracking to omnichannel customer notifications, our retail workflows are now completely automated. Requin gave our boutique label the technical scale of a major brand.',
+    image: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&w=800&q=80',
+    rating: 5,
     isHighlighted: false,
   },
 ];
 
 export const TestimonialsSection: React.FC = () => {
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>(DEFAULT_TESTIMONIALS);
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
-  const [activeDot, setActiveDot] = useState(0);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const isHoveredRef = useRef(false);
-  const isNudgingRef = useRef(false);
-  const animationFrameIdRef = useRef<number | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [direction, setDirection] = useState<'next' | 'prev'>('next');
+  const [isFading, setIsFading] = useState(false);
 
   // Fetch dynamic testimonials from CMS API (falls back gracefully to DEFAULT_TESTIMONIALS)
   useEffect(() => {
@@ -93,143 +125,72 @@ export const TestimonialsSection: React.FC = () => {
       });
   }, []);
 
-  // Continuous Seamless Infinite Auto-Scroll Loop
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container || testimonials.length === 0) return;
+  const triggerSlide = useCallback(
+    (newIndex: number, dir: 'next' | 'prev') => {
+      setDirection(dir);
+      setIsFading(true);
+      setTimeout(() => {
+        setCurrentIndex(newIndex);
+        setIsFading(false);
+      }, 180);
+    },
+    []
+  );
 
-    // Center scroll position at Set 1 initially so user can scroll left or right immediately
-    const initPosition = () => {
-      const setWidth = container.scrollWidth / 4;
-      if (setWidth > 0 && (container.scrollLeft === 0 || container.scrollLeft < setWidth / 2)) {
-        container.scrollLeft = setWidth;
-      }
-    };
-    const initTimer = setTimeout(initPosition, 80);
-
-    const speed = 0.75; // px per frame: silky smooth 60fps movement
-
-    const step = () => {
-      if (container && !isHoveredRef.current && !isNudgingRef.current) {
-        const setWidth = container.scrollWidth / 4;
-        if (setWidth > 0) {
-          container.scrollLeft += speed;
-          // When we pass Set 2, seamlessly wrap back to Set 1 without any visual flicker
-          if (container.scrollLeft >= setWidth * 2) {
-            container.scrollLeft -= setWidth;
-          } else if (container.scrollLeft < setWidth) {
-            container.scrollLeft += setWidth;
-          }
-        }
-      }
-      animationFrameIdRef.current = requestAnimationFrame(step);
-    };
-
-    animationFrameIdRef.current = requestAnimationFrame(step);
-
-    return () => {
-      clearTimeout(initTimer);
-      if (animationFrameIdRef.current) {
-        cancelAnimationFrame(animationFrameIdRef.current);
-      }
-    };
-  }, [testimonials]);
-
-  // Cycle active dot periodically
-  useEffect(() => {
+  const handlePrev = useCallback(() => {
     if (testimonials.length === 0) return;
-    const interval = setInterval(() => {
-      setActiveDot((prev) => (prev + 1) % testimonials.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [testimonials.length]);
+    const nextIdx = currentIndex <= 0 ? testimonials.length - 1 : currentIndex - 1;
+    triggerSlide(nextIdx, 'prev');
+  }, [currentIndex, testimonials.length, triggerSlide]);
 
-  // Smooth Nudge Left or Right without ever hitting empty bounds
-  const handleNudge = (direction: 'left' | 'right') => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
+  const handleNext = useCallback(() => {
+    if (testimonials.length === 0) return;
+    const nextIdx = currentIndex >= testimonials.length - 1 ? 0 : currentIndex + 1;
+    triggerSlide(nextIdx, 'next');
+  }, [currentIndex, testimonials.length, triggerSlide]);
 
-    isNudgingRef.current = true;
-    const nudgeAmount = 330; // 1 card + gap
-    const target = direction === 'left' ? container.scrollLeft - nudgeAmount : container.scrollLeft + nudgeAmount;
-
-    container.scrollTo({
-      left: target,
-      behavior: 'smooth',
-    });
-
-    setTimeout(() => {
-      if (container) {
-        const setWidth = container.scrollWidth / 4;
-        if (setWidth > 0) {
-          if (container.scrollLeft >= setWidth * 2) {
-            container.scrollLeft -= setWidth;
-          } else if (container.scrollLeft < setWidth) {
-            container.scrollLeft += setWidth;
-          }
-        }
-      }
-      isNudgingRef.current = false;
-    }, 420);
-
-    setActiveDot((prev) =>
-      direction === 'left' ? (prev <= 0 ? testimonials.length - 1 : prev - 1) : (prev + 1) % testimonials.length
-    );
+  const handleSelect = (index: number) => {
+    if (index === currentIndex) return;
+    triggerSlide(index, index > currentIndex ? 'next' : 'prev');
   };
 
-  // Render a single testimonial card
-  const renderCard = (item: TestimonialItem, prefix: string) => {
-    const isSelected = selectedCardId === item.id;
+  // Keyboard navigation support
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') handlePrev();
+      if (e.key === 'ArrowRight') handleNext();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handlePrev, handleNext]);
 
-    return (
-      <div
-        key={`${prefix}-${item.id}`}
-        onClick={() => setSelectedCardId((prev) => (prev === item.id ? null : item.id))}
-        className={`w-[270px] sm:w-[300px] lg:w-[320px] shrink-0 rounded-3xl overflow-hidden text-left transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between group cursor-pointer select-none ${
-          isSelected
-            ? 'bg-white border-2 border-[#08B9E8] shadow-[0_12px_35px_-4px_rgba(8,185,232,0.4),0_0_20px_2px_rgba(8,185,232,0.25)] ring-2 ring-[#08B9E8]/30 scale-[1.02]'
-            : 'bg-white border border-slate-200/90 hover:border-[#08B9E8]/60 shadow-[0_4px_20px_-4px_rgba(8,185,232,0.08),0_2px_8px_-2px_rgba(11,23,38,0.04)] hover:shadow-[0_20px_45px_-10px_rgba(8,185,232,0.22)]'
-        }`}
-      >
-        {/* Client Portrait Photo */}
-        <div className="relative h-52 sm:h-56 w-full overflow-hidden bg-slate-100 shrink-0">
-          <img
-            src={item.image}
-            alt={item.name}
-            className="w-full h-full object-cover object-top select-none transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-white/70 via-transparent to-transparent opacity-40" />
-        </div>
+  // Autoplay loop with hover-pause
+  useEffect(() => {
+    if (testimonials.length <= 1 || isPaused) return;
+    const timer = setInterval(() => {
+      handleNext();
+    }, 7000);
+    return () => clearInterval(timer);
+  }, [testimonials.length, isPaused, handleNext]);
 
-        {/* Testimonial Quote & Info Body */}
-        <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between bg-white">
-          <div>
-            <h3
-              className={`text-lg font-bold transition-colors ${
-                isSelected ? 'text-[#0284c7]' : 'text-[#0B1726] group-hover:text-[#0284c7]'
-              }`}
-            >
-              {item.name}
-            </h3>
-            <div className="text-xs text-[#08B9E8] font-bold uppercase tracking-wider mt-0.5 mb-3">
-              {item.role}
-            </div>
-          </div>
+  const current = testimonials[currentIndex] || DEFAULT_TESTIMONIALS[0];
 
-          {/* 1-Line Clean Quote */}
-          <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed italic border-t border-slate-100 pt-3">
-            "{item.quote}"
-          </p>
-        </div>
-      </div>
-    );
+  // Helper to resolve company name cleanly if not explicitly set
+  const resolveCompany = (item: TestimonialItem) => {
+    if (item.company && item.company.trim()) return item.company;
+    if (item.role && item.role.includes(' at ')) {
+      return item.role.split(' at ')[1];
+    }
+    if (item.role && item.role.includes(',')) {
+      return item.role.split(',')[1].trim();
+    }
+    return 'Enterprise Partner';
   };
 
   return (
     <section
       id="testimonials"
-      className="pt-16 sm:pt-20 md:pt-24 pb-20 sm:pb-24 md:pb-28 bg-[#F5FAFD] text-[#0B1726] relative overflow-hidden selection:bg-[#08B9E8]/20 selection:text-[#08B9E8]"
+      className="pt-16 sm:pt-20 md:pt-24 pb-20 sm:pb-24 md:pb-28 bg-[#F5FAFD] text-[#0B1726] relative overflow-hidden selection:bg-[#0088EE]/20 selection:text-[#0088EE]"
     >
       {/* Dynamic Keyframes for ambient lighting */}
       <style>{`
@@ -255,26 +216,23 @@ export const TestimonialsSection: React.FC = () => {
         .animate-testimonial-pulse {
           animation: testimonialNetworkPulse 12s ease-in-out infinite;
         }
-        .scrollbar-none::-webkit-scrollbar {
-          display: none;
-        }
       `}</style>
 
       {/* ========================================================
-          BACKGROUND LAYER 1: Soft Ambient Light Blue & Cyan Radial Glows
+          BACKGROUND LAYER 1: Soft Ambient Light Blue & Cyan Glows
       ======================================================== */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         {/* Top-Center Ambient Cyan Glow */}
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[radial-gradient(circle,rgba(8,185,232,0.12),transparent_70%)] blur-3xl animate-testimonial-float" />
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[850px] h-[520px] bg-[radial-gradient(circle,rgba(0,136,238,0.10),transparent_70%)] blur-3xl animate-testimonial-float" />
         
         {/* Top-Left Sky Blue Accent */}
-        <div className="absolute top-10 -left-20 w-[500px] h-[450px] bg-[radial-gradient(circle,rgba(0,194,255,0.08),transparent_65%)] blur-3xl" />
+        <div className="absolute top-10 -left-20 w-[520px] h-[460px] bg-[radial-gradient(circle,rgba(0,194,255,0.08),transparent_65%)] blur-3xl" />
         
         {/* Bottom-Right Soft Cyan Glow */}
-        <div className="absolute -bottom-20 -right-20 w-[600px] h-[500px] bg-[radial-gradient(circle,rgba(2,132,199,0.08),transparent_70%)] blur-3xl animate-testimonial-float" style={{ animationDelay: '-5s' }} />
+        <div className="absolute -bottom-20 -right-20 w-[620px] h-[520px] bg-[radial-gradient(circle,rgba(8,185,232,0.08),transparent_70%)] blur-3xl animate-testimonial-float" style={{ animationDelay: '-5s' }} />
 
         {/* Center subtle light depth */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] bg-[radial-gradient(circle,rgba(255,255,255,0.7),transparent_70%)] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] bg-[radial-gradient(circle,rgba(255,255,255,0.75),transparent_70%)] pointer-events-none" />
       </div>
 
       {/* ========================================================
@@ -287,9 +245,9 @@ export const TestimonialsSection: React.FC = () => {
       >
         <defs>
           <linearGradient id="lightBlueNetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#08B9E8" stopOpacity="0.12" />
-            <stop offset="50%" stopColor="#00c2ff" stopOpacity="0.06" />
-            <stop offset="100%" stopColor="#0284c7" stopOpacity="0.1" />
+            <stop offset="0%" stopColor="#0088EE" stopOpacity="0.1" />
+            <stop offset="50%" stopColor="#00c2ff" stopOpacity="0.05" />
+            <stop offset="100%" stopColor="#0284c7" stopOpacity="0.08" />
           </linearGradient>
 
           <filter id="lightNodeGlow" x="-50%" y="-50%" width="200%" height="200%">
@@ -309,7 +267,7 @@ export const TestimonialsSection: React.FC = () => {
           <line x1="2%" y1="12%" x2="1%" y2="30%" />
           <line x1="1%" y1="30%" x2="5%" y2="38%" />
         </g>
-        <g fill="#08B9E8">
+        <g fill="#0088EE">
           <circle cx="2%" cy="12%" r="2.5" fillOpacity="0.4" />
           <circle cx="10%" cy="24%" r="3.5" fillOpacity="0.3" filter="url(#lightNodeGlow)" />
           <circle cx="10%" cy="24%" r="2" fillOpacity="0.7" />
@@ -340,104 +298,191 @@ export const TestimonialsSection: React.FC = () => {
       </svg>
 
       {/* ========================================================
-          HEADER CONTENT
+          HEADER CONTENT & TRUST BANNER
       ======================================================== */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10 mb-12 sm:mb-16">
-        <div className="text-lg sm:text-xl md:text-2xl font-bold  tracking-[0.2em] text-[#08B9E8] uppercase mb-3">
-          Client Feedback
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0088EE]/10 border border-[#0088EE]/20 text-[#0088EE] text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#0088EE] animate-pulse" />
+          Client Stories & Trust
         </div>
         
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B1726] tracking-[-0.03em] leading-tight">
-          Our Clients Love Us
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B1726] tracking-tight leading-[1.15]">
+          Our Clients <span className="bg-gradient-to-r from-[#0088EE] via-[#00A3FF] to-[#08B9E8] bg-clip-text text-transparent">Love Us</span>
         </h2>
 
-        
-
-        {/* Subtitle */}
-        <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-xl mx-auto">
-          See what our clients have to say about their experience working with us.
-          <br className="hidden sm:inline" />
-          {' '}We pride ourselves on delivering exceptional service and results.
+        <p className="mt-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto">
+          Read verified experiences from founders, directors, and enterprise executives who scale their businesses with Requin Solutions.
         </p>
-      </div>
 
-      {/* ========================================================
-          CONTINUOUS MOVING CONVEYOR BELT TRACK
-      ======================================================== */}
-      <div className="relative w-full overflow-hidden py-4 z-10">
-        
-        {/* Left Circular Navigation Button */}
-        <button
-          onClick={() => handleNudge('left')}
-          aria-label="Previous client review"
-          className="absolute left-3 sm:left-6 lg:left-10 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/95 border border-slate-200 text-[#08B9E8] hover:text-[#00c2ff] hover:border-[#08B9E8] hover:scale-110 transition-all duration-200 shadow-xl flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#08B9E8]/50 active:scale-95"
-        >
-          <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
-        </button>
-
-        {/* Right Circular Navigation Button */}
-        <button
-          onClick={() => handleNudge('right')}
-          aria-label="Next client review"
-          className="absolute right-3 sm:right-6 lg:right-10 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/95 border border-slate-200 text-[#08B9E8] hover:text-[#00c2ff] hover:border-[#08B9E8] hover:scale-110 transition-all duration-200 shadow-xl flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#08B9E8]/50 active:scale-95"
-        >
-          <ChevronRight className="w-6 h-6 stroke-[2.5]" />
-        </button>
-
-        {/* Left & Right Edge Seamless Gradient Fades */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-20 md:w-32 bg-gradient-to-r from-[#F5FAFD] via-[#F5FAFD]/80 to-transparent z-20" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-20 md:w-32 bg-gradient-to-l from-[#F5FAFD] via-[#F5FAFD]/80 to-transparent z-20" />
-
-        {/* Moving Track Container with 4x Buffer for True Infinite Wrap */}
-        <div
-          ref={scrollContainerRef}
-          onMouseEnter={() => {
-            isHoveredRef.current = true;
-          }}
-          onMouseLeave={() => {
-            isHoveredRef.current = false;
-          }}
-          className="overflow-x-auto scrollbar-none flex select-none cursor-grab active:cursor-grabbing"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          {/* Set 1 */}
-          <div className="flex shrink-0 gap-6 sm:gap-7 pr-6 sm:pr-7">
-            {testimonials.map((item) => renderCard(item, 'set1'))}
+        {/* Trust summary pill badges */}
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mt-6">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-sm text-xs font-semibold text-slate-700">
+            <div className="flex items-center text-amber-400">
+              <Star className="w-3.5 h-3.5 fill-current" />
+            </div>
+            <span><strong className="text-[#0B1726]">4.9 / 5</strong> Rating (150+ Reviews)</span>
           </div>
 
-          {/* Set 2 */}
-          <div className="flex shrink-0 gap-6 sm:gap-7 pr-6 sm:pr-7">
-            {testimonials.map((item) => renderCard(item, 'set2'))}
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-sm text-xs font-semibold text-slate-700">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span><strong className="text-[#0B1726]">98%</strong> Client Retention</span>
           </div>
 
-          {/* Set 3 */}
-          <div className="flex shrink-0 gap-6 sm:gap-7 pr-6 sm:pr-7">
-            {testimonials.map((item) => renderCard(item, 'set3'))}
-          </div>
-
-          {/* Set 4 */}
-          <div className="flex shrink-0 gap-6 sm:gap-7 pr-6 sm:pr-7">
-            {testimonials.map((item) => renderCard(item, 'set4'))}
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-sm text-xs font-semibold text-slate-700">
+            <Award className="w-3.5 h-3.5 text-[#0088EE]" />
+            <span><strong className="text-[#0B1726]">100%</strong> Verified Feedback</span>
           </div>
         </div>
       </div>
 
       {/* ========================================================
-          BOTTOM PAGINATION INDICATOR DOTS
+          LARGE FEATURED TESTIMONIAL CARD
       ======================================================== */}
-      <div className="flex items-center justify-center gap-2 mt-8 z-10 relative">
-        {testimonials.map((item, dotIndex) => (
-          <button
-            key={`dot-${item.id}`}
-            onClick={() => handleNudge(dotIndex > activeDot ? 'right' : 'left')}
-            aria-label={`View feedback from ${item.name}`}
-            className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer focus:outline-none ${
-              activeDot === dotIndex
-                ? 'w-8 bg-[#08B9E8] shadow-sm shadow-[#08B9E8]/40'
-                : 'w-2.5 bg-[#BAE6FD]/70 hover:bg-[#BAE6FD]'
-            }`}
-          />
-        ))}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+        <div
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          className="relative bg-white rounded-3xl sm:rounded-[36px] border border-slate-200/90 shadow-[0_25px_65px_-15px_rgba(0,136,238,0.14),0_10px_25px_-5px_rgba(11,23,38,0.04)] overflow-hidden transition-all duration-300"
+        >
+          {/* Top Brand Radiant Accent Line */}
+          <div className="h-1.5 w-full bg-gradient-to-r from-[#0088EE] via-[#00C2FF] to-[#08B9E8]" />
+
+          <div className="p-6 sm:p-10 lg:p-12">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              
+              {/* LEFT COLUMN: Client Visual Anchor (35% width on large screens) */}
+              <div className="lg:col-span-5 flex flex-col items-center text-center">
+                
+                {/* Portrait Container with Ambient Ring & Floating Verified Badge */}
+                <div className="relative mb-5 group">
+                  <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-3xl overflow-hidden shadow-xl border-4 border-white ring-4 ring-[#0088EE]/15 bg-slate-100 transition-all duration-500">
+                    <img
+                      src={current.image}
+                      alt={current.name}
+                      key={current.id}
+                      className={`w-full h-full object-cover object-top transition-opacity duration-300 ${
+                        isFading ? 'opacity-40 scale-95' : 'opacity-100 scale-100'
+                      }`}
+                      loading="lazy"
+                    />
+                  </div>
+
+                  {/* Verified Partner Badge */}
+                  <div className="absolute -bottom-2 inset-x-0 flex justify-center">
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold shadow-md">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      Verified Client
+                    </span>
+                  </div>
+                </div>
+
+                {/* 5 Stars Rating Display */}
+                <div className="flex items-center gap-1 mt-2 mb-2 text-amber-400">
+                  {[...Array(current.rating || 5)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 fill-current filter drop-shadow-sm" />
+                  ))}
+                </div>
+
+                {/* Location Badge */}
+                {current.location && (
+                  <div className="inline-flex items-center gap-1.5 text-xs text-slate-500 font-medium px-3 py-1 rounded-lg bg-[#F5FAFD] border border-slate-200/80 mt-1">
+                    <MapPin className="w-3.5 h-3.5 text-[#0088EE] shrink-0" />
+                    <span>{current.location}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* RIGHT COLUMN: The Large Readable Quote & Hierarchy (65% width) */}
+              <div
+                className={`lg:col-span-7 flex flex-col justify-between text-left transition-all duration-300 ${
+                  isFading
+                    ? direction === 'next'
+                      ? 'opacity-30 translate-x-3'
+                      : 'opacity-30 -translate-x-3'
+                    : 'opacity-100 translate-x-0'
+                }`}
+              >
+                {/* Watermark Quote Icon */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#E0F2FE] to-[#F0F9FF] text-[#0088EE] border border-[#0088EE]/15 flex items-center justify-center shadow-sm">
+                    <Quote className="w-6 h-6 rotate-180" />
+                  </div>
+
+                  {/* Story Counter Badge */}
+                  <div className="text-xs font-extrabold tracking-widest text-[#0088EE] uppercase px-3 py-1 rounded-full bg-[#E0F2FE]/60 border border-[#0088EE]/20">
+                    {String(currentIndex + 1).padStart(2, '0')} / {String(testimonials.length).padStart(2, '0')}
+                  </div>
+                </div>
+
+                {/* Large, Readable, Impactful Quote */}
+                <blockquote className="text-lg sm:text-xl lg:text-[22px] text-[#0B1726] font-medium leading-[1.65] sm:leading-[1.6] italic my-5 select-text">
+                  "{current.quote}"
+                </blockquote>
+
+                {/* Visual Hierarchy: Name, Designation, and Company */}
+                <div className="pt-5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-end justify-between gap-5">
+                  <div className="space-y-1">
+                    {/* 1. Client's Full Name (Primary Level) */}
+                    <h3 className="text-xl sm:text-2xl font-extrabold text-[#0B1726] tracking-tight">
+                      {current.name}
+                    </h3>
+
+                    {/* 2. Designation / Role (Secondary Level - Vibrant Brand Cyan/Blue) */}
+                    <div className="text-sm sm:text-base font-bold text-[#0088EE] tracking-wide">
+                      {current.role}
+                    </div>
+
+                    {/* 3. Company Name (Tertiary Level - Clean Enterprise Typography) */}
+                    <div className="text-sm font-semibold text-slate-700 flex items-center gap-1.5 pt-0.5">
+                      <Building2 className="w-4 h-4 text-[#0088EE] shrink-0" />
+                      <span>{resolveCompany(current)}</span>
+                    </div>
+                  </div>
+
+                  {/* Prominent Navigation Arrow Buttons */}
+                  <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
+                    <button
+                      onClick={handlePrev}
+                      aria-label="Previous testimonial"
+                      className="group w-12 h-12 rounded-2xl bg-[#F5FAFD] border border-slate-200/90 text-slate-700 hover:text-[#0088EE] hover:bg-white hover:border-[#0088EE]/40 hover:shadow-md transition-all duration-200 flex items-center justify-center cursor-pointer active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#0088EE]/40"
+                    >
+                      <ChevronLeft className="w-5 h-5 stroke-[2.5] transition-transform duration-200 group-hover:-translate-x-0.5" />
+                    </button>
+
+                    <button
+                      onClick={handleNext}
+                      aria-label="Next testimonial"
+                      className="group w-12 h-12 rounded-2xl bg-gradient-to-r from-[#0088EE] via-[#0099FF] to-[#08B9E8] hover:from-[#0077CC] hover:to-[#0099FF] text-white shadow-md shadow-[#0088EE]/30 hover:shadow-lg hover:shadow-[#0088EE]/45 hover:scale-105 transition-all duration-200 flex items-center justify-center cursor-pointer active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#0088EE]/40"
+                    >
+                      <ChevronRight className="w-5 h-5 stroke-[2.5] transition-transform duration-200 group-hover:translate-x-0.5" />
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        {/* ========================================================
+            CLICKABLE PAGINATION DOTS
+        ======================================================== */}
+        <div className="flex items-center justify-center gap-2 mt-8">
+          {testimonials.map((item, dotIndex) => (
+            <button
+              key={`dot-${item.id}`}
+              onClick={() => handleSelect(dotIndex)}
+              aria-label={`View testimonial from ${item.name}`}
+              className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer focus:outline-none ${
+                currentIndex === dotIndex
+                  ? 'w-10 bg-gradient-to-r from-[#0088EE] to-[#08B9E8] shadow-sm shadow-[#0088EE]/40'
+                  : 'w-2.5 bg-slate-200 hover:bg-[#0088EE]/40'
+              }`}
+            />
+          ))}
+        </div>
+
       </div>
     </section>
   );

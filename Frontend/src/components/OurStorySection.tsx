@@ -187,13 +187,14 @@ export const OurStorySection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="max-w-3xl mb-10 sm:mb-12 md:mb-14 text-left">
-          <div className="text-lg sm:text-xl md:text-2xl font-bold tracking-[0.2em] text-[#08B9E8] uppercase mb-3">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0088EE]/10 border border-[#0088EE]/20 text-[#0088EE] text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0088EE] animate-pulse" />
             WHAT WE DID
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B1726] tracking-[-0.03em] leading-tight">
-            Our Story
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B1726] tracking-tight leading-[1.15]">
+            Our <span className="bg-gradient-to-r from-[#0088EE] via-[#00A3FF] to-[#08B9E8] bg-clip-text text-transparent">Story</span>
           </h2>
-          <p className="mt-4 text-base sm:text-lg text-slate-600 font-normal leading-[1.65]">
+          <p className="mt-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl">
             From our founding in Jaipur to delivering mission-critical platforms worldwide.
           </p>
         </div>
