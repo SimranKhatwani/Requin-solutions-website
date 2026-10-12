@@ -42,7 +42,7 @@ import {
   ALLOWED_IMAGE_EXTENSIONS,
 } from '../services/mediaService';
 import { AdminImageUploader } from './AdminImageUploader';
-import { getMediaUrl } from '../utils/mediaUrl';
+import { getMediaUrl, transformHtmlMediaUrls } from '../utils/mediaUrl';
 
 export const AdminBlogs: React.FC = () => {
   const [blogs, setBlogs] = useState<BlogItem[]>([]);
@@ -260,7 +260,7 @@ export const AdminBlogs: React.FC = () => {
       ? `\n  <figcaption class="text-center text-xs text-slate-500 mt-2">${contentImageCaption.trim()}</figcaption>`
       : '';
 
-    const figureHtml = `\n<figure class="my-8">\n  <img src="${contentImageUrl.trim()}" alt="${altText}" class="rounded-2xl w-full object-cover shadow-md border border-slate-200" />${captionHtml}\n</figure>\n`;
+    const figureHtml = `\n<figure class="my-8">\n  <img src="${contentImageUrl.trim()}" alt="${altText}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/placeholder.jpg';" class="rounded-2xl w-full object-cover shadow-md border border-slate-200" />${captionHtml}\n</figure>\n`;
 
     handleInsertTag(figureHtml);
     setIsInsertImageModalOpen(false);
@@ -1280,7 +1280,7 @@ export const AdminBlogs: React.FC = () => {
 
               <div
                 className="prose prose-slate max-w-none text-slate-700 text-sm sm:text-base space-y-4 leading-relaxed [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-slate-900 [&_h2]:mt-6 [&_h2]:mb-2 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-slate-800 [&_p]:text-slate-700 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-[#08B9E8] [&_img]:rounded-xl [&_img]:w-full [&_img]:border [&_img]:border-slate-200"
-                dangerouslySetInnerHTML={{ __html: previewBlog.content }}
+                dangerouslySetInnerHTML={{ __html: transformHtmlMediaUrls(previewBlog.content) }}
               />
             </div>
 

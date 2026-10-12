@@ -8,6 +8,7 @@ import {
   REQUIN_SERVICES,
   ServiceItem,
 } from '../data/requinData';
+import { getMediaUrl } from '../utils/mediaUrl';
 import {
   Monitor,
   Smartphone,
@@ -290,9 +291,13 @@ export const PublicServiceDetailPage: React.FC = () => {
               <div className="lg:col-span-5">
                 <div className="relative rounded-3xl overflow-hidden border border-slate-200/90 shadow-lg bg-slate-100">
                   <img
-                    src={currentService.image}
+                    src={getMediaUrl(currentService.image)}
                     alt={currentService.title}
                     className="w-full h-72 sm:h-80 object-cover"
+                    loading="lazy"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#061827]/80 via-transparent to-transparent opacity-80" />
                   <div className="absolute bottom-6 left-6 flex items-center gap-3">

@@ -9,6 +9,7 @@ import {
   Minimize2,
 } from 'lucide-react';
 import { ProductItem } from '../data/requinData';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 interface ProductVideoModalProps {
   product: ProductItem | null;
@@ -154,9 +155,12 @@ export const ProductVideoModal: React.FC<ProductVideoModalProps> = ({
             onClick={togglePlay}
           >
             <img
-              src={product.image}
+              src={getMediaUrl(product.image)}
               alt={`${product.title} Video Demo`}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
           </div>

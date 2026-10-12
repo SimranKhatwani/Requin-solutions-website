@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Layers } from 'lucide-react';
 import { SHOWCASE_PRODUCTS, ShowcaseProductItem, ProductItem } from '../data/requinData';
 import { ProductFeatureModal } from './ProductFeatureModal';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 interface ProductsSectionProps {
   onSelectProduct?: (product: ProductItem) => void;
@@ -117,9 +118,13 @@ export const ProductsSection: React.FC<ProductsSectionProps> = () => {
           {/* Product Image */}
           <div className="relative w-full overflow-hidden bg-slate-950">
             <img
-              src={activeProduct.image}
+              src={getMediaUrl(activeProduct.image)}
               alt={`${activeProduct.title} Interface`}
               className="w-full h-auto max-h-[380px] object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
+              loading="lazy"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+              }}
             />
 
             {/* Hover overlay prompt */}

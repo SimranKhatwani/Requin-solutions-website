@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowRight, ArrowUpRight, X, Check } from 'lucide-react';
 import { SOFTWARE_PORTFOLIO_ITEMS, SoftwareSolutionItem } from '../data/requinData';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 export const SoftwareSolutionsSection: React.FC = () => {
   const [activeItem, setActiveItem] = useState<SoftwareSolutionItem | null>(null);
@@ -32,10 +33,14 @@ export const SoftwareSolutionsSection: React.FC = () => {
               {/* Product Image Area */}
               <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-slate-900">
                 <img
-                  src={item.image}
+                  src={getMediaUrl(item.image)}
                   alt={item.title}
                   className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  loading="lazy"
                   referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
 
@@ -114,9 +119,13 @@ export const SoftwareSolutionsSection: React.FC = () => {
 
               <div className="rounded-xl overflow-hidden h-52 bg-slate-100">
                 <img
-                  src={activeItem.image}
+                  src={getMediaUrl(activeItem.image)}
                   alt={activeItem.title}
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                  }}
                 />
               </div>
 

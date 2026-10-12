@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Check, ArrowRight, ShieldCheck, Laptop, Server, CheckCircle2 } from 'lucide-react';
 import { ProductItem } from '../data/requinData';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 interface ProductDetailModalProps {
   product: ProductItem | null;
@@ -46,10 +47,14 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           {/* Product UI Preview Screen */}
           <div className="rounded-2xl overflow-hidden h-52 sm:h-64 w-full bg-[#071827] relative border border-white/10">
             <img
-              src={product.image}
+              src={getMediaUrl(product.image)}
               alt={product.title}
               className="w-full h-full object-cover"
+              loading="lazy"
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#071827]/90 via-transparent to-transparent pointer-events-none" />
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs text-slate-300 bg-[#0B2235]/90 px-4 py-2 rounded-xl backdrop-blur-md border border-white/10">

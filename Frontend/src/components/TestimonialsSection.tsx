@@ -11,6 +11,7 @@ import {
   Award,
 } from 'lucide-react';
 import { testimonialService, TestimonialItem } from '../services/testimonialService';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 // Enriched initial dataset with prominent roles, companies, locations, and high-impact quotes
 export const DEFAULT_TESTIMONIALS: TestimonialItem[] = [
@@ -385,13 +386,16 @@ export const TestimonialsSection: React.FC = () => {
                 <div className="relative mb-5 group">
                   <div className="w-32 h-32 sm:w-44 sm:h-44 rounded-3xl overflow-hidden shadow-xl border-4 border-white ring-4 ring-[#0088EE]/15 bg-slate-100 transition-all duration-500">
                     <img
-                      src={current.image}
+                      src={getMediaUrl(current.image)}
                       alt={current.name}
                       key={current.id}
                       className={`w-full h-full object-cover object-top transition-opacity duration-300 ${
                         isFading ? 'opacity-40 scale-95' : 'opacity-100 scale-100'
                       }`}
                       loading="lazy"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                      }}
                     />
                   </div>
 

@@ -7,6 +7,7 @@ import { QuizModal } from '../components/QuizModal';
 import { ProductFeatureModal } from '../components/ProductFeatureModal';
 import { ProductItem, ProductGalleryItem, EXPLORE_MORE_PRODUCTS, ALL_PRODUCTS } from '../data/requinData';
 import { projectService, ProjectItem as CMSProjectItem } from '../services/projectService';
+import { getMediaUrl } from '../utils/mediaUrl';
 import {
   ChevronRight,
   ArrowRight,
@@ -368,9 +369,13 @@ export const PublicProductsPage: React.FC = () => {
                       {/* Product Image */}
                       <div className="relative w-full overflow-hidden bg-slate-950">
                         <img
-                          src={product.image}
+                          src={getMediaUrl(product.image)}
                           alt={`${product.title} Interface`}
                           className="w-full h-auto max-h-[380px] object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
+                          loading="lazy"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                          }}
                         />
 
                         {/* Hover overlay prompt */}

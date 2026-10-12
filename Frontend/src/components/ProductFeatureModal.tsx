@@ -11,6 +11,7 @@ import {
   Maximize2,
 } from 'lucide-react';
 import { ProductItem } from '../data/requinData';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 interface ProductFeatureModalProps {
   product: ProductItem | null;
@@ -183,9 +184,13 @@ export const ProductFeatureModal: React.FC<ProductFeatureModalProps> = ({
                     {/* Image Preview Container */}
                     <div className="relative overflow-hidden bg-slate-100 border-b border-slate-100 flex items-center justify-center aspect-[16/10] sm:aspect-video">
                       <img
-                        src={screen.image}
+                        src={getMediaUrl(screen.image)}
                         alt={screen.title}
                         className="w-full h-full object-contain p-1.5 transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                        }}
                       />
 
                       {/* Hover Overlay with Zoom Icon */}
@@ -287,9 +292,12 @@ export const ProductFeatureModal: React.FC<ProductFeatureModalProps> = ({
             {/* Main Screenshot Container */}
             <div className="relative w-full rounded-2xl overflow-hidden bg-[#0A1826] border border-white/20 shadow-2xl flex items-center justify-center max-h-[75vh]">
               <img
-                src={currentLightboxItem.image}
+                src={getMediaUrl(currentLightboxItem.image)}
                 alt={currentLightboxItem.title}
                 className="max-h-[72vh] w-auto max-w-full object-contain p-2"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                }}
               />
 
               {/* Prev / Next Arrows */}

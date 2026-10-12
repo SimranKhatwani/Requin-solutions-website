@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Check, ArrowRight, Code2, Layers, Cpu } from 'lucide-react';
 import { ServiceItem } from '../data/requinData';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 interface ServiceDetailModalProps {
   service: ServiceItem | null;
@@ -40,10 +41,14 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
           {/* Visual Showcase */}
           <div className="rounded-2xl overflow-hidden h-52 sm:h-64 w-full bg-slate-900 relative">
             <img
-              src={service.image}
+              src={getMediaUrl(service.image)}
               alt={service.title}
               className="w-full h-full object-cover"
+              loading="lazy"
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           </div>

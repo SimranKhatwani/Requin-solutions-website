@@ -5,7 +5,7 @@ import { Footer } from '../components/Footer';
 import { BlogSidebar } from '../components/BlogSidebar';
 import { blogService, BlogItem } from '../services/blogService';
 import { REQUIN_BLOGS } from '../data/requinData';
-import { getMediaUrl } from '../utils/mediaUrl';
+import { getMediaUrl, transformHtmlMediaUrls } from '../utils/mediaUrl';
 import {
   Calendar,
   User,
@@ -104,6 +104,11 @@ export const PublicBlogDetailPage: React.FC = () => {
     });
 
     return items;
+  }, [blog?.content]);
+
+  // Transform blog HTML to resolve any relative /api/media/ or localhost image paths to live backend URLs
+  const sanitizedContent = useMemo(() => {
+    return blog?.content ? transformHtmlMediaUrls(blog.content) : '';
   }, [blog?.content]);
 
   // Inject IDs into the actual rendered content headings on mount
@@ -492,7 +497,7 @@ export const PublicBlogDetailPage: React.FC = () => {
                     <div
                       id="blog-detail-content"
                       className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-10 md:p-12 shadow-sm text-slate-700 text-base sm:text-[17px] leading-relaxed space-y-6 overflow-hidden"
-                      dangerouslySetInnerHTML={{ __html: blog.content }}
+                      dangerouslySetInnerHTML={{ __html: sanitizedContent }}
                     />
 
                     {/* Article Tags */}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowRight, BookOpen, GraduationCap, FileText, Code2, Check, X } from 'lucide-react';
+import { getMediaUrl } from '../utils/mediaUrl';
 
 interface AcademicItem {
   id: string;
@@ -76,10 +77,14 @@ export const AcademicSolutionsSection: React.FC = () => {
                 {/* Visual Area */}
                 <div className="h-44 w-full overflow-hidden bg-slate-200 relative">
                   <img
-                    src={item.image}
+                    src={getMediaUrl(item.image)}
                     alt={item.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
                     referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                    }}
                   />
                   <div className="absolute top-3 left-3 bg-white/95 px-2.5 py-0.5 rounded-md text-[11px] font-semibold text-[#0B1726] shadow-sm">
                     {item.category}
