@@ -302,7 +302,7 @@ export const PublicBlogsPage: React.FC = () => {
             </span>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#0B1726] tracking-tight">
-              Insights, Architecture & <span className="text-[#0284c7]">Technology Trends.</span>
+              Insights, Architecture & <span className="bg-gradient-to-r from-[#0088EE] via-[#00A3FF] to-[#08B9E8] bg-clip-text text-transparent">Technology Trends.</span>
             </h1>
 
             <p className="text-slate-600 text-base sm:text-lg lg:text-xl mt-4 max-w-3xl mx-auto leading-relaxed font-normal">
