@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { LoginModal } from '../components/LoginModal';
-import { QuizModal } from '../components/QuizModal';
 import { ProductFeatureModal } from '../components/ProductFeatureModal';
 import { ProductItem, ProductGalleryItem, EXPLORE_MORE_PRODUCTS, ALL_PRODUCTS } from '../data/requinData';
 import { projectService, ProjectItem as CMSProjectItem } from '../services/projectService';
@@ -112,7 +111,6 @@ export const PublicProductsPage: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
   const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isQuizOpen, setIsQuizOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -168,7 +166,6 @@ export const PublicProductsPage: React.FC = () => {
       {/* Navbar */}
       <Navbar
         onOpenLogin={() => setIsLoginOpen(true)}
-        onOpenQuiz={() => setIsQuizOpen(true)}
         onNavigateSection={(sec) => navigate(`/#${sec}`)}
       />
 
@@ -568,21 +565,10 @@ export const PublicProductsPage: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <Footer
-        onNavigateSection={(sec) => navigate(`/#${sec}`)}
-        onOpenQuiz={() => setIsQuizOpen(true)}
-      />
+      <Footer onNavigateSection={(sec) => navigate(`/#${sec}`)} />
 
       {/* Modals */}
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      {/* <QuizModal
-        isOpen={isQuizOpen}
-        onClose={() => setIsQuizOpen(false)}
-        onSelectService={() => {
-          setIsQuizOpen(false);
-          navigate('/#contact');
-        }}
-      /> */}
       <ProductFeatureModal
         product={selectedProduct}
         isOpen={isFeatureModalOpen}

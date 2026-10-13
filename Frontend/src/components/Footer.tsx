@@ -15,10 +15,9 @@ import { FAQModal } from './FAQModal';
 
 interface FooterProps {
   onNavigateSection?: (sectionId: string) => void;
-  onOpenQuiz?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz }) => {
+export const Footer: React.FC<FooterProps> = ({ onNavigateSection }) => {
   const [email, setEmail] = useState('');
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
@@ -226,14 +225,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateSection, onOpenQuiz })
                   Contact
                 </button>
               </li>
-              {/* <li>
-                <button
-                  onClick={() => handleNav('quiz')}
-                  className="hover:text-[#08B9E8] transition-colors cursor-pointer text-left"
-                >
-                  Quiz
-                </button>
-              </li> */}
               <li>
                 <button
                   onClick={() => navigate('/products')}

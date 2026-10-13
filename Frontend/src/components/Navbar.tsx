@@ -4,7 +4,6 @@ import { Menu, X, ArrowRight } from 'lucide-react';
 
 interface NavbarProps {
   onOpenLogin?: () => void;
-  onOpenQuiz?: () => void;
   onNavigateSection: (sectionId: string) => void;
 }
 

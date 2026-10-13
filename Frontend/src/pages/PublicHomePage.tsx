@@ -7,8 +7,6 @@ import { ExperienceSection } from '../components/ExperienceSection';
 import { ProductsSection } from '../components/ProductsSection';
 import { OurStorySection } from '../components/OurStorySection';
 import { LifeAtRequinSection } from '../components/LifeAtRequinSection';
-import { QuizCTA } from '../components/QuizCTA';
-import { QuizModal } from '../components/QuizModal';
 import { TestimonialsSection } from '../components/TestimonialsSection';
 import { ContactSection } from '../components/ContactSection';
 import { LoginModal } from '../components/LoginModal';
@@ -23,7 +21,6 @@ interface PublicHomePageProps {
 
 export const PublicHomePage: React.FC<PublicHomePageProps> = ({ initialScrollTo }) => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
 
   const navigate = useNavigate();
@@ -52,7 +49,6 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ initialScrollTo 
       {/* Lightweight Sticky Navbar */}
       <Navbar
         onOpenLogin={() => setIsLoginOpen(true)}
-        onOpenQuiz={() => setIsQuizOpen(true)}
         onNavigateSection={scrollToSection}
       />
 
@@ -93,21 +89,10 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ initialScrollTo 
       </main>
 
       {/* Dark Navy Footer */}
-      <Footer
-        onNavigateSection={scrollToSection}
-        onOpenQuiz={() => setIsQuizOpen(true)}
-      />
+      <Footer onNavigateSection={scrollToSection} />
 
       {/* Modals & Interactive Overlays */}
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      {/* <QuizModal
-        isOpen={isQuizOpen}
-        onClose={() => setIsQuizOpen(false)}
-        onSelectService={(serviceId) => {
-          setIsQuizOpen(false);
-          scrollToSection('contact');
-        }}
-      /> */}
 
       <ServiceDetailModal
         service={selectedService}

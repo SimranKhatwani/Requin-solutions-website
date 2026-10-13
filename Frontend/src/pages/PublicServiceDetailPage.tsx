@@ -3,7 +3,6 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { LoginModal } from '../components/LoginModal';
-import { QuizModal } from '../components/QuizModal';
 import {
   REQUIN_SERVICES,
   ServiceItem,
@@ -36,7 +35,6 @@ export const PublicServiceDetailPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isQuizOpen, setIsQuizOpen] = useState(false);
 
   // Find matching service item
   const currentService: ServiceItem =
@@ -239,7 +237,6 @@ export const PublicServiceDetailPage: React.FC = () => {
 
       <Navbar
         onOpenLogin={() => setIsLoginOpen(true)}
-        onOpenQuiz={() => setIsQuizOpen(true)}
         onNavigateSection={(sec) => navigate(`/#${sec}`)}
       />
 
@@ -447,20 +444,9 @@ export const PublicServiceDetailPage: React.FC = () => {
 
 
 
-      <Footer
-        onNavigateSection={(sec) => navigate(`/#${sec}`)}
-        onOpenQuiz={() => setIsQuizOpen(true)}
-      />
+      <Footer onNavigateSection={(sec) => navigate(`/#${sec}`)} />
 
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      {/* <QuizModal
-        isOpen={isQuizOpen}
-        onClose={() => setIsQuizOpen(false)}
-        onSelectService={() => {
-          setIsQuizOpen(false);
-          navigate('/#contact');
-        }}
-      /> */}
     </div>
   );
 };

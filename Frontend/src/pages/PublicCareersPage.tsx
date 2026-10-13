@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { LoginModal } from '../components/LoginModal';
-import { QuizModal } from '../components/QuizModal';
 import { ChatWidget } from '../components/ChatWidget';
 import { careerService, CareerItem } from '../services/careerService';
 import {
@@ -61,7 +60,6 @@ export const PublicCareersPage: React.FC = () => {
   const [applyError, setApplyError] = useState<string | null>(null);
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isQuizOpen, setIsQuizOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -295,7 +293,6 @@ export const PublicCareersPage: React.FC = () => {
       {/* Navigation */}
       <Navbar
         onOpenLogin={() => setIsLoginOpen(true)}
-        onOpenQuiz={() => setIsQuizOpen(true)}
         onNavigateSection={(sectionId) => {
           navigate(`/#${sectionId}`);
         }}
@@ -887,16 +884,11 @@ export const PublicCareersPage: React.FC = () => {
       )}
 
       {/* Footer and Chat Widget */}
-      <Footer onOpenQuiz={() => setIsQuizOpen(true)} />
+      <Footer />
       <ChatWidget />
 
       {/* Modals */}
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      {/* <QuizModal
-        isOpen={isQuizOpen}
-        onClose={() => setIsQuizOpen(false)}
-        onSelectService={() => setIsQuizOpen(false)}
-      /> */}
     </div>
   );
 };

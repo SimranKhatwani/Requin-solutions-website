@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { LoginModal } from '../components/LoginModal';
-import { QuizModal } from '../components/QuizModal';
 import { storyService, StoryItem } from '../services/storyService';
 import { getMediaUrl } from '../utils/mediaUrl';
 import {
@@ -23,7 +22,6 @@ export const PublicStoriesPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isQuizOpen, setIsQuizOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -55,7 +53,6 @@ export const PublicStoriesPage: React.FC = () => {
     <div className="min-h-screen bg-[#071827] text-white flex flex-col font-sans selection:bg-[#08B9E8]/20 selection:text-[#4DD4F5]">
       <Navbar
         onOpenLogin={() => setIsLoginOpen(true)}
-        onOpenQuiz={() => setIsQuizOpen(true)}
         onNavigateSection={(sec) => navigate(`/#${sec}`)}
       />
 
@@ -186,17 +183,9 @@ export const PublicStoriesPage: React.FC = () => {
         </div>
       </main>
 
-      <Footer
-        onNavigateSection={(sec) => navigate(`/#${sec}`)}
-        onOpenQuiz={() => setIsQuizOpen(true)}
-      />
+      <Footer onNavigateSection={(sec) => navigate(`/#${sec}`)} />
 
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      {/* <QuizModal
-        isOpen={isQuizOpen}
-        onClose={() => setIsQuizOpen(false)}
-        onSelectService={() => setIsQuizOpen(false)}
-      /> */}
     </div>
   );
 };

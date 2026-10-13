@@ -457,16 +457,6 @@ export const EXPLORE_MORE_PRODUCTS: ShowcaseProductItem[] = [
 
 export const REQUIN_PRODUCTS: ProductItem[] = ALL_PRODUCTS;
 
-export interface SoftwareSolutionItem {
-  id: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  category: string;
-  image: string;
-  tags: string[];
-  keyOutcomes: string[];
-}
 
 export interface StoryMilestone {
   year: string;
@@ -496,16 +486,6 @@ export interface GalleryImage {
   photos?: GalleryPhotoItem[];
 }
 
-export interface QuizQuestion {
-  id: number;
-  question: string;
-  subtitle: string;
-  options: {
-    label: string;
-    description: string;
-    targetService: string;
-  }[];
-}
 
 export const REQUIN_COMPANY_INFO = {
   name: 'Requin Solutions Pvt Ltd',
@@ -629,60 +609,6 @@ export const REQUIN_SERVICES: ServiceItem[] = [
   }
 ];
 
-export const SOFTWARE_PORTFOLIO_ITEMS: SoftwareSolutionItem[] = [
-  {
-    id: 'hrms-enterprise',
-    title: 'Enterprise HR Management System',
-    subtitle: 'Full-cycle Talent & Operations Engine',
-    description: 'A custom-built enterprise HR solution unifying workforce data, automated salary computation, attendance analytics, and employee leave requests.',
-    category: 'Software Solutions',
-    image: '/images/requin_software_team_1790576614688.jpg',
-    tags: ['HR Tech', 'React', 'Node.js', 'PostgreSQL'],
-    keyOutcomes: [
-      'Centralized employee records for 1,200+ personnel across 3 regional branches',
-      'Reduced monthly payroll reconciliation from 4 business days to 2 hours'
-    ]
-  },
-  {
-    id: 'biometric-access',
-    title: 'Biometric Access & Workforce Auth',
-    subtitle: 'Hardware-Integrated Access Security',
-    description: 'Multi-location hardware-integrated biometric identity system with cloud synchronization and real-time attendance verification.',
-    category: 'Security & IoT',
-    image: '/images/digital_agency_office_1790576645354.jpg',
-    tags: ['IoT', 'Biometrics', 'Go', 'Cloud Sync'],
-    keyOutcomes: [
-      'Sub-second authentication at 12 physical campus entry terminals',
-      'Zero recorded proxy attendance with hardware tamper alarms'
-    ]
-  },
-  {
-    id: 'b2b-commerce',
-    title: 'High-Volume B2B Commerce Engine',
-    subtitle: 'Wholesale Ordering & Inventory Mesh',
-    description: 'Custom headless commerce platform supporting tiered pricing, multi-currency settlement, and real-time ERP warehouse sync.',
-    category: 'Web Development',
-    image: '/images/modern_software_mockup_1790576657118.jpg',
-    tags: ['Next.js', 'GraphQL', 'Stripe', 'Redis'],
-    keyOutcomes: [
-      'Engineered to handle 50,000+ SKU variants with sub-100ms catalog search',
-      'Integrated live logistics tracking across 4 national freight carriers'
-    ]
-  },
-  {
-    id: 'cloud-devops',
-    title: 'Multi-Cloud Infrastructure Automation',
-    subtitle: 'Zero-Downtime Migration & CI/CD Pipeline',
-    description: 'Cloud modernization project transforming a monolithic on-premise application into resilient containerized microservices.',
-    category: 'Cloud Solutions',
-    image: '/images/cloud_infrastructure_1790576629897.jpg',
-    tags: ['AWS', 'Kubernetes', 'Terraform', 'DevOps'],
-    keyOutcomes: [
-      'Achieved 99.98% service uptime across peak traffic events',
-      'Cut deployment cycle duration from 3 weeks to automated 12-minute builds'
-    ]
-  }
-];
 
 export const OUR_STORY_MILESTONES: StoryMilestone[] = [
   {
@@ -904,89 +830,6 @@ export const LIFE_AT_REQUIN_GALLERY: GalleryImage[] = [
   }
 ];
 
-export const QUIZ_QUESTIONS: QuizQuestion[] = [
-  {
-    id: 1,
-    question: 'What is the primary objective of your technology initiative?',
-    subtitle: 'Select the goal that best reflects your current organizational priority.',
-    options: [
-      {
-        label: 'Build a Modern Web or Mobile Application',
-        description: 'Create a customer-facing digital product with intuitive user experience and responsive performance.',
-        targetService: 'web-development'
-      },
-      {
-        label: 'Automate Internal Operations & Enterprise Workflows',
-        description: 'Replace spreadsheets and manual processes with a centralized CRM, HRMS, or custom software.',
-        targetService: 'software-solutions'
-      },
-      {
-        label: 'Modernize Cloud Infrastructure & DevOps',
-        description: 'Migrate to resilient cloud platforms, optimize AWS/GCP expenses, and automate deployments.',
-        targetService: 'cloud-solutions'
-      },
-      {
-        label: 'Scale Search Visibility & Digital Inbound Growth',
-        description: 'Maximize qualified organic traffic and conversion funnels with data-driven technical marketing.',
-        targetService: 'digital-marketing'
-      }
-    ]
-  },
-  {
-    id: 2,
-    question: 'What is the anticipated scale or user audience of your system?',
-    subtitle: 'This helps us suggest the ideal architecture and delivery timeline.',
-    options: [
-      {
-        label: 'Internal Team & Operational Workforce (10–500 Users)',
-        description: 'Streamlined role permissions, fast data entry, and unified reporting for your employees.',
-        targetService: 'software-solutions'
-      },
-      {
-        label: 'High-Growth Startup / Consumer Audience (Thousands to Millions)',
-        description: 'High concurrency, elastic cloud autoscaling, native mobile apps, and low-latency APIs.',
-        targetService: 'web-development'
-      },
-      {
-        label: 'Enterprise Ecosystem with Multi-System Integrations',
-        description: 'Complex ERP connections, legacy migrations, compliance controls, and high-availability SLAs.',
-        targetService: 'cloud-solutions'
-      },
-      {
-        label: 'Institutional / Research / Academic Application',
-        description: 'Computational modeling, structured dataset analysis, and technical documentation.',
-        targetService: 'academic-assistance'
-      }
-    ]
-  },
-  {
-    id: 3,
-    question: 'What is your target timeline for launching or deploying the initial version?',
-    subtitle: 'We tailor our agile sprints to align with your business deadlines.',
-    options: [
-      {
-        label: 'Rapid Prototype / MVP (4 to 8 Weeks)',
-        description: 'Focused scope, clean MVP architecture, ready for immediate market validation.',
-        targetService: 'web-development'
-      },
-      {
-        label: 'Full Commercial Release (2 to 4 Months)',
-        description: 'Production-grade engineering, comprehensive QA testing, and integrated third-party systems.',
-        targetService: 'software-solutions'
-      },
-      {
-        label: 'Continuous Strategic Engineering Partner (Ongoing)',
-        description: 'Dedicated agile team embedded within your organization for continuous feature delivery.',
-        targetService: 'cloud-solutions'
-      },
-      {
-        label: 'Discovery & Architectural Consulting Phase',
-        description: 'Requirements definition, technical feasibility analysis, and architecture blueprints.',
-        targetService: 'software-solutions'
-      }
-    ]
-  }
-];
 
 
 // ========================================================

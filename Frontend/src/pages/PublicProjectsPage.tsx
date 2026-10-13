@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { LoginModal } from '../components/LoginModal';
-import { QuizModal } from '../components/QuizModal';
 import { projectService, ProjectItem } from '../services/projectService';
 import { getMediaUrl } from '../utils/mediaUrl';
 import {
@@ -357,7 +356,6 @@ export const PublicProjectsPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isQuizOpen, setIsQuizOpen] = useState(false);
 
   // Gallery Modal State
   const [activeGalleryProject, setActiveGalleryProject] = useState<ProjectItem | null>(null);
@@ -423,7 +421,6 @@ export const PublicProjectsPage: React.FC = () => {
 
       <Navbar
         onOpenLogin={() => setIsLoginOpen(true)}
-        onOpenQuiz={() => setIsQuizOpen(true)}
         onNavigateSection={(sec) => navigate(`/#${sec}`)}
       />
 
@@ -734,17 +731,9 @@ export const PublicProjectsPage: React.FC = () => {
         </div>
       )}
 
-      <Footer
-        onNavigateSection={(sec) => navigate(`/#${sec}`)}
-        onOpenQuiz={() => setIsQuizOpen(true)}
-      />
+      <Footer onNavigateSection={(sec) => navigate(`/#${sec}`)} />
 
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      {/* <QuizModal
-        isOpen={isQuizOpen}
-        onClose={() => setIsQuizOpen(false)}
-        onSelectService={() => setIsQuizOpen(false)}
-      /> */}
     </div>
   );
 };
