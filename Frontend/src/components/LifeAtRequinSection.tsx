@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Calendar,
   ChevronLeft,
@@ -553,13 +554,23 @@ export const LifeAtRequinSection: React.FC = () => {
       </div>
 
       {/* ========================================================
-          INTERACTIVE PHOTO GALLERY MODAL
+          INTERACTIVE PHOTO GALLERY MODAL (Portaled to body, z-[100])
       ======================================================== */}
-      {isModalOpen && activeModalItem && (
+      {isModalOpen && activeModalItem && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-[#071827]/90 backdrop-blur-md animate-fadeIn overflow-y-auto overscroll-contain"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-5 md:p-6 bg-[#040D17]/95 backdrop-blur-lg animate-fadeIn overflow-y-auto overscroll-contain"
           onClick={() => setIsModalOpen(false)}
         >
+          {/* Prominent Floating Top-Right Cancel / Exit Button */}
+          <button
+            onClick={() => setIsModalOpen(false)}
+            aria-label="Exit photo gallery"
+            className="fixed top-3 right-3 sm:top-5 sm:right-6 z-[110] w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#081524]/90 hover:bg-rose-600/90 border border-white/20 hover:border-rose-400 text-white transition-all flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8] shadow-2xl hover:scale-110 cursor-pointer backdrop-blur-md group"
+            title="Exit Gallery (Esc)"
+          >
+            <X className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-200 group-hover:rotate-90" />
+          </button>
+
           <div
             className="relative w-[95vw] max-w-5xl lg:max-w-6xl bg-[#081524] rounded-2xl sm:rounded-3xl border border-slate-700/80 shadow-[0_25px_80px_rgba(0,0,0,0.85),0_0_50px_rgba(8,185,232,0.18)] overflow-hidden flex flex-col max-h-[90vh] my-auto overscroll-contain"
             onClick={(e) => e.stopPropagation()}
@@ -585,7 +596,8 @@ export const LifeAtRequinSection: React.FC = () => {
                   <button
                     onClick={() => setIsModalOpen(false)}
                     aria-label="Close modal"
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-all flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8] shadow-md hover:scale-105 cursor-pointer"
+                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 hover:bg-rose-600 border border-slate-700 hover:border-rose-500 text-slate-200 hover:text-white transition-all flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#08B9E8] shadow-md hover:scale-105 cursor-pointer"
+                    title="Close"
                   >
                     <X className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
@@ -770,7 +782,8 @@ export const LifeAtRequinSection: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );

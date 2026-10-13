@@ -54,17 +54,18 @@ export const Hero: React.FC<HeroProps> = ({ onExploreServices, onViewProducts })
             <div className="flex flex-col xs:flex-row sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2 sm:pt-3">
               <button
                 onClick={onExploreServices}
-                className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full font-bold text-sm sm:text-base text-[#05131f] bg-gradient-to-r from-[#00c2ff] to-[#08b9e8] hover:from-[#38d4ff] hover:to-[#00c2ff] transition-all duration-300 shadow-lg shadow-[#00c2ff]/25 hover:shadow-[0_0_25px_rgba(0,194,255,0.4)] focus:outline-none active:scale-[0.98] cursor-pointer"
+                className="group inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full font-bold text-sm sm:text-base text-[#05131f] bg-gradient-to-r from-[#00c2ff] to-[#08b9e8] hover:from-[#38d4ff] hover:to-[#00c2ff] transition-all duration-300 shadow-lg shadow-[#00c2ff]/25 hover:shadow-[0_0_25px_rgba(0,194,255,0.4)] focus:outline-none active:scale-[0.98] cursor-pointer"
               >
                 <span>Explore Our Services</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </button>
 
               <button
                 onClick={onViewProducts}
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-bold text-sm sm:text-base text-white bg-[#071F33]/60 hover:bg-[#071F33] border border-[#00c2ff]/50 hover:border-[#00c2ff] transition-all duration-300 focus:outline-none active:scale-[0.98] cursor-pointer"
+                className="group inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full font-bold text-sm sm:text-base text-white hover:text-[#05131f] bg-[#071F33]/80 hover:bg-[#00c2ff] border border-[#00c2ff]/50 hover:border-[#00c2ff] transition-all duration-300 shadow-md shadow-black/20 hover:shadow-[0_0_25px_rgba(0,194,255,0.45)] hover:scale-[1.02] focus:outline-none active:scale-[0.98] cursor-pointer"
               >
                 <span>View Our Products</span>
+                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </button>
             </div>
           </div>
