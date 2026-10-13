@@ -7,8 +7,6 @@ import {
   CheckCircle2,
   Building2,
   MapPin,
-  ShieldCheck,
-  Award,
 } from 'lucide-react';
 import { testimonialService, TestimonialItem } from '../services/testimonialService';
 import { getMediaUrl } from '../utils/mediaUrl';
@@ -324,9 +322,9 @@ export const TestimonialsSection: React.FC = () => {
       </svg>
 
       {/* ========================================================
-          HEADER CONTENT & TRUST BANNER
+          HEADER CONTENT
       ======================================================== */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10 mb-12 sm:mb-16">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10 mb-8 sm:mb-10">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0088EE]/10 border border-[#0088EE]/20 text-[#0088EE] text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-[#0088EE] animate-pulse" />
           Client Stories & Trust
@@ -339,26 +337,6 @@ export const TestimonialsSection: React.FC = () => {
         <p className="mt-4 text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto">
           Read verified experiences from founders, directors, and enterprise executives who scale their businesses with Requin Solutions.
         </p>
-
-        {/* Trust summary pill badges */}
-        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mt-6">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-sm text-xs font-semibold text-slate-700">
-            <div className="flex items-center text-amber-400">
-              <Star className="w-3.5 h-3.5 fill-current" />
-            </div>
-            <span><strong className="text-[#0B1726]">4.9 / 5</strong> Rating (150+ Reviews)</span>
-          </div>
-
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-sm text-xs font-semibold text-slate-700">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span><strong className="text-[#0B1726]">98%</strong> Client Retention</span>
-          </div>
-
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-sm text-xs font-semibold text-slate-700">
-            <Award className="w-3.5 h-3.5 text-[#0088EE]" />
-            <span><strong className="text-[#0B1726]">100%</strong> Verified Feedback</span>
-          </div>
-        </div>
       </div>
 
       {/* ========================================================
