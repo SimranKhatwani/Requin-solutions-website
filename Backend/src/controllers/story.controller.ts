@@ -4,6 +4,7 @@ import { AuthenticatedRequest } from '../types';
 
 export const StoryController = {
   async getPublishedStories(_req: Request, res: Response): Promise<void> {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     const stories = await StoryService.getPublished();
     res.json({ success: true, count: stories.length, data: stories });
   },

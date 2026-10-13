@@ -1,8 +1,71 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Sparkles } from 'lucide-react';
 import { OUR_STORY_MILESTONES } from '../data/requinData';
+import { storyService, StoryItem } from '../services/storyService';
+
+interface DisplayMilestone {
+  id?: string;
+  year: string;
+  title: string;
+  description: string;
+  impact?: string;
+  tag?: string;
+}
 
 export const OurStorySection: React.FC = () => {
+  const [stories, setStories] = useState<StoryItem[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    storyService
+      .getPublishedStories()
+      .then((res) => {
+        if (isMounted && res && res.success && Array.isArray(res.data) && res.data.length > 0) {
+          setStories(res.data);
+        }
+      })
+      .catch((err) => {
+        console.warn('Could not fetch dynamic stories, using default milestones:', err);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const displayMilestones: DisplayMilestone[] = useMemo(() => {
+    if (stories.length > 0) {
+      const sorted = [...stories].sort((a, b) => {
+        if (typeof a.displayOrder === 'number' && typeof b.displayOrder === 'number') {
+          return a.displayOrder - b.displayOrder;
+        }
+        return Number(a.year || 0) - Number(b.year || 0);
+      });
+
+      return sorted.map((s) => {
+        const matchedStatic = OUR_STORY_MILESTONES.find(
+          (m) => m.year === s.year || m.title.toLowerCase() === s.title.toLowerCase()
+        );
+        return {
+          id: s.id,
+          year: s.year,
+          title: s.title,
+          description: s.description,
+          impact: s.storyContent && s.storyContent.trim() !== s.description.trim() ? s.storyContent.trim() : (matchedStatic?.impact || undefined),
+          tag: (s as any).tag || matchedStatic?.tag || undefined,
+        };
+      });
+    }
+
+    return OUR_STORY_MILESTONES.map((m, idx) => ({
+      id: `default-${idx}`,
+      year: m.year,
+      title: m.title,
+      description: m.description,
+      impact: m.impact,
+      tag: m.tag,
+    }));
+  }, [stories]);
   return (
     <section
       id="our-story"
@@ -207,8 +270,8 @@ export const OurStorySection: React.FC = () => {
             aria-hidden="true"
           />
 
-          {OUR_STORY_MILESTONES.map((milestone, idx) => (
-            <div key={idx} className="relative pl-5 sm:pl-10 group">
+          {displayMilestones.map((milestone, idx) => (
+            <div key={milestone.id || idx} className="relative pl-5 sm:pl-10 group">
               {/* Timeline Accent Node */}
               <div className="absolute -left-[7px] top-1.5 w-4 h-4 rounded-full bg-white border-2 border-[#0284c7] group-hover:bg-[#0284c7] transition-colors duration-200 shadow-sm z-10" />
 
@@ -217,9 +280,11 @@ export const OurStorySection: React.FC = () => {
                 <span className="text-xl sm:text-2xl font-extrabold text-[#0284c7] font-mono tracking-tight block">
                   {milestone.year}
                 </span>
-                <div className="text-[13px] sm:text-sm font-bold text-slate-500 uppercase tracking-wider hidden md:block mt-1 leading-snug">
-                  {milestone.tag}
-                </div>
+                {milestone.tag && (
+                  <div className="text-[13px] sm:text-sm font-bold text-slate-500 uppercase tracking-wider hidden md:block mt-1 leading-snug">
+                    {milestone.tag}
+                  </div>
+                )}
               </div>
 
               {/* Milestone Content Container */}
@@ -228,19 +293,23 @@ export const OurStorySection: React.FC = () => {
                   <h3 className="text-xl sm:text-2xl font-bold text-[#0B1726] group-hover:text-[#0284c7] transition-colors">
                     {milestone.title}
                   </h3>
-                  <span className="text-sm sm:text-base font-bold px-3.5 py-1.5 rounded-lg bg-[#F0F9FF] border border-[#BAE6FD] text-[#0284c7] shadow-sm">
-                    {milestone.tag}
-                  </span>
+                  {milestone.tag && (
+                    <span className="text-sm sm:text-base font-bold px-3.5 py-1.5 rounded-lg bg-[#F0F9FF] border border-[#BAE6FD] text-[#0284c7] shadow-sm">
+                      {milestone.tag}
+                    </span>
+                  )}
                 </div>
 
                 <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
                   {milestone.description}
                 </p>
 
-                <div className="mt-4 pt-4 border-t border-slate-100 flex items-start sm:items-center gap-2 text-xs text-slate-600">
-                  <Sparkles className="w-4 h-4 text-[#0284c7] shrink-0 mt-0.5 sm:mt-0" />
-                  <span className="font-medium text-slate-800 leading-snug">{milestone.impact}</span>
-                </div>
+                {milestone.impact && (
+                  <div className="mt-4 pt-4 border-t border-slate-100 flex items-start sm:items-center gap-2 text-xs text-slate-600">
+                    <Sparkles className="w-4 h-4 text-[#0284c7] shrink-0 mt-0.5 sm:mt-0" />
+                    <span className="font-medium text-slate-800 leading-snug">{milestone.impact}</span>
+                  </div>
+                )}
               </div>
             </div>
           ))}

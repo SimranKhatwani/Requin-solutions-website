@@ -33,9 +33,17 @@ export const PublicStoriesPage: React.FC = () => {
       try {
         setLoading(true);
         const res = await storyService.getPublishedStories();
-        if (res.data) setStories(res.data);
+        if (res.data && res.data.length > 0) {
+          const sorted = [...res.data].sort((a, b) => {
+            if (typeof a.displayOrder === 'number' && typeof b.displayOrder === 'number') {
+              return a.displayOrder - b.displayOrder;
+            }
+            return Number(a.year || 0) - Number(b.year || 0);
+          });
+          setStories(sorted);
+        }
       } catch (err: any) {
-        setError(err.message || 'Failed to load milestones.');
+        console.warn('Failed to load milestones from server:', err);
       } finally {
         setLoading(false);
       }
