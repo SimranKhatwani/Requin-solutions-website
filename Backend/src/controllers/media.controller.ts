@@ -141,4 +141,19 @@ export const MediaController = {
       res.status(500).json({ error: err.message || 'Failed to list media files.' });
     }
   },
+
+  /**
+   * Admin-only deduplicate endpoint to clean up redundant copies of images
+   * Path: POST /api/admin/media/deduplicate and POST /api/media/deduplicate
+   */
+  async deduplicateMedia(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const adminEmail = req.adminUser?.email || 'admin@requingroup.com';
+      const result = await MediaService.deduplicate(adminEmail);
+      res.json({ success: true, data: result });
+    } catch (err: any) {
+      console.error('Failed to deduplicate media:', err);
+      res.status(500).json({ error: err.message || 'Failed to deduplicate media files.' });
+    }
+  },
 };

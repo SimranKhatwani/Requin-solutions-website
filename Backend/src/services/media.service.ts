@@ -25,4 +25,8 @@ export const MediaService = {
   ): Promise<{ success: boolean; message?: string; error?: string; status?: number }> {
     return await GridFSService.deleteImage(id, adminEmail);
   },
+
+  async deduplicate(adminEmail: string = 'admin@requingroup.com') {
+    return await GridFSService.deduplicateMedia(adminEmail);
+  },
 };

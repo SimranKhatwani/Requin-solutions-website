@@ -28,3 +28,9 @@ mediaRouter.delete('/api/admin/media/:id', requireAdminAuth, MediaController.del
 // Admin Media Library list endpoints
 mediaRouter.get('/admin/media', requireAdminAuth, MediaController.getAllMedia);
 mediaRouter.get('/api/admin/media', requireAdminAuth, MediaController.getAllMedia);
+
+// Admin Media Deduplication endpoints
+mediaRouter.post('/media/deduplicate', requireAdminAuth, MediaController.deduplicateMedia);
+mediaRouter.post('/api/media/deduplicate', requireAdminAuth, MediaController.deduplicateMedia);
+mediaRouter.post('/admin/media/deduplicate', requireAdminAuth, MediaController.deduplicateMedia);
+mediaRouter.post('/api/admin/media/deduplicate', requireAdminAuth, MediaController.deduplicateMedia);

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Readable } from 'stream';
-import { MediaModel } from '../models/media.model';
+import { MediaModel, MediaMongoose } from '../models/media.model';
 import { ActivityModel } from '../models/activity.model';
 import { ProjectMongoose } from '../models/project.model';
 import { BlogMongoose } from '../models/blog.model';
@@ -43,6 +43,47 @@ export const GridFSService = {
     module: string = 'general'
   ): Promise<GridFSUploadResult> {
     const bucket = getGridFSBucket();
+
+    // 1. Deduplication Check: Check if an identical file (originalName + size) already exists
+    try {
+      const existing = await MediaMongoose.findOne({
+        $or: [
+          { originalName: file.originalname, size: file.size },
+          { fileName: file.originalname, size: file.size },
+        ],
+      }).lean();
+
+      if (existing) {
+        // Verify the binary still exists in GridFS
+        let existsInGridFS = false;
+        if (mongoose.Types.ObjectId.isValid(existing.id)) {
+          const files = await bucket
+            .find({ _id: new mongoose.Types.ObjectId(existing.id) })
+            .limit(1)
+            .toArray();
+          if (files && files.length > 0) {
+            existsInGridFS = true;
+          }
+        }
+
+        if (existsInGridFS) {
+          // Re-use existing asset to prevent duplicates in Media Library and database bloat
+          return {
+            id: existing.id,
+            fileName: existing.fileName,
+            originalName: existing.originalName,
+            url: existing.url,
+            mimeType: existing.mimeType,
+            size: existing.size,
+            createdAt: (existing as any).createdAt
+              ? (existing as any).createdAt.toString()
+              : new Date().toISOString(),
+          };
+        }
+      }
+    } catch (checkErr) {
+      console.warn('Warning checking media deduplication:', checkErr);
+    }
 
     // Sanitize original filename and ensure unique storage name
     const timestamp = Date.now();
@@ -201,7 +242,11 @@ export const GridFSService = {
 
       // Check Blogs
       const blogMatch = await BlogMongoose.findOne({
-        featuredImage: { $regex: regexPattern },
+        $or: [
+          { featuredImage: { $regex: regexPattern } },
+          { image: { $regex: regexPattern } },
+          { content: { $regex: regexPattern } },
+        ],
       }).lean();
       if (blogMatch) {
         return { isReferenced: true, referencedIn: `Blog: ${blogMatch.title}` };
@@ -322,6 +367,188 @@ export const GridFSService = {
     return {
       success: true,
       message: 'Image deleted successfully from MongoDB GridFS.',
+    };
+  },
+
+  /**
+   * Identifies all duplicate media files, consolidates references in Blogs, LifeAtRequin,
+   * Projects, and Stories to canonical IDs, and cleans up redundant duplicates from GridFS.
+   */
+  async deduplicateMedia(adminEmail: string = 'admin@requingroup.com'): Promise<{
+    duplicateGroupsCount: number;
+    deletedCount: number;
+    repointedCount: number;
+  }> {
+    const bucket = getGridFSBucket();
+    const allMedia = await MediaMongoose.find().lean();
+    const blogs = await BlogMongoose.find();
+    const life = await LifeAtRequinMongoose.find();
+    const projects = await ProjectMongoose.find();
+    const stories = await StoryMongoose.find();
+
+    const groups: Record<string, typeof allMedia> = {};
+    allMedia.forEach((m) => {
+      const key = (m.originalName || m.fileName) + '___' + m.size;
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(m);
+    });
+
+    const duplicateGroups = Object.entries(groups).filter(([_, list]) => list.length > 1);
+    let deletedCount = 0;
+    let repointedCount = 0;
+
+    for (const [_, items] of duplicateGroups) {
+      items.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+      // Count references for each item
+      const refCounts: Record<string, number> = {};
+      for (const item of items) {
+        let count = 0;
+        blogs.forEach((b) => {
+          if (b.featuredImage?.includes(item.id)) count++;
+          if (b.content?.includes(item.id)) count++;
+        });
+        life.forEach((l) => {
+          if (l.image?.includes(item.id)) count++;
+          if (l.photos?.some((p) => p.image?.includes(item.id))) count++;
+        });
+        projects.forEach((p) => {
+          if (p.featuredImage?.includes(item.id)) count++;
+          if (p.galleryImages?.some((img) => img.includes(item.id))) count++;
+        });
+        stories.forEach((s) => {
+          if (s.image?.includes(item.id)) count++;
+          if (s.galleryImages?.some((img) => img.includes(item.id))) count++;
+        });
+        refCounts[item.id] = count;
+      }
+
+      let canonical = items[0];
+      const withRefs = items.find((m) => refCounts[m.id] > 0);
+      if (withRefs) canonical = withRefs;
+
+      const duplicatesToDelete = items.filter((m) => m.id !== canonical.id);
+
+      for (const dup of duplicatesToDelete) {
+        // Re-point blogs
+        for (const b of blogs) {
+          let changed = false;
+          let feat = b.featuredImage;
+          let content = b.content;
+          if (feat && feat.includes(dup.id)) {
+            feat = feat.replace(new RegExp(dup.id, 'g'), canonical.id);
+            changed = true;
+          }
+          if (content && content.includes(dup.id)) {
+            content = content.replace(new RegExp(dup.id, 'g'), canonical.id);
+            changed = true;
+          }
+          if (changed) {
+            b.featuredImage = feat;
+            b.content = content;
+            await b.save();
+            repointedCount++;
+          }
+        }
+
+        // Re-point lifeatrequin
+        for (const l of life) {
+          let changed = false;
+          let img = l.image;
+          let photos = l.photos || [];
+
+          if (img && img.includes(dup.id)) {
+            img = img.replace(new RegExp(dup.id, 'g'), canonical.id);
+            changed = true;
+          }
+          photos = photos.map((p) => {
+            if (p.image && p.image.includes(dup.id)) {
+              changed = true;
+              return { ...p, image: p.image.replace(new RegExp(dup.id, 'g'), canonical.id) };
+            }
+            return p;
+          });
+
+          if (changed) {
+            l.image = img;
+            l.photos = photos;
+            await l.save();
+            repointedCount++;
+          }
+        }
+
+        // Re-point projects
+        for (const p of projects) {
+          let changed = false;
+          let feat = p.featuredImage;
+          let gal = p.galleryImages || [];
+          if (feat && feat.includes(dup.id)) {
+            feat = feat.replace(new RegExp(dup.id, 'g'), canonical.id);
+            changed = true;
+          }
+          gal = gal.map((g) => {
+            if (g.includes(dup.id)) {
+              changed = true;
+              return g.replace(new RegExp(dup.id, 'g'), canonical.id);
+            }
+            return g;
+          });
+          if (changed) {
+            p.featuredImage = feat;
+            p.galleryImages = gal;
+            await p.save();
+            repointedCount++;
+          }
+        }
+
+        // Re-point stories
+        for (const s of stories) {
+          let changed = false;
+          let img = s.image;
+          let gal = s.galleryImages || [];
+          if (img && img.includes(dup.id)) {
+            img = img.replace(new RegExp(dup.id, 'g'), canonical.id);
+            changed = true;
+          }
+          gal = gal.map((g) => {
+            if (g.includes(dup.id)) {
+              changed = true;
+              return g.replace(new RegExp(dup.id, 'g'), canonical.id);
+            }
+            return g;
+          });
+          if (changed) {
+            s.image = img;
+            s.galleryImages = gal;
+            await s.save();
+            repointedCount++;
+          }
+        }
+
+        // Delete duplicate records and GridFS chunks
+        await MediaMongoose.deleteOne({ id: dup.id });
+        if (mongoose.Types.ObjectId.isValid(dup.id)) {
+          try {
+            await bucket.delete(new mongoose.Types.ObjectId(dup.id));
+          } catch {}
+        }
+        deletedCount++;
+      }
+    }
+
+    if (deletedCount > 0) {
+      ActivityModel.add(
+        `Consolidated media library (purged ${deletedCount} duplicate assets)`,
+        'media',
+        'Media Deduplication Tool',
+        adminEmail
+      );
+    }
+
+    return {
+      duplicateGroupsCount: duplicateGroups.length,
+      deletedCount,
+      repointedCount,
     };
   },
 };

@@ -167,4 +167,28 @@ export const mediaService = {
       });
     }
   },
+
+  /**
+   * Consolidates duplicate assets in GridFS and re-points references
+   */
+  async deduplicateMedia(): Promise<{
+    success: boolean;
+    data: { duplicateGroupsCount: number; deletedCount: number; repointedCount: number };
+  }> {
+    try {
+      return await apiClient<{
+        success: boolean;
+        data: { duplicateGroupsCount: number; deletedCount: number; repointedCount: number };
+      }>('/api/admin/media/deduplicate', {
+        method: 'POST',
+      });
+    } catch {
+      return await apiClient<{
+        success: boolean;
+        data: { duplicateGroupsCount: number; deletedCount: number; repointedCount: number };
+      }>('/api/media/deduplicate', {
+        method: 'POST',
+      });
+    }
+  },
 };

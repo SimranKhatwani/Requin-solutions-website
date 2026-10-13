@@ -40,7 +40,7 @@ export const StatsService = {
     const draftCareers = totalCareers - publishedCareers;
     const totalApplications = (db.jobApplications || []).length;
 
-    const recentActivity = ActivityModel.getRecent(10);
+    const recentActivity = await ActivityModel.getRecent(10);
 
     return {
       totalBlogs,

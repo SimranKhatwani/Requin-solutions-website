@@ -246,11 +246,11 @@ export const AdminDashboard: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <span className="text-[11px] font-medium text-slate-400 block">
+                    <span className="text-[11px] font-semibold text-slate-600 block">
                       {new Date(act.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
-                    <span className="text-[10px] text-slate-400 font-mono">
-                      {new Date(act.timestamp).toLocaleDateString()}
+                    <span className="text-[10px] text-slate-400 font-medium">
+                      {new Date(act.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </span>
                   </div>
                 </div>

@@ -12,6 +12,8 @@ import {
   ExternalLink,
   Grid,
   List,
+  Sparkles,
+  CheckCircle2,
 } from 'lucide-react';
 import { mediaService, MediaItem } from '../services/mediaService';
 import { getMediaUrl } from '../utils/mediaUrl';
@@ -25,6 +27,8 @@ export const AdminMedia: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [deduplicating, setDeduplicating] = useState(false);
+  const [dedupeSuccess, setDedupeSuccess] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -77,6 +81,30 @@ export const AdminMedia: React.FC = () => {
     }
   };
 
+  const handleDeduplicate = async () => {
+    try {
+      setDeduplicating(true);
+      setError(null);
+      setDedupeSuccess(null);
+      const res = await mediaService.deduplicateMedia();
+      if (res.data) {
+        if (res.data.deletedCount > 0) {
+          setDedupeSuccess(
+            `Removed ${res.data.deletedCount} duplicate asset(s) and synchronized references.`
+          );
+        } else {
+          setDedupeSuccess('All media assets are unique. No duplicates found.');
+        }
+        setTimeout(() => setDedupeSuccess(null), 5000);
+      }
+      await fetchMedia();
+    } catch (err: any) {
+      setError(err.message || 'Failed to clean duplicates.');
+    } finally {
+      setDeduplicating(false);
+    }
+  };
+
   const formatFileSize = (bytes: number) => {
     if (!bytes) return '0 KB';
     const kb = bytes / 1024;
@@ -102,7 +130,7 @@ export const AdminMedia: React.FC = () => {
           </p>
         </div>
 
-        <div>
+        <div className="flex items-center gap-2.5">
           <input
             type="file"
             ref={fileInputRef}
@@ -110,6 +138,26 @@ export const AdminMedia: React.FC = () => {
             accept="image/jpeg,image/png,image/webp,image/svg+xml,image/gif,image/avif,.avif,image/*"
             className="hidden"
           />
+
+          <button
+            onClick={handleDeduplicate}
+            disabled={deduplicating || uploading}
+            title="Consolidate duplicate media assets and merge references"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl font-semibold text-xs text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-xs disabled:opacity-50 transition-all cursor-pointer"
+          >
+            {deduplicating ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#08B9E8]" />
+                <span>Checking Duplicates...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-3.5 h-3.5 text-[#08B9E8]" />
+                <span>Clean Duplicates</span>
+              </>
+            )}
+          </button>
+
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
@@ -129,6 +177,13 @@ export const AdminMedia: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {dedupeSuccess && (
+        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2 shadow-xs">
+          <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+          <span>{dedupeSuccess}</span>
+        </div>
+      )}
 
       {error && (
         <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
